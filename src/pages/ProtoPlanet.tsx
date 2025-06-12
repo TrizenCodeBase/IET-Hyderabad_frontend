@@ -255,185 +255,136 @@ const ProtoPlanet = () => {
         message: 'Preparing submission...'
       });
 
-      // Create form data for submission
-      const submitData = new FormData();
+      const API_BASE_URL = process.env.NODE_ENV === 'production'
+        ? 'https://iet-hyderabad-backend.llp.trizenventures.com'
+        : 'http://localhost:5000';
+
+      // First check if backend is accessible
+      try {
+        const healthCheck = await fetch(`${API_BASE_URL}/health`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Origin': window.location.origin
+          },
+          credentials: 'include',
+          mode: 'cors'
+        });
+
+        if (!healthCheck.ok) {
+          throw new Error('Backend server is not responding. Please try again later.');
+        }
+      } catch (healthError) {
+        console.error('Health check failed:', healthError);
+        throw new Error('Unable to connect to the server. Please try again later.');
+      }
+
+      // Proceed with form submission
+      setSubmissionStatus({
+        status: 'submitting',
+        message: 'Uploading registration data...'
+      });
+
+      const submitFormData = new FormData();
       
-      // Append team details
-      submitData.append('teamName', formData.teamName);
-      submitData.append('institutionName', formData.institutionName);
-      submitData.append('cityState', formData.cityState);
-      submitData.append('projectTitle', formData.projectTitle);
+      // Append form fields to FormData
+      submitFormData.append('teamName', formData.teamName);
+      submitFormData.append('institutionName', formData.institutionName);
+      submitFormData.append('cityState', formData.cityState);
+      submitFormData.append('projectTitle', formData.projectTitle);
       
-      // Combine all project details into projectAbstract
-      const projectAbstract = {
+      // Append project details
+      const projectDetails = {
         track: formData.projectTrack,
         problemStatement: formData.problemStatement,
         proposedSolution: formData.proposedSolution,
         systemArchitecture: formData.systemArchitecture,
         technologicalImpact: formData.technologicalImpact
       };
-      submitData.append('projectAbstract', JSON.stringify(projectAbstract));
+      submitFormData.append('projectDetails', JSON.stringify(projectDetails));
       
-      submitData.append('feeType', formData.feeType);
-      submitData.append('transactionId', formData.transactionId);
-      submitData.append('termsAccepted', formData.termsAccepted.toString());
-
-      // Format team members data
-      const member1Data = {
-        ...formData.member1,
-        title: 'Mr',
-      };
-      const member2Data = {
-        ...formData.member2,
-        title: 'Mr',
-      };
-      const member3Data = formData.member3.name ? {
-        ...formData.member3,
-        title: 'Mr',
-      } : null;
-
-      // Append team members data
-      submitData.append('member1', JSON.stringify(member1Data));
-      submitData.append('member2', JSON.stringify(member2Data));
-      if (member3Data) {
-        submitData.append('member3', JSON.stringify(member3Data));
+      // Append team members
+      submitFormData.append('member1', JSON.stringify(formData.member1));
+      submitFormData.append('member2', JSON.stringify(formData.member2));
+      if (formData.member3.name) {
+        submitFormData.append('member3', JSON.stringify(formData.member3));
       }
-
-      // Append the screenshot file
+      
+      // Append payment details
+      submitFormData.append('feeType', formData.feeType);
+      submitFormData.append('transactionId', formData.transactionId);
+      
+      // Append screenshot if available
       if (fileInputRef.current?.files?.[0]) {
-        setSubmissionStatus({
-          status: 'submitting',
-          message: 'Processing payment screenshot...'
-        });
-        const file = fileInputRef.current.files[0];
-        submitData.append('screenshot', file, file.name);
-        console.log('Appending file:', file.name, file.type, file.size);
-      } else {
-        console.error('No screenshot file found');
-        throw new Error('Please upload the payment screenshot');
+        submitFormData.append('screenshot', fileInputRef.current.files[0]);
       }
 
-      // Log form data before submission
-      console.log('Form data entries:');
-      for (const [key, value] of submitData.entries()) {
-        console.log(key, ':', typeof value === 'string' ? value : 'File/Blob data');
-      }
-
-      setSubmissionStatus({
-        status: 'submitting',
-        message: 'Uploading registration data...'
-      });
+      console.log('Submitting to:', `${API_BASE_URL}/api/protoplan/register`);
       
-      const API_URL = process.env.NODE_ENV === 'production' 
-        ? 'https://iet-hyderabad-backend.llp.trizenventures.com/api/protoplan/register'
-        : 'http://localhost:5000/api/protoplan/register';
+      const response = await fetch(`${API_BASE_URL}/api/protoplan/register`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Origin': window.location.origin
+        },
+        credentials: 'include',
+        mode: 'cors',
+        body: submitFormData
+      });
 
-      try {
-        // First check if backend is accessible
+      // Log response details for debugging
+      console.log('Response status:', response.status);
+      console.log('Response headers:', {
+        'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+        'access-control-allow-credentials': response.headers.get('access-control-allow-credentials'),
+        'content-type': response.headers.get('content-type')
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ 
+          message: `Server error: ${response.status} ${response.statusText}` 
+        }));
+        throw new Error(errorData.message || 'Registration failed');
+      }
+
+      const result = await response.json();
+      console.log('Server response:', result);
+
+      if (result.success) {
         setSubmissionStatus({
-          status: 'submitting',
-          message: 'Checking server connection...'
+          status: 'success',
+          message: 'Registration successful! We will contact you shortly.'
         });
 
-        const healthCheck = await fetch(
-          process.env.NODE_ENV === 'production'
-            ? 'https://iet-hyderabad-backend.llp.trizenventures.com/health'
-            : 'http://localhost:5000/health'
-        );
-
-        if (!healthCheck.ok) {
-          throw new Error('Backend server is not responding. Please try again later.');
+        // Reset form
+        setFormData({
+          teamName: '',
+          institutionName: '',
+          cityState: '',
+          member1: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
+          member2: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
+          member3: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
+          projectTitle: '',
+          projectAbstract: '',
+          projectTrack: '',
+          problemStatement: '',
+          proposedSolution: '',
+          systemArchitecture: '',
+          technologicalImpact: '',
+          feeType: '',
+          transactionId: '',
+          termsAccepted: false
+        });
+        setUploadedImage(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
         }
+        setCurrentStep('team-details');
 
-        // Proceed with form submission
-        setSubmissionStatus({
-          status: 'submitting',
-          message: 'Uploading registration data...'
-        });
-
-        console.log('Submitting to:', API_URL);
-        
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'multipart/form-data',
-            'Origin': window.location.origin
-          },
-          credentials: 'include',
-          body: submitData
-        });
-
-        // Log response details for debugging
-        console.log('Response status:', response.status);
-        console.log('Response headers:', {
-          'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
-          'access-control-allow-credentials': response.headers.get('access-control-allow-credentials'),
-          'content-type': response.headers.get('content-type')
-        });
-
-        if (!response.ok) {
-          if (response.status === 502) {
-            throw new Error('Unable to reach the server. Please check your connection and try again.');
-          }
-          
-          const errorData = await response.json().catch(() => ({ 
-            message: `Server error: ${response.status} ${response.statusText}` 
-          }));
-          
-          throw new Error(errorData.message || 'Registration failed');
-        }
-
-        const result = await response.json();
-        console.log('Server response:', result);
-
-        if (result.success) {
-          setSubmissionStatus({
-            status: 'success',
-            message: 'Registration successful! We will contact you shortly.'
-          });
-
-          // Reset form
-          setFormData({
-            teamName: '',
-            institutionName: '',
-            cityState: '',
-            member1: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
-            member2: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
-            member3: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
-            projectTitle: '',
-            projectAbstract: '',
-            projectTrack: '',
-            problemStatement: '',
-            proposedSolution: '',
-            systemArchitecture: '',
-            technologicalImpact: '',
-            feeType: '',
-            transactionId: '',
-            termsAccepted: false
-          });
-          setUploadedImage(null);
-          if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-          }
-          setCurrentStep('team-details');
-
-          // Show success message
-          alert('Registration successful! We will contact you shortly.');
-        } else {
-          throw new Error(result.message || 'Registration failed');
-        }
-      } catch (error) {
-        console.error('Form submission error:', error);
-        setSubmissionStatus({
-          status: 'error',
-          message: error instanceof Error ? error.message : 'An unexpected error occurred'
-        });
-        
-        // Show error in UI
-        alert(error instanceof Error ? error.message : 'Failed to submit registration. Please try again.');
-      } finally {
-        setIsSubmitting(false);
+        // Show success message
+        alert('Registration successful! We will contact you shortly.');
+      } else {
+        throw new Error(result.message || 'Registration failed');
       }
     } catch (error) {
       console.error('Form submission error:', error);
@@ -444,6 +395,8 @@ const ProtoPlanet = () => {
       
       // Show error in UI
       alert(error instanceof Error ? error.message : 'Failed to submit registration. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
