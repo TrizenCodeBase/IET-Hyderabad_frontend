@@ -5,11 +5,7 @@
 ### Backend Setup (.env)
 Create a `.env` file in the `backend` directory with the following variables:
 
-```env
-PORT=5000
-MONGODB_URI=mongodb+srv://projectstrizen:YOUR_PASSWORD_HERE@cluster0.p1pxurw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-CORS_ORIGIN=http://localhost:8080
-```
+
 
 Replace `YOUR_PASSWORD_HERE` with your actual MongoDB password.
 
