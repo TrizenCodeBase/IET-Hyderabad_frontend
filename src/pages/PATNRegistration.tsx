@@ -48,7 +48,7 @@ const PATNRegistration = () => {
     try {
       console.log('Submitting form data:', formData);
 
-      const response = await fetch('http://iet-hyderabad-backend.llp.trizenventures.com/api/register', {
+      const response = await fetch('https://iet-hyderabad-backend.llp.trizenventures.com/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
