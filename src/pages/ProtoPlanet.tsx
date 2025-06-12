@@ -324,13 +324,24 @@ const ProtoPlanet = () => {
         message: 'Uploading registration data...'
       });
       
-      const response = await fetch('http://localhost:5000/api/protoplan/register', {
+      const API_URL = process.env.NODE_ENV === 'production' 
+        ? 'https://iet-hyderabad-backend.llp.trizenventures.com/api/protoplan/register'
+        : 'http://localhost:5000/api/protoplan/register';
+
+      console.log('Submitting to:', API_URL);
+      
+      const response = await fetch(API_URL, {
         method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Origin': window.location.origin
+        },
+        credentials: 'include',
         body: submitData
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ message: 'Network error occurred' }));
         throw new Error(errorData.message || 'Registration failed');
       }
 
