@@ -326,63 +326,86 @@ const ProtoPlanet = () => {
       
       const API_URL = process.env.NODE_ENV === 'production' 
         ? 'https://iet-hyderabad-backend.llp.trizenventures.com/api/protoplan/register'
-        : 'https://iet-hyderabad-backend.llp.trizenventures.com/api/protoplan/register';
+        : 'http://localhost:5000/api/protoplan/register';
 
-      console.log('Submitting to:', API_URL);
-      
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Origin': window.location.origin
-        },
-        credentials: 'include',
-        body: submitData
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Network error occurred' }));
-        throw new Error(errorData.message || 'Registration failed');
-      }
-
-      const result = await response.json();
-      console.log('Server response:', result);
-
-      if (result.success) {
-        setSubmissionStatus({
-          status: 'success',
-          message: 'Registration successful! We will contact you shortly.'
+      try {
+        console.log('Submitting to:', API_URL);
+        
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Origin': window.location.origin
+          },
+          mode: 'cors',
+          credentials: 'include',
+          body: submitData
         });
 
-        // Reset form
-        setFormData({
-          teamName: '',
-          institutionName: '',
-          cityState: '',
-          member1: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
-          member2: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
-          member3: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
-          projectTitle: '',
-          projectAbstract: '',
-          projectTrack: '',
-          problemStatement: '',
-          proposedSolution: '',
-          systemArchitecture: '',
-          technologicalImpact: '',
-          feeType: '',
-          transactionId: '',
-          termsAccepted: false
+        // Log response headers for debugging
+        console.log('Response headers:', {
+          'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+          'access-control-allow-credentials': response.headers.get('access-control-allow-credentials'),
+          'content-type': response.headers.get('content-type')
         });
-        setUploadedImage(null);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
+
+        if (!response.ok) {
+          if (response.status === 502) {
+            throw new Error('Backend server is not responding. Please try again later.');
+          }
+          const errorData = await response.json().catch(() => ({ 
+            message: `HTTP error! status: ${response.status}`
+          }));
+          throw new Error(errorData.message || 'Registration failed');
         }
-        setCurrentStep('team-details');
 
-        // Show success message
-        alert('Registration successful! We will contact you shortly.');
-      } else {
-        throw new Error(result.message || 'Registration failed');
+        const result = await response.json();
+        console.log('Server response:', result);
+
+        if (result.success) {
+          setSubmissionStatus({
+            status: 'success',
+            message: 'Registration successful! We will contact you shortly.'
+          });
+
+          // Reset form
+          setFormData({
+            teamName: '',
+            institutionName: '',
+            cityState: '',
+            member1: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
+            member2: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
+            member3: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
+            projectTitle: '',
+            projectAbstract: '',
+            projectTrack: '',
+            problemStatement: '',
+            proposedSolution: '',
+            systemArchitecture: '',
+            technologicalImpact: '',
+            feeType: '',
+            transactionId: '',
+            termsAccepted: false
+          });
+          setUploadedImage(null);
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
+          setCurrentStep('team-details');
+
+          // Show success message
+          alert('Registration successful! We will contact you shortly.');
+        } else {
+          throw new Error(result.message || 'Registration failed');
+        }
+      } catch (error) {
+        console.error('Form submission error:', error);
+        setSubmissionStatus({
+          status: 'error',
+          message: 'Error: ' + (error as Error).message
+        });
+        alert('Error submitting form: ' + (error as Error).message);
       }
     } catch (error) {
       console.error('Form submission error:', error);
