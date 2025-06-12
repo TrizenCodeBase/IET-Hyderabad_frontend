@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
@@ -8,10 +7,13 @@ import PATNTimelineSection from '../components/PATN/PATNTimelineSection';
 import PATNEvaluationSection from '../components/PATN/PATNEvaluationSection';
 import PATNPrizesSection from '../components/PATN/PATNPrizesSection';
 import PATNRegistrationSection from '../components/PATN/PATNRegistrationSection';
+import { useTheme } from '../contexts/ThemeContext';
 
 const PATN = () => {
+  const { isDark } = useTheme();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className={`min-h-screen ${isDark ? 'bg-background' : 'bg-gradient-to-br from-slate-50 to-blue-50'}`}>
       <Navigation />
       <PATNHeroSection />
       <PATNAboutSection />

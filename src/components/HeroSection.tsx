@@ -3,84 +3,103 @@ import { Zap, Star, Users, ChevronDown } from 'lucide-react';
 
 const HeroSection = () => {
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Multiple layered background images with improved overlay */}
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
+      {/* Background with subtle star-like dots */}
       <div className="absolute inset-0">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `
-              url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&h=1080&fit=crop'),
-              url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1920&h=1080&fit=crop'),
-              url('https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1920&h=1080&fit=crop')
-            `,
-            backgroundPosition: 'top right, bottom left, center',
-            backgroundSize: '40% 50%, 35% 45%, cover',
-            backgroundBlendMode: 'overlay, multiply, normal'
-          }}
-        ></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/90 via-purple-800/80 to-blue-900/90 backdrop-blur-sm"></div>
+        {/* Animated stars/dots effect */}
+        <div className="absolute inset-0">
+          <div className="stars-small"></div>
+          <div className="stars-medium"></div>
+          <div className="stars-large"></div>
+        </div>
         
-        {/* Enhanced floating animated elements */}
-        <div className="absolute top-20 left-10 w-24 h-24 bg-gradient-to-r from-purple-400/20 to-blue-400/20 rounded-full blur-xl animate-float"></div>
-        <div className="absolute bottom-20 right-10 w-20 h-20 bg-gradient-to-r from-blue-400/30 to-purple-400/30 rounded-full blur-lg animate-float" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-20 w-16 h-16 bg-gradient-to-r from-purple-300/20 to-blue-300/20 rounded-full blur-md animate-float" style={{ animationDelay: '2s' }}></div>
-        
-        {/* Added more floating elements */}
-        <div className="absolute top-1/3 right-24 w-32 h-32 bg-gradient-to-r from-blue-300/10 to-purple-300/10 rounded-full blur-xl animate-float" style={{ animationDelay: '3s' }}></div>
-        <div className="absolute bottom-1/4 left-1/3 w-28 h-28 bg-gradient-to-r from-purple-400/15 to-blue-400/15 rounded-full blur-lg animate-float" style={{ animationDelay: '2.5s' }}></div>
+        {/* Floating orbs with subtle glow */}
+        <div className="absolute top-20 left-10 w-2 h-2 bg-background rounded-full blur-sm animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-1.5 h-1.5 bg-background rounded-full blur-sm animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-20 w-3 h-3 bg-background rounded-full blur-sm animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/3 right-24 w-2 h-2 bg-background rounded-full blur-sm animate-pulse" style={{ animationDelay: '3s' }}></div>
       </div>
       
-      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto mt-16 md:mt-20">
-        <div className="animate-fade-in space-y-8">
-          <div className="mb-8">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 mb-6 animate-bounce-slow">
-              <span className="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-              <p className="text-sm font-medium text-white/90">Registration Open</p>
+      <div className="relative z-10 text-center px-4 sm:px-6 max-w-screen-lg mx-auto mt-16 md:mt-20">
+        <div className="animate-fade-in space-y-6">
+          <div className="mb-6">
+            <div className="inline-flex items-center gap-2 bg-black/40 backdrop-blur-xl border border-[#B100FF]/20 rounded-full px-4 py-2 mb-4 hover:border-[#B100FF]/40 transition-all duration-500">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-background animate-ping"></span>
+              <p className="text-sm font-medium text-white tracking-wide">Registration Open</p>
             </div>
             
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-4 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent tracking-tight">
-              InnoVerse
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-3 text-white [text-shadow:_0_1px_10px_rgb(255_255_255_/_20%)]">
+              IET Hyderabad Local Network
             </h1>
-            <div className="h-1.5 w-32 bg-gradient-to-r from-white/60 via-blue-300 to-purple-300 rounded-full mx-auto mb-6 transform hover:scale-110 transition-transform"></div>
+            <div className="h-1 w-40 mx-auto mb-6 rounded-full bg-background shadow-[0_0_20px_rgba(255,255,255,0.1)]"></div>
           </div>
           
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-white/95 tracking-wide">
+          <h2 className="text-2xl md:text-3xl font-bold mb-3 text-white tracking-wide">
             Future Technology Conclave 2025
           </h2>
           
-          <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-8 py-4 mb-8 hover:bg-white/15 transition-all duration-300">
-            <Zap className="w-5 h-5 text-yellow-300 animate-pulse" />
-            <p className="text-lg font-semibold text-white">
+          <div className="inline-flex items-center gap-2 bg-black/40 backdrop-blur-xl border border-[#B100FF]/20 rounded-full px-6 py-3 mb-6 hover:border-[#B100FF]/40 hover:shadow-[0_0_30px_rgba(110,0,255,0.2)] transition-all duration-500">
+            <Zap className="w-4 h-4 text-white" />
+            <p className="text-base font-semibold text-white tracking-wide">
               Organized by IET Hyderabad Local Network
             </p>
           </div>
           
-          <p className="text-xl md:text-2xl font-bold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-purple-200 to-blue-200 tracking-wide">
+          <p className="text-xl md:text-2xl font-bold mb-8 text-white [text-shadow:_0_1px_10px_rgb(255_255_255_/_20%)] tracking-wider">
             Explore. Invent. Impact.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <button className="group px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300">
-              <span className="flex items-center gap-3">
-                <Star className="w-5 h-5 group-hover:rotate-45 transition-transform" />
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <button className="group relative px-6 py-2.5 bg-background text-white rounded-lg font-bold text-sm shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 transition-all duration-500">
+              <span className="flex items-center gap-2">
+                <Star className="w-4 h-4 group-hover:rotate-45 transition-transform duration-500" />
                 Register Now
               </span>
+              <div className="absolute inset-0 rounded-lg bg-background opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500"></div>
             </button>
-            <button className="group px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl font-semibold text-lg hover:bg-white/20 transition-all duration-300">
-              <span className="flex items-center gap-3">
-                <Users className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            <button className="group px-6 py-2.5 bg-black/40 backdrop-blur-xl border border-[#B100FF]/20 text-white rounded-lg font-semibold text-sm hover:border-[#B100FF]/40 hover:shadow-[0_0_30px_rgba(110,0,255,0.2)] transition-all duration-500">
+              <span className="flex items-center gap-2">
+                <Users className="w-4 h-4 group-hover:scale-110 transition-transform duration-500" />
                 View Events
               </span>
             </button>
           </div>
           
-          {/* Scroll indicator - Now positioned in the flow */}
-          <div className="flex justify-center mt-16">
-            <ChevronDown className="w-6 h-6 text-white/70 animate-bounce" />
+          {/* Scroll indicator */}
+          <div className="flex justify-center mt-12">
+            <ChevronDown className="w-5 h-5 text-white animate-bounce opacity-75 hover:opacity-100 transition-opacity duration-300" />
           </div>
         </div>
       </div>
+
+      <style>
+        {`
+          @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.7; }
+          }
+          
+          .stars-small, .stars-medium, .stars-large {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(2px 2px at var(--star-x, 50%) var(--star-y, 50%), rgba(255, 255, 255, 0.3), transparent);
+            background-size: 200px 200px;
+            animation: twinkle 4s infinite;
+          }
+          
+          .stars-medium {
+            background-image: radial-gradient(3px 3px at var(--star-x, 30%) var(--star-y, 70%), rgba(255, 255, 255, 0.3), transparent);
+            background-size: 300px 300px;
+            animation-delay: 2s;
+          }
+          
+          .stars-large {
+            background-image: radial-gradient(4px 4px at var(--star-x, 70%) var(--star-y, 30%), rgba(255, 255, 255, 0.3), transparent);
+            background-size: 400px 400px;
+            animation-delay: 3s;
+          }
+        `}
+      </style>
     </section>
   );
 };

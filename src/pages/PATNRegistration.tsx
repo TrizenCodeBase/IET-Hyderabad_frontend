@@ -3,9 +3,11 @@ import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 const PATNRegistration = () => {
   const navigate = useNavigate();
+  const { isDark } = useTheme();
   const [showSuccess, setShowSuccess] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [formData, setFormData] = useState({
@@ -88,45 +90,53 @@ const PATNRegistration = () => {
   return (
     <>
       {showNotification && (
-        <div className="fixed bottom-4 right-4 bg-[#21B5E9] text-white px-4 py-3 rounded-lg shadow-lg flex items-center space-x-2 animate-fade-in-up z-50">
+        <div className="fixed bottom-4 right-4 bg-[#5B21B6] text-white px-4 py-3 rounded-lg shadow-[0_4px_20px_-2px_rgba(91,33,182,0.35),0_0_12px_0_rgba(91,33,182,0.2)] backdrop-blur-sm flex items-center space-x-2 animate-fade-in-up z-50">
           <CheckCircle className="w-5 h-5" />
           <span>Registration submitted successfully!</span>
         </div>
       )}
 
       {showSuccess ? (
-        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-8 max-w-md w-full mx-4 text-center">
-            <div className="mb-6 flex justify-center">
-              <div className="w-16 h-16 bg-[#21B5E9]/20 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-8 h-8 text-[#21B5E9]" />
+        <div className="min-h-screen bg-black flex items-center justify-center">
+          <div className="relative overflow-hidden bg-black/40 backdrop-blur-sm rounded-lg p-8 max-w-md w-full mx-4 text-center border border-[#5B21B6]/20
+            shadow-[0_4px_20px_-2px_rgba(91,33,182,0.25),0_0_8px_0_rgba(91,33,182,0.1)]
+            before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-b before:from-[#5B21B6]/5 before:to-transparent before:opacity-100">
+            <div className="relative mb-6 flex justify-center">
+              <div className="w-16 h-16 bg-[#5B21B6]/20 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(91,33,182,0.2)]">
+                <CheckCircle className="w-8 h-8 text-[#5B21B6]" />
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-4">Registration Complete!</h2>
+            <h2 className="text-2xl font-bold text-white mb-4 [text-shadow:_0_1px_10px_rgb(91_33_182_/_20%)]">Registration Complete!</h2>
             <p className="text-gray-200 mb-8">
               Thank you for registering. You will receive a confirmation email shortly.
             </p>
             <button
               onClick={() => navigate('/')}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="relative overflow-hidden w-full bg-[#5B21B6] text-white font-bold py-3 px-4 rounded-xl 
+                shadow-[0_4px_20px_-2px_rgba(91,33,182,0.35),0_0_12px_0_rgba(91,33,182,0.2)]
+                hover:shadow-[0_8px_30px_-2px_rgba(91,33,182,0.45),0_0_20px_0_rgba(91,33,182,0.3)]
+                hover:scale-[1.02] transition-all duration-300"
             >
-              Go To Home Page
+              <span className="relative z-10">Go To Home Page</span>
+              <div className="absolute inset-0 rounded-xl bg-[#5B21B6] opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500"></div>
             </button>
           </div>
         </div>
       ) : (
-        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+        <div className="min-h-screen bg-black">
           <Navigation />
           
           <div className="container mx-auto px-4 py-8 mt-16">
             <div className="max-w-2xl mx-auto">
-              <div className="bg-white rounded-xl shadow-lg">
-                <div className="p-6 sm:p-8">
-                  <h1 className="text-2xl font-bold text-purple-900 text-center mb-6">PATN Registration</h1>
+              <div className="relative overflow-hidden rounded-xl bg-white backdrop-blur-sm border border-[#5B21B6]/20
+                shadow-[0_4px_20px_-2px_rgba(91,33,182,0.25),0_0_8px_0_rgba(91,33,182,0.1)]
+                before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-b before:from-[#5B21B6]/5 before:to-transparent before:opacity-100">
+                <div className="relative p-6 sm:p-8">
+                  <h1 className="text-2xl font-bold text-gray-900 text-center mb-6 [text-shadow:_0_1px_10px_rgb(91_33_182_/_10%)]">PATN Registration</h1>
                   
                   <form onSubmit={handleSubmit} className="space-y-5">
                     {error && (
-                      <div className="bg-red-50 border border-red-500 text-red-500 rounded-lg p-4 text-sm">
+                      <div className="bg-red-50 border border-red-200 text-red-600 rounded-lg p-4 text-sm">
                         {error}
                       </div>
                     )}
@@ -138,7 +148,7 @@ const PATNRegistration = () => {
                           name="title"
                           value={formData.title}
                           onChange={handleChange}
-                          className="w-full px-3 py-2 rounded-lg border-[1px] border-black focus:border-black focus:ring-0 text-gray-800 text-sm bg-white transition-colors"
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:border-[#5B21B6] focus:ring-1 focus:ring-[#5B21B6] text-sm transition-colors"
                           required
                         >
                           <option value="">Select Title</option>
@@ -156,7 +166,7 @@ const PATNRegistration = () => {
                           value={formData.fullName}
                           onChange={handleChange}
                           placeholder="Enter your full name"
-                          className="w-full px-3 py-2 rounded-lg border-[1px] border-black focus:border-black focus:ring-0 text-gray-800 text-sm bg-white transition-colors"
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:border-[#5B21B6] focus:ring-1 focus:ring-[#5B21B6] text-sm transition-colors placeholder:text-gray-400"
                           required
                         />
                       </div>
@@ -169,7 +179,7 @@ const PATNRegistration = () => {
                           name="category"
                           value={formData.category}
                           onChange={handleChange}
-                          className="w-full px-3 py-2 rounded-lg border-[1px] border-black focus:border-black focus:ring-0 text-gray-800 text-sm bg-white transition-colors"
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:border-[#5B21B6] focus:ring-1 focus:ring-[#5B21B6] text-sm transition-colors"
                           required
                         >
                           <option value="">Select Category</option>
@@ -185,7 +195,7 @@ const PATNRegistration = () => {
                           value={formData.department}
                           onChange={handleChange}
                           placeholder="e.g., Computer Science, ECE"
-                          className="w-full px-3 py-2 rounded-lg border-[1px] border-black focus:border-black focus:ring-0 text-gray-800 text-sm bg-white transition-colors"
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:border-[#5B21B6] focus:ring-1 focus:ring-[#5B21B6] text-sm transition-colors placeholder:text-gray-400"
                           required
                         />
                       </div>
@@ -199,7 +209,7 @@ const PATNRegistration = () => {
                         value={formData.instituteName}
                         onChange={handleChange}
                         placeholder="Enter your institute/organization"
-                        className="w-full px-3 py-2 rounded-lg border-[1px] border-black focus:border-black focus:ring-0 text-gray-800 text-sm bg-white transition-colors"
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:border-[#5B21B6] focus:ring-1 focus:ring-[#5B21B6] text-sm transition-colors placeholder:text-gray-400"
                         required
                       />
                     </div>
@@ -214,7 +224,7 @@ const PATNRegistration = () => {
                             value="yes"
                             checked={formData.isIETMember === 'yes'}
                             onChange={handleRadioChange}
-                            className="w-4 h-4 text-purple-600 border-black focus:ring-purple-500"
+                            className="w-4 h-4 text-[#5B21B6] border-gray-300 focus:ring-[#5B21B6] bg-white"
                             required
                           />
                           <span className="ml-2 text-sm text-gray-700">Yes</span>
@@ -226,7 +236,7 @@ const PATNRegistration = () => {
                             value="no"
                             checked={formData.isIETMember === 'no'}
                             onChange={handleRadioChange}
-                            className="w-4 h-4 text-purple-600 border-black focus:ring-purple-500"
+                            className="w-4 h-4 text-[#5B21B6] border-gray-300 focus:ring-[#5B21B6] bg-white"
                             required
                           />
                           <span className="ml-2 text-sm text-gray-700">No</span>
@@ -243,7 +253,7 @@ const PATNRegistration = () => {
                           value={formData.mobileNumber}
                           onChange={handleChange}
                           placeholder="Enter your mobile number"
-                          className="w-full px-3 py-2 rounded-lg border-[1px] border-black focus:border-black focus:ring-0 text-gray-800 text-sm bg-white transition-colors"
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:border-[#5B21B6] focus:ring-1 focus:ring-[#5B21B6] text-sm transition-colors placeholder:text-gray-400"
                           required
                         />
                       </div>
@@ -255,7 +265,7 @@ const PATNRegistration = () => {
                           value={formData.emailAddress}
                           onChange={handleChange}
                           placeholder="your.email@example.com"
-                          className="w-full px-3 py-2 rounded-lg border-[1px] border-black focus:border-black focus:ring-0 text-gray-800 text-sm bg-white transition-colors"
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:border-[#5B21B6] focus:ring-1 focus:ring-[#5B21B6] text-sm transition-colors placeholder:text-gray-400"
                           required
                         />
                       </div>
@@ -268,7 +278,7 @@ const PATNRegistration = () => {
                           name="zoneVenue"
                           value={formData.zoneVenue}
                           onChange={handleChange}
-                          className="w-full px-3 py-2 rounded-lg border-[1px] border-black focus:border-black focus:ring-0 text-gray-800 text-sm bg-white transition-colors"
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:border-[#5B21B6] focus:ring-1 focus:ring-[#5B21B6] text-sm transition-colors"
                           required
                         >
                           <option value="">Select Zone</option>
@@ -285,7 +295,7 @@ const PATNRegistration = () => {
                           value={formData.youtubeLink}
                           onChange={handleChange}
                           placeholder="https://youtube.com/..."
-                          className="w-full px-3 py-2 rounded-lg border-[1px] border-black focus:border-black focus:ring-0 text-gray-800 text-sm bg-white transition-colors"
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:border-[#5B21B6] focus:ring-1 focus:ring-[#5B21B6] text-sm transition-colors placeholder:text-gray-400"
                           required
                         />
                       </div>
@@ -294,11 +304,13 @@ const PATNRegistration = () => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className={`w-full bg-purple-600 text-white font-medium py-3 rounded-lg hover:bg-purple-700 transition-colors duration-200 ${
-                        loading ? 'opacity-50 cursor-not-allowed' : ''
-                      }`}
+                      className="relative overflow-hidden w-full bg-[#5B21B6] text-white font-medium py-3 rounded-lg 
+                        shadow-[0_4px_20px_-2px_rgba(91,33,182,0.35),0_0_12px_0_rgba(91,33,182,0.2)]
+                        hover:shadow-[0_8px_30px_-2px_rgba(91,33,182,0.45),0_0_20px_0_rgba(91,33,182,0.3)]
+                        hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                     >
-                      {loading ? 'Submitting...' : 'Complete Registration'}
+                      <span className="relative z-10">{loading ? 'Submitting...' : 'Complete Registration'}</span>
+                      <div className="absolute inset-0 rounded-lg bg-[#5B21B6] opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500"></div>
                     </button>
                   </form>
                 </div>

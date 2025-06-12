@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const PrizeSection = () => {
@@ -10,27 +9,45 @@ const PrizeSection = () => {
   ];
 
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="container mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <div className="animate-on-scroll">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Prize Pool</h2>
+    <section className="py-12 bg-black relative overflow-hidden">
+      <div className="container mx-auto max-w-screen-lg px-4 sm:px-6 relative z-10">
+        <div className="animate-on-scroll space-y-6">
+          <div className="text-center space-y-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-white [text-shadow:_0_1px_10px_rgb(255_255_255_/_20%)]">
+              Prize Pool
+            </h2>
+            <div className="h-1 w-40 mx-auto rounded-full bg-background shadow-[0_0_20px_rgba(255,255,255,0.1)]"></div>
+          </div>
           
-          <div className="bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100">
+          <div className="backdrop-blur-xl bg-black/40 rounded-lg overflow-hidden border border-[#B100FF]/20 shadow-[0_0_15px_rgba(110,0,255,0.15)] hover:shadow-[0_0_30px_rgba(110,0,255,0.3)] transition-all duration-500">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gradient-to-r from-purple-600 to-blue-600">
-                  <tr>
-                    <th className="px-6 py-4 text-left font-bold text-white text-base">Event</th>
-                    <th className="px-6 py-4 text-left font-bold text-white text-base">1st Prize</th>
-                    <th className="px-6 py-4 text-left font-bold text-white text-base">Runner-Up</th>
+                <thead>
+                  <tr className="bg-background">
+                    <th className="px-6 py-4 text-left font-bold text-white text-base tracking-wide">Event</th>
+                    <th className="px-6 py-4 text-left font-bold text-white text-base tracking-wide">1st Prize</th>
+                    <th className="px-6 py-4 text-left font-bold text-white text-base tracking-wide">Runner-Up</th>
                   </tr>
                 </thead>
                 <tbody>
                   {prizeData.map((prize, index) => (
-                    <tr key={index} className="border-b border-gray-100">
-                      <td className="px-6 py-4 font-semibold text-purple-600 text-base">{prize.event}</td>
-                      <td className="px-6 py-4 text-green-600 font-bold text-base">{prize.first}</td>
-                      <td className="px-6 py-4 text-blue-600 font-bold text-base">{prize.runnerUp}</td>
+                    <tr 
+                      key={index} 
+                      className="border-b border-[#B100FF]/10 hover:bg-[#6E00FF]/5 transition-all duration-300"
+                    >
+                      <td className="px-6 py-4 font-semibold text-purple-300 text-sm tracking-wide">{prize.event}</td>
+                      <td className="px-6 py-4 text-emerald-400 font-bold text-sm">
+                        <span className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                          {prize.first}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-blue-400 font-bold text-sm">
+                        <span className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                          {prize.runnerUp}
+                        </span>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

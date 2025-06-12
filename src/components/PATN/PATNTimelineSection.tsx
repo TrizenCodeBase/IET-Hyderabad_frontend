@@ -1,74 +1,70 @@
-
 import React from 'react';
-import { Calendar, MapPin, Video, Users } from 'lucide-react';
+import { CalendarDays, Users, Presentation, Trophy } from 'lucide-react';
 
 const PATNTimelineSection = () => {
   const timelineSteps = [
     {
-      step: 1,
-      title: 'Registration & Video Submission',
-      date: 'Deadline: July 20, 2025',
-      description: 'Record a 3-minute video on your chosen topic and upload to YouTube (Unlisted)',
-      icon: Video,
-      action: 'Register at: https://iethlnevents.in/patn/',
-      color: 'from-blue-500 to-purple-500'
+      icon: <CalendarDays className="w-6 h-6 text-[#5B21B6]" />,
+      title: "Registration",
+      date: "Until July 20, 2025",
+      description: "Submit your application with presentation topic and abstract"
     },
     {
-      step: 2,
-      title: 'Regional Presentation Round',
-      date: 'August 2, 2025',
-      description: 'Selected participants present live at VIT-AP University',
-      icon: Users,
-      action: 'Venue: VIT-AP University, Amaravati',
-      color: 'from-green-500 to-teal-500'
+      icon: <Users className="w-6 h-6 text-[#5B21B6]" />,
+      title: "Participant Selection",
+      date: "July 25, 2025",
+      description: "Selected participants will be notified via email"
     },
     {
-      step: 3,
-      title: 'Grand Final',
-      date: 'October 11, 2025',
-      description: 'Final round with top performers from regional rounds',
-      icon: Calendar,
-      action: 'Location: Hyderabad',
-      color: 'from-yellow-500 to-orange-500'
+      icon: <Presentation className="w-6 h-6 text-[#5B21B6]" />,
+      title: "Competition Day",
+      date: "August 5, 2025",
+      description: "Present your topic to the jury panel and audience"
+    },
+    {
+      icon: <Trophy className="w-6 h-6 text-[#5B21B6]" />,
+      title: "Results & Awards",
+      date: "August 5, 2025",
+      description: "Winners announcement and prize distribution"
     }
   ];
 
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="animate-on-scroll">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-            Competition Timeline
+    <section className="py-16 bg-black">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 [text-shadow:_0_1px_10px_rgb(91_33_182_/_20%)]">
+            Event Timeline
           </h2>
-          
-          <div className="space-y-8">
-            {timelineSteps.map((step, index) => (
-              <div key={index} className="flex flex-col md:flex-row items-center gap-8">
-                <div className="flex-shrink-0">
-                  <div className={`w-20 h-20 bg-gradient-to-r ${step.color} rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg`}>
-                    {step.step}
-                  </div>
+          <div className="h-1 w-24 mx-auto bg-[#5B21B6] rounded-full shadow-[0_0_20px_rgba(91,33,182,0.3)]"></div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {timelineSteps.map((step, index) => (
+            <div
+              key={index}
+              className="relative overflow-hidden rounded-lg border border-[#5B21B6]/20 bg-black/40 p-6 
+              shadow-[0_4px_20px_-2px_rgba(91,33,182,0.25),0_0_8px_0_rgba(91,33,182,0.1)] 
+              hover:shadow-[0_8px_30px_-2px_rgba(91,33,182,0.35),0_0_12px_0_rgba(91,33,182,0.2)]
+              hover:border-[#5B21B6]/40 group backdrop-blur-sm transition-all duration-500
+              before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-b before:from-[#5B21B6]/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity"
+            >
+              <div className="relative flex flex-col items-center text-center">
+                <div className="p-3 rounded-full bg-[#5B21B6]/5 mb-4 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_rgba(91,33,182,0.2)]">
+                  {step.icon}
                 </div>
-                
-                <div className="flex-1 modern-card p-6">
-                  <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 bg-gradient-to-r ${step.color} rounded-xl flex items-center justify-center`}>
-                      <step.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-800 mb-2">{step.title}</h3>
-                      <p className="text-lg font-semibold text-purple-600 mb-3">{step.date}</p>
-                      <p className="text-gray-600 mb-3">{step.description}</p>
-                      <div className="flex items-center gap-2 text-sm font-medium text-blue-600">
-                        <MapPin className="w-4 h-4" />
-                        <span>{step.action}</span>
-                      </div>
-                    </div>
-                  </div>
+                <h3 className="text-xl font-semibold text-white mb-2 [text-shadow:_0_1px_5px_rgb(91_33_182_/_15%)]">
+                  {step.title}
+                </h3>
+                <div className="text-[#5B21B6] font-semibold mb-3 [text-shadow:_0_1px_8px_rgb(91_33_182_/_20%)]">
+                  {step.date}
                 </div>
+                <p className="text-gray-300">
+                  {step.description}
+                </p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

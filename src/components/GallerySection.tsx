@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Camera, Play, Users, Trophy } from 'lucide-react';
 
@@ -49,42 +48,48 @@ const GallerySection = () => {
   ];
 
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="animate-on-scroll">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-            Event Gallery
-          </h2>
+    <section className="py-12 bg-black relative overflow-hidden">
+      <div className="container mx-auto max-w-screen-lg px-4 sm:px-6 relative z-10">
+        <div className="animate-fade-in space-y-6">
+          <div className="text-center space-y-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-white [text-shadow:_0_1px_10px_rgb(255_255_255_/_20%)]">
+              Event Gallery
+            </h2>
+            <div className="h-1 w-40 mx-auto rounded-full bg-background shadow-[0_0_20px_rgba(255,255,255,0.1)]"></div>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {galleryItems.map((item, index) => {
               const IconComponent = item.icon;
               return (
-                <div key={index} className="modern-card overflow-hidden group">
+                <div 
+                  key={index} 
+                  className="backdrop-blur-xl bg-black/40 rounded-lg overflow-hidden border border-[#B100FF]/20 shadow-[0_0_15px_rgba(110,0,255,0.15)] hover:shadow-[0_0_30px_rgba(110,0,255,0.3)] transform hover:scale-[1.02] transition-all duration-500 group"
+                >
                   <div className="relative">
                     <img 
                       src={item.image} 
                       alt={item.title}
-                      className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                      className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    <div className="absolute top-4 right-4">
-                      {item.type === 'video' ? (
-                        <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                          <Play className="w-5 h-5 text-white fill-white" />
-                        </div>
-                      ) : (
-                        <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                          <Camera className="w-5 h-5 text-white" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <IconComponent className="w-4 h-4 text-white" />
-                        <h3 className="text-white font-bold text-lg">{item.title}</h3>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent backdrop-blur-[2px]" />
+                    <div className="absolute top-3 right-3">
+                      <div className="w-8 h-8 bg-background rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                        {item.type === 'video' ? (
+                          <Play className="w-4 h-4 text-white" />
+                        ) : (
+                          <Camera className="w-4 h-4 text-white" />
+                        )}
                       </div>
-                      <p className="text-white/80 text-sm">{item.description}</p>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-6 h-6 bg-background rounded-lg flex items-center justify-center shadow-[0_0_10px_rgba(255,255,255,0.1)]">
+                          <IconComponent className="w-3 h-3 text-white" />
+                        </div>
+                        <h3 className="text-lg font-bold text-white">{item.title}</h3>
+                      </div>
+                      <p className="text-gray-300 text-xs">{item.description}</p>
                     </div>
                   </div>
                 </div>
@@ -92,8 +97,8 @@ const GallerySection = () => {
             })}
           </div>
           
-          <div className="text-center mt-8">
-            <button className="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-bold hover:shadow-lg transition-all duration-300">
+          <div className="text-center">
+            <button className="px-6 py-2.5 bg-background text-white rounded-lg text-sm font-bold shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transform hover:scale-[1.02] transition-all duration-500">
               View More Photos
             </button>
           </div>

@@ -1,13 +1,12 @@
-
 import React from 'react';
 import { Building2, Handshake } from 'lucide-react';
 
 const SponsorsSection = () => {
   const sponsors = [
-    { name: 'TechCorp Solutions', logo: '🏢', tier: 'Title Sponsor', color: 'from-blue-500 to-purple-600' },
-    { name: 'InnovateX', logo: '🚀', tier: 'Gold Sponsor', color: 'from-yellow-400 to-orange-500' },
-    { name: 'DataFlow Systems', logo: '📊', tier: 'Silver Sponsor', color: 'from-gray-400 to-gray-600' },
-    { name: 'CloudTech Pro', logo: '☁️', tier: 'Silver Sponsor', color: 'from-gray-400 to-gray-600' }
+    { name: 'TechCorp Solutions', logo: '🏢', tier: 'Title Sponsor', color: 'bg-background' },
+    { name: 'InnovateX', logo: '🚀', tier: 'Gold Sponsor', color: 'bg-background' },
+    { name: 'DataFlow Systems', logo: '📊', tier: 'Silver Sponsor', color: 'bg-background' },
+    { name: 'CloudTech Pro', logo: '☁️', tier: 'Silver Sponsor', color: 'bg-background' }
   ];
 
   const partners = [
@@ -18,50 +17,65 @@ const SponsorsSection = () => {
   ];
 
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="animate-on-scroll">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-            Our Sponsors & Partners
-          </h2>
+    <section className="py-12 bg-black relative overflow-hidden">
+      <div className="container mx-auto max-w-screen-lg px-4 sm:px-6 relative z-10">
+        <div className="animate-fade-in space-y-6">
+          <div className="text-center space-y-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-white [text-shadow:_0_1px_10px_rgb(255_255_255_/_20%)]">
+              Our Sponsors & Partners
+            </h2>
+            <div className="h-1 w-40 mx-auto rounded-full bg-background shadow-[0_0_20px_rgba(255,255,255,0.1)]"></div>
+          </div>
           
           {/* Sponsors */}
-          <div className="mb-12">
-            <div className="flex items-center justify-center gap-2 mb-8">
-              <Building2 className="w-6 h-6 text-purple-600" />
-              <h3 className="text-2xl font-bold text-gray-800">Sponsors</h3>
+          <div className="space-y-6">
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-8 h-8 bg-background rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                <Building2 className="w-4 h-4 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-white">Sponsors</h3>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {sponsors.map((sponsor, index) => (
-                <div key={index} className="modern-card p-6 text-center">
-                  <div className={`w-16 h-16 bg-gradient-to-r ${sponsor.color} rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl`}>
+                <div 
+                  key={index} 
+                  className="backdrop-blur-xl bg-black/40 rounded-lg p-4 text-center border border-[#B100FF]/20 shadow-[0_0_15px_rgba(110,0,255,0.15)] hover:shadow-[0_0_30px_rgba(110,0,255,0.3)] transform hover:scale-[1.02] transition-all duration-500"
+                >
+                  <div className={`w-12 h-12 ${sponsor.color} rounded-lg flex items-center justify-center mx-auto mb-4 text-2xl shadow-[0_0_15px_rgba(255,255,255,0.1)]`}>
                     {sponsor.logo}
                   </div>
-                  <h4 className="text-lg font-bold text-gray-800 mb-2">{sponsor.name}</h4>
-                  <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
-                    {sponsor.tier}
-                  </span>
+                  <h4 className="text-lg font-bold text-white mb-3">{sponsor.name}</h4>
+                  <div className="inline-flex items-center justify-center gap-2 bg-black/40 backdrop-blur-xl border border-[#B100FF]/20 rounded-full px-3 py-1.5">
+                    <span className="w-1.5 h-1.5 bg-background rounded-full shadow-[0_0_10px_rgba(255,255,255,0.1)]"></span>
+                    <span className="text-gray-300 text-xs">{sponsor.tier}</span>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Partners */}
-          <div>
-            <div className="flex items-center justify-center gap-2 mb-8">
-              <Handshake className="w-6 h-6 text-blue-600" />
-              <h3 className="text-2xl font-bold text-gray-800">Partners</h3>
+          <div className="space-y-6">
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-8 h-8 bg-background rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                <Handshake className="w-4 h-4 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-white">Partners</h3>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {partners.map((partner, index) => (
-                <div key={index} className="modern-card p-6 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-teal-500 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl">
+                <div 
+                  key={index} 
+                  className="backdrop-blur-xl bg-black/40 rounded-lg p-4 text-center border border-[#B100FF]/20 shadow-[0_0_15px_rgba(110,0,255,0.15)] hover:shadow-[0_0_30px_rgba(110,0,255,0.3)] transform hover:scale-[1.02] transition-all duration-500"
+                >
+                  <div className="w-12 h-12 bg-background rounded-lg flex items-center justify-center mx-auto mb-4 text-2xl shadow-[0_0_15px_rgba(255,255,255,0.1)]">
                     {partner.logo}
                   </div>
-                  <h4 className="text-lg font-bold text-gray-800 mb-2">{partner.name}</h4>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
-                    {partner.type}
-                  </span>
+                  <h4 className="text-lg font-bold text-white mb-3">{partner.name}</h4>
+                  <div className="inline-flex items-center justify-center gap-2 bg-black/40 backdrop-blur-xl border border-[#B100FF]/20 rounded-full px-3 py-1.5">
+                    <span className="w-1.5 h-1.5 bg-background rounded-full shadow-[0_0_10px_rgba(255,255,255,0.1)]"></span>
+                    <span className="text-gray-300 text-xs">{partner.type}</span>
+                  </div>
                 </div>
               ))}
             </div>

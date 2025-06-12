@@ -1,66 +1,68 @@
-
 import React from 'react';
-import { Trophy, Award, Gift } from 'lucide-react';
+import { Trophy, Award, Medal } from 'lucide-react';
 
 const PATNPrizesSection = () => {
+  const prizes = [
+    {
+      icon: <Trophy className="w-8 h-8 text-[#5B21B6]" />,
+      title: "First Prize",
+      amount: "₹7,000",
+      benefits: ["Certificate of Excellence", "Regional Round Entry", "Mentorship Opportunity"]
+    },
+    {
+      icon: <Award className="w-8 h-8 text-[#5B21B6]" />,
+      title: "Second Prize",
+      amount: "₹5,000",
+      benefits: ["Certificate of Merit", "Regional Round Entry", "Networking Access"]
+    },
+    {
+      icon: <Medal className="w-8 h-8 text-[#5B21B6]" />,
+      title: "Third Prize",
+      amount: "₹3,000",
+      benefits: ["Certificate of Achievement", "Regional Round Entry", "Event Access Pass"]
+    }
+  ];
+
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="animate-on-scroll">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-            Prizes & Recognition
+    <section className="py-16 bg-black">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 [text-shadow:_0_1px_10px_rgb(91_33_182_/_20%)]">
+            Prizes & Benefits
           </h2>
-          
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <div className="modern-card p-8 text-center">
-              <div className="w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Trophy className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Winner</h3>
-              <p className="text-4xl font-bold text-yellow-600 mb-4">₹10,000</p>
-              <p className="text-gray-600">
-                First place winner receives the highest prize along with recognition and networking opportunities.
-              </p>
-            </div>
-            
-            <div className="modern-card p-8 text-center">
-              <div className="w-20 h-20 bg-gradient-to-r from-gray-400 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Award className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Runner-Up</h3>
-              <p className="text-4xl font-bold text-gray-600 mb-4">₹5,000</p>
-              <p className="text-gray-600">
-                Second place winner receives substantial prize money and recognition for their excellent presentation.
-              </p>
-            </div>
-          </div>
-          
-          <div className="modern-card p-8 text-center">
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
-                <Gift className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-gray-800">Additional Benefits</h3>
-                <p className="text-gray-600">For all participants</p>
+          <div className="h-1 w-24 mx-auto bg-[#5B21B6] rounded-full shadow-[0_0_20px_rgba(91,33,182,0.3)]"></div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {prizes.map((prize, index) => (
+            <div
+              key={index}
+              className="relative overflow-hidden rounded-lg border border-[#5B21B6]/20 bg-black/40 p-6 
+              shadow-[0_4px_20px_-2px_rgba(91,33,182,0.25),0_0_8px_0_rgba(91,33,182,0.1)] 
+              hover:shadow-[0_8px_30px_-2px_rgba(91,33,182,0.35),0_0_12px_0_rgba(91,33,182,0.2)]
+              hover:border-[#5B21B6]/40 group backdrop-blur-sm transition-all duration-500
+              before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-b before:from-[#5B21B6]/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity"
+            >
+              <div className="relative flex flex-col items-center text-center">
+                <div className="p-4 rounded-full bg-[#5B21B6]/5 mb-4 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_rgba(91,33,182,0.2)]">
+                  {prize.icon}
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2 [text-shadow:_0_1px_5px_rgb(91_33_182_/_15%)]">
+                  {prize.title}
+                </h3>
+                <div className="text-3xl font-bold text-[#5B21B6] mb-4 [text-shadow:_0_1px_8px_rgb(91_33_182_/_20%)]">
+                  {prize.amount}
+                </div>
+                <ul className="space-y-2">
+                  {prize.benefits.map((benefit, benefitIndex) => (
+                    <li key={benefitIndex} className="text-gray-300">
+                      {benefit}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
-            
-            <div className="grid md:grid-cols-3 gap-6 text-center">
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <h4 className="font-semibold text-blue-800 mb-2">Certificates</h4>
-                <p className="text-sm text-blue-600">All regional level participants receive certificates</p>
-              </div>
-              <div className="p-4 bg-purple-50 rounded-lg">
-                <h4 className="font-semibold text-purple-800 mb-2">Networking</h4>
-                <p className="text-sm text-purple-600">Connect with industry professionals and peers</p>
-              </div>
-              <div className="p-4 bg-green-50 rounded-lg">
-                <h4 className="font-semibold text-green-800 mb-2">Skill Development</h4>
-                <p className="text-sm text-green-600">Enhance presentation and communication skills</p>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

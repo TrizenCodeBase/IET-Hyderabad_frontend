@@ -1,37 +1,18 @@
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 
 const DarkModeToggle = () => {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
-    }
-  }, []);
-
-  const toggleDarkMode = () => {
-    const newDarkMode = !isDark;
-    setIsDark(newDarkMode);
-    
-    if (newDarkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  };
+  const { isDark, toggleTheme } = useTheme();
 
   return (
     <button
-      onClick={toggleDarkMode}
-      className="p-2 rounded-lg bg-secondary hover:bg-accent transition-colors duration-200"
-      aria-label="Toggle dark mode"
+      onClick={toggleTheme}
+      className={`p-2 rounded-lg transition-colors duration-200 ${
+        isDark 
+          ? 'bg-background text-white hover:bg-background/80' 
+          : 'bg-white text-background hover:bg-white/80'
+      }`}
+      aria-label="Toggle theme"
     >
       {isDark ? (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

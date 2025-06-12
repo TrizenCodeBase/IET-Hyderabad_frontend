@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import EventCard from './EventCard';
 
@@ -25,7 +24,7 @@ const EventsSection = () => {
     category: 'Speaking'
   };
 
-  const innoverseEvents = [
+  const networkEvents = [
     {
       name: 'InnoThon',
       description: 'Ideate solutions using AI, IoT, AR/VR, Smart Cities, HealthTech, EdTech',
@@ -64,8 +63,7 @@ const EventsSection = () => {
     }
   ];
 
-  const allEvents = [patnEvent, techTalkEvent, ...innoverseEvents];
-
+  const allEvents = [patnEvent, techTalkEvent, ...networkEvents];
   const categories = ['all', 'Technical', 'Speaking', 'Ideation', 'Hardware', 'Pitch', 'App'];
 
   const filteredEvents = selectedCategory === 'all' 
@@ -73,23 +71,28 @@ const EventsSection = () => {
     : allEvents.filter(event => event.category === selectedCategory);
 
   return (
-    <section id="events" className="py-16 bg-gray-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="animate-on-scroll">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Our Events</h2>
-          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-            Explore our exciting range of technology and innovation competitions designed to challenge and inspire the next generation of engineers and innovators.
-          </p>
+    <section id="events" className="py-12 bg-black relative overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 max-w-screen-lg relative z-10">
+        <div className="space-y-8 animate-fade-in">
+          <div className="text-center space-y-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-white [text-shadow:_0_1px_10px_rgb(255_255_255_/_20%)]">
+              Our Events
+            </h2>
+            <div className="h-1 w-40 mx-auto rounded-full bg-background shadow-[0_0_20px_rgba(255,255,255,0.1)]"></div>
+            <p className="text-gray-400 max-w-2xl mx-auto text-base">
+              Explore our exciting range of technology and innovation competitions designed to challenge and inspire the next generation of engineers and innovators.
+            </p>
+          </div>
           
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
+          <div className="flex flex-wrap justify-center gap-3">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 text-sm ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-500 ${
                   selectedCategory === category
-                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
-                    : 'bg-white text-purple-600 border-2 border-purple-200 hover:border-purple-400 hover:shadow-md'
+                    ? 'bg-background text-white shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] scale-105'
+                    : 'bg-black/40 backdrop-blur-xl border border-[#B100FF]/20 text-white hover:border-[#B100FF]/40 hover:shadow-[0_0_30px_rgba(110,0,255,0.2)]'
                 }`}
               >
                 {category === 'all' ? 'All Events' : category}
@@ -97,9 +100,13 @@ const EventsSection = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredEvents.map((event, index) => (
-              <div key={index} className="animate-on-scroll" style={{ animationDelay: `${index * 0.1}s` }}>
+              <div 
+                key={event.name} 
+                className="animate-fade-in backdrop-blur-xl bg-black/40 rounded-lg border border-[#B100FF]/20 shadow-[0_0_15px_rgba(110,0,255,0.15)] hover:shadow-[0_0_30px_rgba(110,0,255,0.3)] transition-all duration-500 transform hover:scale-[1.02]" 
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
                 <EventCard {...event} />
               </div>
             ))}

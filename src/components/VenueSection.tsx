@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MapPin, Clock, Car, Utensils, Wifi, Coffee } from 'lucide-react';
 
@@ -30,34 +29,49 @@ const VenueSection = () => {
   ];
 
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="animate-on-scroll">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-            Venue Information
-          </h2>
+    <section className="py-12 bg-black relative overflow-hidden">
+      <div className="container mx-auto max-w-screen-lg px-4 sm:px-6 relative z-10">
+        <div className="animate-on-scroll space-y-6">
+          <div className="text-center space-y-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-white [text-shadow:_0_1px_10px_rgb(255_255_255_/_20%)]">
+              Venue Information
+            </h2>
+            <div className="h-1 w-40 mx-auto rounded-full bg-background shadow-[0_0_20px_rgba(255,255,255,0.1)]"></div>
+          </div>
           
           {/* Venues */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {venues.map((venue, index) => (
-              <div key={index} className="modern-card overflow-hidden">
-                <img 
-                  src={venue.image} 
-                  alt={venue.name}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    <MapPin className="w-5 h-5 text-purple-600" />
-                    <span className="text-purple-600 font-semibold text-sm">{venue.role}</span>
+              <div 
+                key={index} 
+                className="backdrop-blur-xl bg-black/40 rounded-lg overflow-hidden border border-[#B100FF]/20 shadow-[0_0_15px_rgba(110,0,255,0.15)] hover:shadow-[0_0_30px_rgba(110,0,255,0.3)] transform hover:scale-[1.02] transition-transform duration-500 group"
+              >
+                <div className="relative h-48">
+                  <img 
+                    src={venue.image} 
+                    alt={venue.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent backdrop-blur-[2px] group-hover:hidden"></div>
+                </div>
+                <div className="p-4 bg-black/40 backdrop-blur-xl group-hover:bg-black/80 group-hover:backdrop-blur-none">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 bg-background rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                      <MapPin className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-purple-300 font-bold text-sm">{venue.role}</span>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">{venue.name}</h3>
-                  <p className="text-gray-600 text-sm mb-4">{venue.address}</p>
-                  <p className="text-gray-700 mb-4">{venue.description}</p>
+                  <h3 className="text-lg font-bold text-white mb-2 [text-shadow:_0_1px_10px_rgb(255_255_255_/_20%)]">{venue.name}</h3>
+                  <p className="text-gray-400 text-xs mb-3">{venue.address}</p>
+                  <p className="text-gray-300 text-sm mb-4">{venue.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {venue.features.map((feature, featureIndex) => (
-                      <span key={featureIndex} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
-                        {feature}
+                      <span 
+                        key={featureIndex} 
+                        className="inline-flex items-center gap-2 bg-black/40 backdrop-blur-xl border border-[#B100FF]/20 rounded-full px-3 py-1.5 group-hover:bg-black/80 group-hover:backdrop-blur-none"
+                      >
+                        <span className="w-1.5 h-1.5 bg-background rounded-full shadow-[0_0_10px_rgba(255,255,255,0.1)]"></span>
+                        <span className="text-gray-300 text-xs">{feature}</span>
                       </span>
                     ))}
                   </div>
@@ -67,18 +81,21 @@ const VenueSection = () => {
           </div>
 
           {/* Amenities */}
-          <div>
-            <h3 className="text-2xl font-bold text-center text-gray-800 mb-8">Campus Amenities</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="space-y-6">
+            <h3 className="text-xl font-bold text-center text-white [text-shadow:_0_1px_10px_rgb(255_255_255_/_20%)]">Campus Amenities</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {amenities.map((amenity, index) => {
                 const IconComponent = amenity.icon;
                 return (
-                  <div key={index} className="modern-card p-6 text-center">
-                    <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <div 
+                    key={index} 
+                    className="backdrop-blur-xl bg-black/40 rounded-lg p-4 text-center border border-[#B100FF]/20 shadow-[0_0_15px_rgba(110,0,255,0.15)] hover:shadow-[0_0_30px_rgba(110,0,255,0.3)] transform hover:scale-[1.02] transition-transform duration-500 group hover:backdrop-blur-none hover:bg-black/80"
+                  >
+                    <div className="w-12 h-12 bg-background rounded-lg flex items-center justify-center mx-auto mb-4 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
                       <IconComponent className="w-6 h-6 text-white" />
                     </div>
-                    <h4 className="text-lg font-bold text-gray-800 mb-2">{amenity.name}</h4>
-                    <p className="text-gray-600 text-sm">{amenity.description}</p>
+                    <h4 className="text-lg font-bold text-white mb-2 [text-shadow:_0_1px_10px_rgb(255_255_255_/_20%)]">{amenity.name}</h4>
+                    <p className="text-gray-300 text-sm">{amenity.description}</p>
                   </div>
                 );
               })}
