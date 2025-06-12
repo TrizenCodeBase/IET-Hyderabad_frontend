@@ -261,6 +261,7 @@ const ProtoPlanet = () => {
 
       // First check if backend is accessible
       try {
+        console.log('Attempting health check...');
         const healthCheck = await fetch(`${API_BASE_URL}/health`, {
           method: 'GET',
           headers: {
@@ -271,12 +272,30 @@ const ProtoPlanet = () => {
           mode: 'cors'
         });
 
+        console.log('Health check response:', {
+          status: healthCheck.status,
+          statusText: healthCheck.statusText,
+          headers: {
+            'access-control-allow-origin': healthCheck.headers.get('access-control-allow-origin'),
+            'access-control-allow-credentials': healthCheck.headers.get('access-control-allow-credentials')
+          }
+        });
+
         if (!healthCheck.ok) {
-          throw new Error('Backend server is not responding. Please try again later.');
+          const errorText = await healthCheck.text();
+          console.error('Health check failed:', {
+            status: healthCheck.status,
+            statusText: healthCheck.statusText,
+            body: errorText
+          });
+          throw new Error(`Backend server error: ${healthCheck.status} ${healthCheck.statusText}`);
         }
+
+        const healthData = await healthCheck.json();
+        console.log('Health check successful:', healthData);
       } catch (healthError) {
-        console.error('Health check failed:', healthError);
-        throw new Error('Unable to connect to the server. Please try again later.');
+        console.error('Health check error:', healthError);
+        throw new Error(healthError instanceof Error ? healthError.message : 'Unable to connect to the server');
       }
 
       // Proceed with form submission
