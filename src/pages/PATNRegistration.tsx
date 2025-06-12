@@ -44,47 +44,18 @@ const PATNRegistration = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
+    setError('');
 
     try {
-      console.log('Submitting form data:', formData);
-
-      const response = await fetch('https://iet-hyderabad-backend.llp.trizenventures.com/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Origin': 'https://iet-hyderabad-frontend.llp.trizenventures.com'
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          title: formData.title,
-          fullName: formData.fullName,
-          category: formData.category,
-          department: formData.department,
-          instituteName: formData.instituteName,
-          isIETMember: formData.isIETMember,
-          mobileNumber: formData.mobileNumber,
-          emailAddress: formData.emailAddress,
-          zoneVenue: formData.zoneVenue,
-          youtubeLink: formData.youtubeLink
-        })
-      });
-
-      const data = await response.json();
-      console.log('Server response:', data);
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Registration failed');
-      }
-
+      // Simulating API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
       setShowSuccess(true);
       setShowNotification(true);
-      setTimeout(() => setShowNotification(false), 5000); // Hide notification after 5 seconds
+      setTimeout(() => setShowNotification(false), 5000);
     } catch (err) {
-      console.error('Registration error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to submit registration. Please try again.');
+      setError('An error occurred during registration. Please try again.');
     } finally {
       setLoading(false);
     }
