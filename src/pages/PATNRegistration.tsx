@@ -54,7 +54,10 @@ const PATNRegistration = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Origin': 'https://iet-hyderabad-frontend.llp.trizenventures.com'
         },
+        credentials: 'include',
         body: JSON.stringify({
           title: formData.title,
           fullName: formData.fullName,
