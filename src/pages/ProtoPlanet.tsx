@@ -326,7 +326,7 @@ const ProtoPlanet = () => {
       
       const API_URL = process.env.NODE_ENV === 'production' 
         ? 'https://iet-hyderabad-backend.llp.trizenventures.com/api/protoplan/register'
-        : 'http://localhost:5000/api/protoplan/register';
+        : 'https://iet-hyderabad-backend.llp.trizenventures.com/api/protoplan/register';
 
       console.log('Submitting to:', API_URL);
       
