@@ -59,7 +59,7 @@ const GuidelinesSection = () => {
                   {guideline.items.map((item, itemIndex) => (
                     <li key={itemIndex} className="flex items-start gap-3">
                       <div className="w-5 h-5 bg-background rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 shadow-[0_0_10px_rgba(255,255,255,0.1)]">
-                        <Check className="w-3 h-3 text-white" />
+                        <Check className="w-3 h-3 text-foreground" />
                       </div>
                       <span className="text-gray-300 leading-relaxed text-sm">{item}</span>
                     </li>

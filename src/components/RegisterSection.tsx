@@ -17,7 +17,7 @@ const RegisterSection = () => {
           </p>
           
           <div>
-            <button className="px-8 py-2.5 bg-background text-white rounded-lg text-sm font-bold shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transform hover:scale-[1.02] transition-all duration-500">
+            <button className="px-8 py-2.5 bg-background text-foreground rounded-lg text-sm font-bold shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transform hover:scale-[1.02] transition-all duration-500">
               Register Now
             </button>
           </div>

@@ -1,12 +1,125 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, FormEvent } from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { Users, UserPlus, Lightbulb, CreditCard } from 'lucide-react';
 
+interface TeamMember {
+  name: string;
+  email: string;
+  phone: string;
+  yearBranch: string;
+  isIETMember: boolean;
+  ietMembershipId: string;
+}
+
+interface FormData {
+  // Team Details
+  teamName: string;
+  institutionName: string;
+  cityState: string;
+  // Team Members
+  member1: TeamMember;
+  member2: TeamMember;
+  member3: TeamMember;
+  // Project Details
+  projectTitle: string;
+  projectAbstract: string;
+  projectTrack: string;
+  problemStatement: string;
+  proposedSolution: string;
+  systemArchitecture: string;
+  technologicalImpact: string;
+  // Payment Details
+  feeType: string;
+  transactionId: string;
+  termsAccepted: boolean;
+}
+
 const ProtoPlanet = () => {
   const [currentStep, setCurrentStep] = useState('team-details');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionStatus, setSubmissionStatus] = useState<{
+    status: 'idle' | 'submitting' | 'success' | 'error';
+    message: string;
+  }>({
+    status: 'idle',
+    message: ''
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [formData, setFormData] = useState<FormData>({
+    // Team Details
+    teamName: '',
+    institutionName: '',
+    cityState: '',
+    // Team Members
+    member1: {
+      name: '',
+      email: '',
+      phone: '',
+      yearBranch: '',
+      isIETMember: false,
+      ietMembershipId: ''
+    },
+    member2: {
+      name: '',
+      email: '',
+      phone: '',
+      yearBranch: '',
+      isIETMember: false,
+      ietMembershipId: ''
+    },
+    member3: {
+      name: '',
+      email: '',
+      phone: '',
+      yearBranch: '',
+      isIETMember: false,
+      ietMembershipId: ''
+    },
+    // Project Details
+    projectTitle: '',
+    projectAbstract: '',
+    projectTrack: '',
+    problemStatement: '',
+    proposedSolution: '',
+    systemArchitecture: '',
+    technologicalImpact: '',
+    // Payment Details
+    feeType: '',
+    transactionId: '',
+    termsAccepted: false
+  });
+
+  const handleInputChange = (section: string, field: string, value: string | boolean) => {
+    setFormData(prev => {
+      if (field === '') {
+        // Direct field update (like teamName, projectTitle, etc.)
+        return {
+          ...prev,
+          [section]: value
+        };
+      } else if (section.startsWith('member')) {
+        // Team member update
+        return {
+          ...prev,
+          [section]: {
+            ...prev[section],
+            [field]: value
+          }
+        };
+      } else {
+        // Other nested fields
+        return {
+          ...prev,
+          [section]: {
+            ...prev[section],
+            [field]: value
+          }
+        };
+      }
+    });
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -18,7 +131,7 @@ const ProtoPlanet = () => {
       }
       
       // Check file size (10MB = 10 * 1024 * 1024 bytes)
-      if (file.size > 10 * 1024 * 1024) {
+      if (file.size > 20 * 1024 * 1024) {
         alert('File size must be less than 10MB');
         return;
       }
@@ -33,6 +146,260 @@ const ProtoPlanet = () => {
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const validateForm = () => {
+    const missingFields: string[] = [];
+
+    // Team Details validation
+    if (!formData.teamName) missingFields.push('Team Name');
+    if (!formData.institutionName) missingFields.push('Institution Name');
+    if (!formData.cityState) missingFields.push('City & State');
+
+    // Member 1 (Team Leader) validation
+    if (!formData.member1.name) missingFields.push('Team Leader - Full Name');
+    if (!formData.member1.email) missingFields.push('Team Leader - Email');
+    if (!formData.member1.phone) missingFields.push('Team Leader - Phone Number');
+    if (!formData.member1.yearBranch) missingFields.push('Team Leader - Year & Branch');
+    if (formData.member1.isIETMember && !formData.member1.ietMembershipId) {
+      missingFields.push('Team Leader - IET Membership ID');
+    }
+
+    // Member 2 validation
+    if (!formData.member2.name) missingFields.push('Member 2 - Full Name');
+    if (!formData.member2.email) missingFields.push('Member 2 - Email');
+    if (!formData.member2.phone) missingFields.push('Member 2 - Phone Number');
+    if (!formData.member2.yearBranch) missingFields.push('Member 2 - Year & Branch');
+    if (formData.member2.isIETMember && !formData.member2.ietMembershipId) {
+      missingFields.push('Member 2 - IET Membership ID');
+    }
+
+    // Member 3 validation (optional, but if any field is filled, all should be filled)
+    if (formData.member3.name || formData.member3.email || formData.member3.phone || formData.member3.yearBranch) {
+      if (!formData.member3.name) missingFields.push('Member 3 - Full Name');
+      if (!formData.member3.email) missingFields.push('Member 3 - Email');
+      if (!formData.member3.phone) missingFields.push('Member 3 - Phone Number');
+      if (!formData.member3.yearBranch) missingFields.push('Member 3 - Year & Branch');
+      if (formData.member3.isIETMember && !formData.member3.ietMembershipId) {
+        missingFields.push('Member 3 - IET Membership ID');
+      }
+    }
+
+    // Project details validation
+    if (!formData.projectTrack) missingFields.push('Project Track');
+    if (!formData.projectTitle) missingFields.push('Project Title');
+    if (!formData.problemStatement) missingFields.push('Problem Statement');
+    if (!formData.proposedSolution) missingFields.push('Proposed Solution');
+    if (!formData.systemArchitecture) missingFields.push('Basic System Architecture');
+    if (!formData.technologicalImpact) missingFields.push('Expected Technological and Social Impact');
+
+    // Payment details validation
+    if (!formData.feeType) missingFields.push('Fee Type');
+    if (!formData.transactionId) missingFields.push('Transaction Reference Number');
+    if (!uploadedImage) missingFields.push('Transaction Screenshot');
+    if (!formData.termsAccepted) missingFields.push('Terms and Conditions Acceptance');
+
+    if (missingFields.length > 0) {
+      // Group missing fields by section
+      const sections: { [key: string]: string[] } = {
+        'Team Details': missingFields.filter(f => !f.includes('-') && !f.includes('Project') && !f.includes('Fee')),
+        'Team Members': missingFields.filter(f => f.includes('-')),
+        'Project Details': missingFields.filter(f => f.includes('Project') || f.includes('Problem') || f.includes('Solution') || f.includes('Architecture') || f.includes('Impact')),
+        'Payment & Declaration': missingFields.filter(f => f.includes('Fee') || f.includes('Transaction') || f.includes('Terms'))
+      };
+
+      let message = 'Please fill in the following required fields:\n\n';
+      
+      for (const [section, fields] of Object.entries(sections)) {
+        if (fields.length > 0) {
+          message += `${section}:\n${fields.map(f => `• ${f}`).join('\n')}\n\n`;
+        }
+      }
+
+      alert(message);
+
+      // Set the current step to the first section that has missing fields
+      if (sections['Team Details'].length > 0) {
+        setCurrentStep('team-details');
+      } else if (sections['Team Members'].length > 0) {
+        setCurrentStep('team-members');
+      } else if (sections['Project Details'].length > 0) {
+        setCurrentStep('project-abstract');
+      } else if (sections['Payment & Declaration'].length > 0) {
+        setCurrentStep('payment');
+      }
+
+      return false;
+    }
+
+    if (!formData.termsAccepted) {
+      alert('Please accept the terms and conditions');
+      setCurrentStep('payment');
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setSubmissionStatus({
+        status: 'submitting',
+        message: 'Preparing form data...'
+      });
+
+      // Create form data for submission
+      const submitData = new FormData();
+      
+      // Append team details
+      submitData.append('teamName', formData.teamName);
+      submitData.append('institutionName', formData.institutionName);
+      submitData.append('cityState', formData.cityState);
+      submitData.append('projectTitle', formData.projectTitle);
+      
+      // Combine all project details into projectAbstract
+      const projectAbstract = {
+        track: formData.projectTrack,
+        problemStatement: formData.problemStatement,
+        proposedSolution: formData.proposedSolution,
+        systemArchitecture: formData.systemArchitecture,
+        technologicalImpact: formData.technologicalImpact
+      };
+      submitData.append('projectAbstract', JSON.stringify(projectAbstract));
+      
+      submitData.append('feeType', formData.feeType);
+      submitData.append('transactionId', formData.transactionId);
+      submitData.append('termsAccepted', formData.termsAccepted.toString());
+
+      // Format team members data
+      const member1Data = {
+        ...formData.member1,
+        title: 'Mr',
+      };
+      const member2Data = {
+        ...formData.member2,
+        title: 'Mr',
+      };
+      const member3Data = formData.member3.name ? {
+        ...formData.member3,
+        title: 'Mr',
+      } : null;
+
+      // Append team members data
+      submitData.append('member1', JSON.stringify(member1Data));
+      submitData.append('member2', JSON.stringify(member2Data));
+      if (member3Data) {
+        submitData.append('member3', JSON.stringify(member3Data));
+      }
+
+      // Append the screenshot file
+      if (fileInputRef.current?.files?.[0]) {
+        setSubmissionStatus({
+          status: 'submitting',
+          message: 'Processing payment screenshot...'
+        });
+        const file = fileInputRef.current.files[0];
+        submitData.append('screenshot', file, file.name);
+        console.log('Appending file:', file.name, file.type, file.size);
+      } else {
+        console.error('No screenshot file found');
+        throw new Error('Please upload the payment screenshot');
+      }
+
+      // Log form data before submission
+      console.log('Form data entries:');
+      for (const [key, value] of submitData.entries()) {
+        console.log(key, ':', typeof value === 'string' ? value : 'File/Blob data');
+      }
+
+      setSubmissionStatus({
+        status: 'submitting',
+        message: 'Uploading registration data...'
+      });
+      
+      const response = await fetch('http://localhost:5000/api/protoplan/register', {
+        method: 'POST',
+        body: submitData
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Registration failed');
+      }
+
+      const result = await response.json();
+      console.log('Server response:', result);
+
+      if (result.success) {
+        setSubmissionStatus({
+          status: 'success',
+          message: 'Registration successful! We will contact you shortly.'
+        });
+
+        // Reset form
+        setFormData({
+          teamName: '',
+          institutionName: '',
+          cityState: '',
+          member1: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
+          member2: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
+          member3: { name: '', email: '', phone: '', yearBranch: '', isIETMember: false, ietMembershipId: '' },
+          projectTitle: '',
+          projectAbstract: '',
+          projectTrack: '',
+          problemStatement: '',
+          proposedSolution: '',
+          systemArchitecture: '',
+          technologicalImpact: '',
+          feeType: '',
+          transactionId: '',
+          termsAccepted: false
+        });
+        setUploadedImage(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        setCurrentStep('team-details');
+
+        // Show success message
+        alert('Registration successful! We will contact you shortly.');
+      } else {
+        throw new Error(result.message || 'Registration failed');
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      setSubmissionStatus({
+        status: 'error',
+        message: 'Error: ' + (error as Error).message
+      });
+      alert('Error submitting form: ' + (error as Error).message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Add status message display
+  const renderStatusMessage = () => {
+    if (submissionStatus.status === 'idle') return null;
+
+    const statusColors = {
+      submitting: 'bg-blue-100 text-blue-800',
+      success: 'bg-green-100 text-green-800',
+      error: 'bg-red-100 text-red-800'
+    };
+
+    return (
+      <div className={`p-4 rounded-lg mb-4 ${statusColors[submissionStatus.status]}`}>
+        <p className="font-medium">{submissionStatus.message}</p>
+      </div>
+    );
   };
 
   return (
@@ -60,6 +427,9 @@ const ProtoPlanet = () => {
 
       <main className="pt-20 pb-16 relative z-10">
         <div className="container mx-auto px-4 max-w-6xl">
+          {/* Add status message at the top of the form */}
+          {renderStatusMessage()}
+
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-purple-900/20 backdrop-blur-sm border border-purple-500/20 rounded-full px-4 py-2 mb-6">
               <span className="text-sm text-white">🚀 IET Hyderabad Local Network</span>
@@ -137,536 +507,715 @@ const ProtoPlanet = () => {
 
           {/* Form Section */}
           <div className="bg-white shadow-[0_4px_20px_-2px_rgba(147,51,234,0.25),0_0_8px_0_rgba(147,51,234,0.1)] backdrop-blur-sm border border-purple-500/20 rounded-xl p-8 md:p-10">
-            {currentStep === 'team-details' ? (
-              <>
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
-                    👥
-                  </span>
-                  <h2 className="text-2xl font-bold text-gray-900">Team Details</h2>
-                </div>
-                <p className="text-gray-600 mb-8">
-                  Basic information about your team and institution
-                </p>
-
-                <form className="space-y-6 max-w-6xl mx-auto">
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2" htmlFor="teamName">
-                      Team Name <span className="text-purple-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="teamName"
-                      placeholder="Enter your team name"
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
-                    />
-                    <p className="text-gray-500 text-sm mt-1">
-                      Choose a short and unique name for your team
-                    </p>
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {currentStep === 'team-details' ? (
+                <>
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
+                      👥
+                    </span>
+                    <h2 className="text-2xl font-bold text-gray-900">Team Details</h2>
                   </div>
+                  <p className="text-gray-600 mb-8">
+                    Basic information about your team and institution
+                  </p>
 
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2" htmlFor="institutionName">
-                      Institution Name <span className="text-purple-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="institutionName"
-                      placeholder="College/University name"
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2" htmlFor="cityState">
-                      City & State <span className="text-purple-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="cityState"
-                      placeholder="e.g., Hyderabad, Telangana"
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
-                    />
-                  </div>
-
-                  <div className="pt-6">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep('team-members')}
-                      className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-sm"
-                    >
-                      Next →
-                    </button>
-                  </div>
-                </form>
-              </>
-            ) : currentStep === 'team-members' ? (
-              <>
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
-                    👥
-                  </span>
-                  <h2 className="text-2xl font-bold text-gray-900">Team Members</h2>
-                </div>
-                <p className="text-gray-600 mb-8">
-                  Enter the details of your team members
-                </p>
-
-                <form className="space-y-8 max-w-6xl mx-auto">
-                  {/* Team Leader Section */}
-                  <div className="space-y-6">
-                    <h3 className="text-xl font-semibold text-gray-900">Team Leader (Member 1) <span className="text-purple-500">*</span></h3>
+                  <div className="space-y-6 max-w-6xl mx-auto">
                     <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Full Name <span className="text-purple-500">*</span>
+                      <label className="block text-gray-700 font-medium mb-2" htmlFor="teamName">
+                        Team Name <span className="text-purple-500">*</span>
                       </label>
                       <input
                         type="text"
-                        placeholder="Enter full name"
+                        id="teamName"
+                        placeholder="Enter team name"
+                        value={formData.teamName}
+                        onChange={(e) => handleInputChange('teamName', '', e.target.value)}
                         className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
                       />
+                      <p className="text-gray-500 text-sm mt-1">
+                        Choose a short and unique name for your team
+                      </p>
                     </div>
+
                     <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Email ID <span className="text-purple-500">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        placeholder="email@example.com"
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Phone Number <span className="text-purple-500">*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        placeholder="+91 12345 67890"
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Year & Branch <span className="text-purple-500">*</span>
+                      <label className="block text-gray-700 font-medium mb-2" htmlFor="institutionName">
+                        Institution Name <span className="text-purple-500">*</span>
                       </label>
                       <input
                         type="text"
-                        placeholder="e.g., 3rd Year CSE"
+                        id="institutionName"
+                        placeholder="College/University name"
+                        value={formData.institutionName}
+                        onChange={(e) => handleInputChange('institutionName', '', e.target.value)}
                         className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
                       />
                     </div>
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="leader-iet-member"
-                        className="w-4 h-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500"
-                      />
-                      <label htmlFor="leader-iet-member" className="ml-2 text-gray-700">
-                        IET Student Member
-                      </label>
-                    </div>
-                  </div>
 
-                  {/* Member 2 Section */}
-                  <div className="space-y-6">
-                    <h3 className="text-xl font-semibold text-gray-900">Member 2 <span className="text-purple-500">*</span></h3>
                     <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Full Name <span className="text-purple-500">*</span>
+                      <label className="block text-gray-700 font-medium mb-2" htmlFor="cityState">
+                        City & State <span className="text-purple-500">*</span>
                       </label>
                       <input
                         type="text"
-                        placeholder="Enter full name"
+                        id="cityState"
+                        placeholder="e.g., Hyderabad, Telangana"
+                        value={formData.cityState}
+                        onChange={(e) => handleInputChange('cityState', '', e.target.value)}
                         className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
                       />
                     </div>
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Email ID <span className="text-purple-500">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        placeholder="email@example.com"
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Phone Number <span className="text-purple-500">*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        placeholder="+91 12345 67890"
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Year & Branch <span className="text-purple-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g., 2nd Year ECE"
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
-                      />
-                    </div>
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="member2-iet-member"
-                        className="w-4 h-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500"
-                      />
-                      <label htmlFor="member2-iet-member" className="ml-2 text-gray-700">
-                        IET Student Member
-                      </label>
-                    </div>
-                  </div>
 
-                  {/* Member 3 Section (Optional) */}
-                  <div className="space-y-6">
-                    <h3 className="text-xl font-semibold text-gray-900">Member 3 (Optional)</h3>
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Full Name
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Enter full name"
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Email ID
-                      </label>
-                      <input
-                        type="email"
-                        placeholder="email@example.com"
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        placeholder="+91 12345 67890"
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Year & Branch
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g., 1st Year ME"
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
-                      />
-                    </div>
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="member3-iet-member"
-                        className="w-4 h-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500"
-                      />
-                      <label htmlFor="member3-iet-member" className="ml-2 text-gray-700">
-                        IET Student Member
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between pt-6">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep('team-details')}
-                      className="px-8 py-3 bg-white text-gray-700 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
-                    >
-                      ← Previous
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep('project-abstract')}
-                      className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-sm"
-                    >
-                      Next →
-                    </button>
-                  </div>
-                </form>
-              </>
-            ) : currentStep === 'project-abstract' ? (
-              <>
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
-                    💡
-                  </span>
-                  <h2 className="text-2xl font-bold text-gray-900">Project Abstract Submission - Level 1</h2>
-                </div>
-                <p className="text-gray-600 mb-8">
-                  Describe your innovative hardware solution
-                </p>
-
-                <form className="space-y-6 max-w-6xl mx-auto">
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                      Select Your Track <span className="text-purple-500">*</span>
-                    </label>
-                    <div className="space-y-3">
+                    <div className="pt-6">
                       <button
                         type="button"
-                        className="w-full px-4 py-3 flex items-center gap-3 bg-white border border-gray-300 rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm"
+                        onClick={() => setCurrentStep('team-members')}
+                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-sm"
                       >
-                        <span className="text-xl">🌐</span>
-                        IoT & Smart Environments
-                      </button>
-                      <button
-                        type="button"
-                        className="w-full px-4 py-3 flex items-center gap-3 bg-white border border-gray-300 rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm"
-                      >
-                        <span className="text-xl">🤖</span>
-                        Robotics & Intelligent Machines
-                      </button>
-                      <button
-                        type="button"
-                        className="w-full px-4 py-3 flex items-center gap-3 bg-white border border-gray-300 rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm"
-                      >
-                        <span className="text-xl">🏥</span>
-                        HealthTech & Human Augmentation
-                      </button>
-                      <button
-                        type="button"
-                        className="w-full px-4 py-3 flex items-center gap-3 bg-white border border-gray-300 rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm"
-                      >
-                        <span className="text-xl">🌱</span>
-                        Sustainable & Clean Tech
+                        Next →
                       </button>
                     </div>
                   </div>
-
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                      Project Title <span className="text-purple-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Concise and descriptive title"
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
-                    />
+                </>
+              ) : currentStep === 'team-members' ? (
+                <>
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
+                      👥
+                    </span>
+                    <h2 className="text-2xl font-bold text-gray-900">Team Members</h2>
                   </div>
+                  <p className="text-gray-600 mb-8">
+                    Enter the details of your team members
+                  </p>
 
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                      Problem Statement <span className="text-purple-500">*</span>
-                    </label>
-                    <textarea
-                      rows={4}
-                      placeholder="Brief description of the problem you're solving..."
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm resize-none"
-                    ></textarea>
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                      Proposed Solution <span className="text-purple-500">*</span>
-                    </label>
-                    <textarea
-                      rows={4}
-                      placeholder="How your project addresses the problem..."
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm resize-none"
-                    ></textarea>
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                      Basic System Architecture <span className="text-purple-500">*</span>
-                    </label>
-                    <textarea
-                      rows={4}
-                      placeholder="Overview of hardware/system components..."
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm resize-none"
-                    ></textarea>
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                      Expected Technological and Social Impact <span className="text-purple-500">*</span>
-                    </label>
-                    <textarea
-                      rows={4}
-                      placeholder="Who benefits, and how?..."
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm resize-none"
-                    ></textarea>
-                  </div>
-
-                  <div className="flex justify-between pt-6">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep('team-members')}
-                      className="px-8 py-3 bg-white text-gray-700 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
-                    >
-                      ← Previous
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep('payment')}
-                      className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-sm"
-                    >
-                      Next →
-                    </button>
-                  </div>
-                </form>
-              </>
-            ) : currentStep === 'payment' ? (
-              <>
-                {/* Registration Fee Section */}
-                <div className="space-y-8 max-w-6xl mx-auto">
-                  <div>
-                    <div className="flex items-center gap-3 mb-6">
-                      <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
-                        💳
-                      </span>
-                      <h2 className="text-2xl font-bold text-gray-900">Registration Fee</h2>
-                    </div>
-
-                    <div className="space-y-3">
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Fee Type <span className="text-purple-500">*</span>
-                      </label>
-                      <button
-                        type="button"
-                        className="w-full px-4 py-3 flex items-center gap-3 bg-white border border-gray-300 rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm"
-                      >
-                        <input type="radio" name="feeType" className="w-4 h-4 border-gray-300 text-purple-500 focus:ring-purple-500" />
-                        <div>
-                          <div className="font-medium">IET Member Team - ₹300</div>
-                          <div className="text-sm text-gray-500">At least one member must be an IET Student Member</div>
-                        </div>
-                      </button>
-                      <button
-                        type="button"
-                        className="w-full px-4 py-3 flex items-center gap-3 bg-white border border-gray-300 rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm"
-                      >
-                        <input type="radio" name="feeType" className="w-4 h-4 border-gray-300 text-purple-500 focus:ring-purple-500" />
-                        <div>
-                          <div className="font-medium">Non-Member Team - ₹600</div>
-                          <div className="text-sm text-gray-500">For teams without IET membership</div>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Bank Details Section */}
-                  <div>
-                    <div className="flex items-center gap-3 mb-6">
-                      <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
-                        🏦
-                      </span>
-                      <h2 className="text-2xl font-bold text-gray-900">Bank Details for Payment</h2>
-                    </div>
-
-                    <div className="space-y-4 text-gray-900">
+                  <div className="space-y-8 max-w-6xl mx-auto">
+                    {/* Team Leader Section */}
+                    <div className="space-y-6">
+                      <h3 className="text-xl font-semibold text-gray-900">Team Leader (Member 1) <span className="text-purple-500">*</span></h3>
                       <div>
-                        <div className="text-gray-600">Bank Name:</div>
-                        <div>Axis Bank</div>
-                      </div>
-                      <div>
-                        <div className="text-gray-600">Account Name:</div>
-                        <div>INSTITUTION OF ENGINEERING AND TECHNOLOGY-LOCAL NETWORK ACCOUNT HYDERABAD</div>
-                      </div>
-                      <div>
-                        <div className="text-gray-600">Account Number:</div>
-                        <div>92402004037404S</div>
-                      </div>
-                      <div>
-                        <div className="text-gray-600">IFSC Code:</div>
-                        <div>UTIB0000009</div>
-                      </div>
-                      <div>
-                        <div className="text-gray-600">Branch Name:</div>
-                        <div>Bangalore Main Branch</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Transaction Details Section */}
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Transaction Reference Number
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Enter transaction ID after payment"
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
-                      />
-                      <p className="text-gray-500 text-sm mt-1">Enter the transaction ID received after payment</p>
-                    </div>
-
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Upload Transaction Screenshot
-                      </label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-purple-500 transition-colors">
-                        <div className="flex flex-col items-center justify-center text-center">
-                          <span className="text-2xl mb-2">⬆️</span>
-                          <div className="text-gray-900 font-medium">Click to upload screenshot</div>
-                          <div className="text-gray-500 text-sm">PNG, JPG up to 10MB</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Declaration Section */}
-                  <div>
-                    <div className="flex items-center gap-3 mb-6">
-                      <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
-                        📝
-                      </span>
-                      <h2 className="text-2xl font-bold text-gray-900">Declaration</h2>
-                    </div>
-
-                    <div className="space-y-4">
-                      <p className="text-gray-900">By submitting this form, we confirm that:</p>
-                      <ul className="list-disc text-gray-700 space-y-2 ml-5">
-                        <li>All project work is original and developed by the team</li>
-                        <li>Our institution is located in Telangana, Andhra Pradesh, or Chhattisgarh</li>
-                        <li>We agree to participate in both offline rounds if shortlisted</li>
-                        <li>We understand and accept all rules and eligibility criteria</li>
-                      </ul>
-
-                      <div className="flex items-center gap-2 mt-4">
-                        <input
-                          type="checkbox"
-                          id="terms"
-                          className="w-4 h-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500"
-                        />
-                        <label htmlFor="terms" className="text-gray-700">
-                          I/We agree to the above terms and conditions <span className="text-purple-500">*</span>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Full Name <span className="text-purple-500">*</span>
                         </label>
+                        <input
+                          type="text"
+                          placeholder="Enter full name"
+                          value={formData.member1.name}
+                          onChange={(e) => handleInputChange('member1', 'name', e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Email ID <span className="text-purple-500">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          placeholder="email@example.com"
+                          value={formData.member1.email}
+                          onChange={(e) => handleInputChange('member1', 'email', e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Phone Number <span className="text-purple-500">*</span>
+                        </label>
+                        <input
+                          type="tel"
+                          placeholder="+91 12345 67890"
+                          value={formData.member1.phone}
+                          onChange={(e) => handleInputChange('member1', 'phone', e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Year & Branch <span className="text-purple-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g., 3rd Year CSE"
+                          value={formData.member1.yearBranch}
+                          onChange={(e) => handleInputChange('member1', 'yearBranch', e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        />
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="leader-iet-member"
+                            checked={formData.member1.isIETMember}
+                            onChange={(e) => handleInputChange('member1', 'isIETMember', e.target.checked)}
+                            className="w-4 h-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500"
+                          />
+                          <label htmlFor="leader-iet-member" className="ml-2 text-gray-700">
+                            IET Student Member
+                          </label>
+                        </div>
+                        {formData.member1.isIETMember && (
+                          <div>
+                            <label className="block text-gray-700 font-medium mb-2">
+                              IET Membership ID <span className="text-purple-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="Enter IET Membership ID"
+                              value={formData.member1.ietMembershipId}
+                              onChange={(e) => handleInputChange('member1', 'ietMembershipId', e.target.value)}
+                              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
 
-                  <div className="flex justify-between pt-6">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep('project-abstract')}
-                      className="px-8 py-3 bg-white text-gray-700 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
-                    >
-                      ← Previous
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-sm flex items-center gap-2"
-                    >
-                      Submit Registration <span>📨</span>
-                    </button>
+                    {/* Member 2 Section */}
+                    <div className="space-y-6">
+                      <h3 className="text-xl font-semibold text-gray-900">Member 2 <span className="text-purple-500">*</span></h3>
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Full Name <span className="text-purple-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Enter full name"
+                          value={formData.member2.name}
+                          onChange={(e) => handleInputChange('member2', 'name', e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Email ID <span className="text-purple-500">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          placeholder="email@example.com"
+                          value={formData.member2.email}
+                          onChange={(e) => handleInputChange('member2', 'email', e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Phone Number <span className="text-purple-500">*</span>
+                        </label>
+                        <input
+                          type="tel"
+                          placeholder="+91 12345 67890"
+                          value={formData.member2.phone}
+                          onChange={(e) => handleInputChange('member2', 'phone', e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Year & Branch <span className="text-purple-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g., 2nd Year ECE"
+                          value={formData.member2.yearBranch}
+                          onChange={(e) => handleInputChange('member2', 'yearBranch', e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        />
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="member2-iet-member"
+                            checked={formData.member2.isIETMember}
+                            onChange={(e) => handleInputChange('member2', 'isIETMember', e.target.checked)}
+                            className="w-4 h-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500"
+                          />
+                          <label htmlFor="member2-iet-member" className="ml-2 text-gray-700">
+                            IET Student Member
+                          </label>
+                        </div>
+                        {formData.member2.isIETMember && (
+                          <div>
+                            <label className="block text-gray-700 font-medium mb-2">
+                              IET Membership ID <span className="text-purple-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="Enter IET Membership ID"
+                              value={formData.member2.ietMembershipId}
+                              onChange={(e) => handleInputChange('member2', 'ietMembershipId', e.target.value)}
+                              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Member 3 Section (Optional) */}
+                    <div className="space-y-6">
+                      <h3 className="text-xl font-semibold text-gray-900">Member 3 (Optional)</h3>
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Full Name
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Enter full name"
+                          value={formData.member3.name}
+                          onChange={(e) => handleInputChange('member3', 'name', e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Email ID
+                        </label>
+                        <input
+                          type="email"
+                          placeholder="email@example.com"
+                          value={formData.member3.email}
+                          onChange={(e) => handleInputChange('member3', 'email', e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          placeholder="+91 12345 67890"
+                          value={formData.member3.phone}
+                          onChange={(e) => handleInputChange('member3', 'phone', e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Year & Branch
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g., 1st Year ME"
+                          value={formData.member3.yearBranch}
+                          onChange={(e) => handleInputChange('member3', 'yearBranch', e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        />
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="member3-iet-member"
+                            checked={formData.member3.isIETMember}
+                            onChange={(e) => handleInputChange('member3', 'isIETMember', e.target.checked)}
+                            className="w-4 h-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500"
+                          />
+                          <label htmlFor="member3-iet-member" className="ml-2 text-gray-700">
+                            IET Student Member
+                          </label>
+                        </div>
+                        {formData.member3.isIETMember && (
+                          <div>
+                            <label className="block text-gray-700 font-medium mb-2">
+                              IET Membership ID
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="Enter IET Membership ID"
+                              value={formData.member3.ietMembershipId}
+                              onChange={(e) => handleInputChange('member3', 'ietMembershipId', e.target.value)}
+                              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between pt-6">
+                      <button
+                        type="button"
+                        onClick={() => setCurrentStep('team-details')}
+                        className="px-8 py-3 bg-white text-gray-700 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
+                      >
+                        ← Previous
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentStep('project-abstract')}
+                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-sm"
+                      >
+                        Next →
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </>
-            ) : null}
+                </>
+              ) : currentStep === 'project-abstract' ? (
+                <>
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
+                      💡
+                    </span>
+                    <h2 className="text-2xl font-bold text-gray-900">Project Abstract Submission - Level 1</h2>
+                  </div>
+                  <p className="text-gray-600 mb-8">
+                    Describe your innovative hardware solution
+                  </p>
+
+                  <div className="space-y-6 max-w-6xl mx-auto">
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">
+                        Select Your Track <span className="text-purple-500">*</span>
+                      </label>
+                      <div className="space-y-3">
+                        <button
+                          type="button"
+                          onClick={() => handleInputChange('projectTrack', '', 'IoT & Smart Environments')}
+                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white border ${
+                            formData.projectTrack === 'IoT & Smart Environments' 
+                              ? 'border-purple-500 ring-1 ring-purple-500' 
+                              : 'border-gray-300'
+                          } rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm`}
+                        >
+                          <span className="text-xl">🌐</span>
+                          IoT & Smart Environments
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleInputChange('projectTrack', '', 'Robotics & Intelligent Machines')}
+                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white border ${
+                            formData.projectTrack === 'Robotics & Intelligent Machines'
+                              ? 'border-purple-500 ring-1 ring-purple-500'
+                              : 'border-gray-300'
+                          } rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm`}
+                        >
+                          <span className="text-xl">🤖</span>
+                          Robotics & Intelligent Machines
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleInputChange('projectTrack', '', 'HealthTech & Human Augmentation')}
+                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white border ${
+                            formData.projectTrack === 'HealthTech & Human Augmentation'
+                              ? 'border-purple-500 ring-1 ring-purple-500'
+                              : 'border-gray-300'
+                          } rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm`}
+                        >
+                          <span className="text-xl">🏥</span>
+                          HealthTech & Human Augmentation
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleInputChange('projectTrack', '', 'Sustainable & Clean Tech')}
+                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white border ${
+                            formData.projectTrack === 'Sustainable & Clean Tech'
+                              ? 'border-purple-500 ring-1 ring-purple-500'
+                              : 'border-gray-300'
+                          } rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm`}
+                        >
+                          <span className="text-xl">🌱</span>
+                          Sustainable & Clean Tech
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">
+                        Project Title <span className="text-purple-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Concise and descriptive title"
+                        value={formData.projectTitle}
+                        onChange={(e) => handleInputChange('projectTitle', '', e.target.value)}
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">
+                        Problem Statement <span className="text-purple-500">*</span>
+                      </label>
+                      <textarea
+                        rows={4}
+                        placeholder="Brief description of the problem you're solving..."
+                        value={formData.problemStatement}
+                        onChange={(e) => handleInputChange('problemStatement', '', e.target.value)}
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm resize-none"
+                      ></textarea>
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">
+                        Proposed Solution <span className="text-purple-500">*</span>
+                      </label>
+                      <textarea
+                        rows={4}
+                        placeholder="How your project addresses the problem..."
+                        value={formData.proposedSolution}
+                        onChange={(e) => handleInputChange('proposedSolution', '', e.target.value)}
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm resize-none"
+                      ></textarea>
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">
+                        Basic System Architecture <span className="text-purple-500">*</span>
+                      </label>
+                      <textarea
+                        rows={4}
+                        placeholder="Overview of hardware/system components..."
+                        value={formData.systemArchitecture}
+                        onChange={(e) => handleInputChange('systemArchitecture', '', e.target.value)}
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm resize-none"
+                      ></textarea>
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">
+                        Expected Technological and Social Impact <span className="text-purple-500">*</span>
+                      </label>
+                      <textarea
+                        rows={4}
+                        placeholder="Who benefits, and how?..."
+                        value={formData.technologicalImpact}
+                        onChange={(e) => handleInputChange('technologicalImpact', '', e.target.value)}
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm resize-none"
+                      ></textarea>
+                    </div>
+
+                    <div className="flex justify-between pt-6">
+                      <button
+                        type="button"
+                        onClick={() => setCurrentStep('team-members')}
+                        className="px-8 py-3 bg-white text-gray-700 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
+                      >
+                        ← Previous
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentStep('payment')}
+                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-sm"
+                      >
+                        Next →
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : currentStep === 'payment' ? (
+                <>
+                  {/* Registration Fee Section */}
+                  <div className="space-y-8 max-w-6xl mx-auto">
+                    <div>
+                      <div className="flex items-center gap-3 mb-6">
+                        <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
+                          💳
+                        </span>
+                        <h2 className="text-2xl font-bold text-gray-900">Registration Fee</h2>
+                      </div>
+
+                      <div className="space-y-3">
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Fee Type <span className="text-purple-500">*</span>
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => handleInputChange('feeType', '', 'IET Member Team')}
+                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white border ${
+                            formData.feeType === 'IET Member Team' 
+                              ? 'border-purple-500 ring-1 ring-purple-500' 
+                              : 'border-gray-300'
+                          } rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm`}
+                        >
+                          <input 
+                            type="radio" 
+                            name="feeType" 
+                            value="IET Member Team" 
+                            checked={formData.feeType === 'IET Member Team'}
+                            onChange={() => handleInputChange('feeType', '', 'IET Member Team')}
+                            className="w-4 h-4 border-gray-300 text-purple-500 focus:ring-purple-500" 
+                          />
+                          <div>
+                            <div className="font-medium">IET Member Team - ₹300</div>
+                            <div className="text-sm text-gray-500">At least one member must be an IET Student Member</div>
+                          </div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleInputChange('feeType', '', 'Non-Member Team')}
+                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white border ${
+                            formData.feeType === 'Non-Member Team'
+                              ? 'border-purple-500 ring-1 ring-purple-500'
+                              : 'border-gray-300'
+                          } rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm`}
+                        >
+                          <input 
+                            type="radio" 
+                            name="feeType" 
+                            value="Non-Member Team" 
+                            checked={formData.feeType === 'Non-Member Team'}
+                            onChange={() => handleInputChange('feeType', '', 'Non-Member Team')}
+                            className="w-4 h-4 border-gray-300 text-purple-500 focus:ring-purple-500" 
+                          />
+                          <div>
+                            <div className="font-medium">Non-Member Team - ₹600</div>
+                            <div className="text-sm text-gray-500">For teams without IET membership</div>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Bank Details Section */}
+                    <div>
+                      <div className="flex items-center gap-3 mb-6">
+                        <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
+                          🏦
+                        </span>
+                        <h2 className="text-2xl font-bold text-gray-900">Bank Details for Payment</h2>
+                      </div>
+
+                      <div className="space-y-4 text-gray-900">
+                        <div>
+                          <div className="text-gray-600">Bank Name:</div>
+                          <div>Axis Bank</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-600">Account Name:</div>
+                          <div>INSTITUTION OF ENGINEERING AND TECHNOLOGY-LOCAL NETWORK ACCOUNT HYDERABAD</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-600">Account Number:</div>
+                          <div>92402004037404S</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-600">IFSC Code:</div>
+                          <div>UTIB0000009</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-600">Branch Name:</div>
+                          <div>Bangalore Main Branch</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Transaction Details Section */}
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Transaction Reference Number
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Enter transaction ID after payment"
+                          value={formData.transactionId}
+                          onChange={(e) => handleInputChange('transactionId', '', e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        />
+                        <p className="text-gray-500 text-sm mt-1">Enter the transaction ID received after payment</p>
+                      </div>
+
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Upload Transaction Screenshot
+                        </label>
+                        <div 
+                          onClick={handleUploadClick}
+                          className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-purple-500 transition-colors cursor-pointer"
+                        >
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileUpload}
+                            accept="image/png,image/jpeg,image/jpg"
+                            className="hidden"
+                          />
+                          <div className="flex flex-col items-center justify-center text-center">
+                            {uploadedImage ? (
+                              <div className="w-full">
+                                <img 
+                                  src={uploadedImage} 
+                                  alt="Transaction Screenshot" 
+                                  className="max-h-48 mx-auto mb-2"
+                                />
+                                <p className="text-sm text-gray-500">Click to change image</p>
+                              </div>
+                            ) : (
+                              <>
+                                <span className="text-2xl mb-2">⬆️</span>
+                                <div className="text-gray-900 font-medium">Click to upload screenshot</div>
+                                <div className="text-gray-500 text-sm">PNG, JPG up to 10MB</div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Declaration Section */}
+                    <div>
+                      <div className="flex items-center gap-3 mb-6">
+                        <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
+                          📝
+                        </span>
+                        <h2 className="text-2xl font-bold text-gray-900">Declaration</h2>
+                      </div>
+
+                      <div className="space-y-4">
+                        <p className="text-gray-900">By submitting this form, we confirm that:</p>
+                        <ul className="list-disc text-gray-700 space-y-2 ml-5">
+                          <li>All project work is original and developed by the team</li>
+                          <li>Our institution is located in Telangana, Andhra Pradesh, or Chhattisgarh</li>
+                          <li>We agree to participate in both offline rounds if shortlisted</li>
+                          <li>We understand and accept all rules and eligibility criteria</li>
+                        </ul>
+
+                        <div className="flex items-center gap-2 mt-4">
+                          <input
+                            type="checkbox"
+                            id="terms"
+                            checked={formData.termsAccepted}
+                            onChange={(e) => handleInputChange('termsAccepted', '', e.target.checked)}
+                            className="w-4 h-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500"
+                          />
+                          <label htmlFor="terms" className="text-gray-700">
+                            I/We agree to the above terms and conditions <span className="text-purple-500">*</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Submit Form Button */}
+                    <div className="flex justify-between pt-6">
+                      <button
+                        type="button"
+                        onClick={() => setCurrentStep('project-abstract')}
+                        className="px-8 py-3 bg-white text-gray-700 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
+                      >
+                        ← Previous
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            {submissionStatus.message}
+                          </>
+                        ) : (
+                          <>Submit Registration <span>📨</span></>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : null}
+            </form>
           </div>
         </div>
       </main>

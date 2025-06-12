@@ -76,16 +76,16 @@ const GallerySection = () => {
                     <div className="absolute top-3 right-3">
                       <div className="w-8 h-8 bg-background rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]">
                         {item.type === 'video' ? (
-                          <Play className="w-4 h-4 text-white" />
+                          <Play className="w-4 h-4 text-foreground" />
                         ) : (
-                          <Camera className="w-4 h-4 text-white" />
+                          <Camera className="w-4 h-4 text-foreground" />
                         )}
                       </div>
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
                       <div className="flex items-center gap-2 mb-2">
                         <div className="w-6 h-6 bg-background rounded-lg flex items-center justify-center shadow-[0_0_10px_rgba(255,255,255,0.1)]">
-                          <IconComponent className="w-3 h-3 text-white" />
+                          <IconComponent className="w-3 h-3 text-foreground" />
                         </div>
                         <h3 className="text-lg font-bold text-white">{item.title}</h3>
                       </div>
@@ -98,7 +98,7 @@ const GallerySection = () => {
           </div>
           
           <div className="text-center">
-            <button className="px-6 py-2.5 bg-background text-white rounded-lg text-sm font-bold shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transform hover:scale-[1.02] transition-all duration-500">
+            <button className="px-6 py-2.5 bg-background text-foreground rounded-lg text-sm font-bold shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transform hover:scale-[1.02] transition-all duration-500">
               View More Photos
             </button>
           </div>

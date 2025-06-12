@@ -27,7 +27,7 @@ const CoordinatorsSection = () => {
                 className="backdrop-blur-xl bg-black/40 rounded-lg p-5 text-center border border-[#B100FF]/20 shadow-[0_0_15px_rgba(110,0,255,0.15)] hover:shadow-[0_0_30px_rgba(110,0,255,0.3)] transform hover:scale-[1.02] transition-all duration-500"
               >
                 <div className="w-12 h-12 bg-background rounded-lg flex items-center justify-center mx-auto mb-4 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                  <Users className="w-5 h-5 text-white" />
+                  <Users className="w-5 h-5 text-foreground" />
                 </div>
                 <h3 className="text-lg font-bold text-purple-300 mb-2">{coordinator.event}</h3>
                 <p className="text-white font-semibold text-base mb-3">{coordinator.name}</p>

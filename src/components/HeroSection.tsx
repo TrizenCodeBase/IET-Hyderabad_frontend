@@ -50,7 +50,7 @@ const HeroSection = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button className="group relative px-6 py-2.5 bg-background text-white rounded-lg font-bold text-sm shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 transition-all duration-500">
+            <button className="group relative px-6 py-2.5 bg-background text-foreground rounded-lg font-bold text-sm shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 transition-all duration-500">
               <span className="flex items-center gap-2">
                 <Star className="w-4 h-4 group-hover:rotate-45 transition-transform duration-500" />
                 Register Now

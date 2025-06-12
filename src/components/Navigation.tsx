@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import DarkModeToggle from './DarkModeToggle';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
@@ -9,6 +8,7 @@ const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isEventsDropdownOpen, setIsEventsDropdownOpen] = useState(false);
   const { isDark } = useTheme();
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,8 +16,27 @@ const Navigation = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      // Clear any existing timeout when component unmounts
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, []);
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setIsEventsDropdownOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsEventsDropdownOpen(false);
+    }, 300); // 300ms delay before closing
+  };
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -48,8 +67,8 @@ const Navigation = () => {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isDark 
-        ? 'bg-background/95 backdrop-blur-md text-white' 
-        : 'bg-white/95 backdrop-blur-md text-background'
+        ? 'bg-background/95 backdrop-blur-md text-foreground' 
+        : 'bg-white/95 backdrop-blur-md text-foreground'
     } ${isScrolled ? 'shadow-lg' : 'shadow-md'}`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
@@ -69,8 +88,8 @@ const Navigation = () => {
                 {item.hasDropdown ? (
                   <div 
                     className="relative"
-                    onMouseEnter={() => setIsEventsDropdownOpen(true)}
-                    onMouseLeave={() => setIsEventsDropdownOpen(false)}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                   >
                     <button className={`flex items-center gap-1 font-medium hover:opacity-80 transition-opacity duration-200`}>
                       <span>{item.name}</span>
@@ -78,9 +97,13 @@ const Navigation = () => {
                     </button>
                     
                     {isEventsDropdownOpen && (
-                      <div className={`absolute top-full left-0 mt-2 w-48 border border-border rounded-lg shadow-lg py-2 ${
-                        isDark ? 'bg-background/95' : 'bg-white/95'
-                      } backdrop-blur-md`}>
+                      <div 
+                        className={`absolute top-full left-0 mt-2 w-48 border border-border rounded-lg shadow-lg py-2 ${
+                          isDark ? 'bg-background/95' : 'bg-white/95'
+                        } backdrop-blur-md`}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                      >
                         {item.dropdownItems?.map((dropdownItem) => (
                           <div key={dropdownItem.name}>
                             {dropdownItem.subItems ? (
@@ -94,7 +117,7 @@ const Navigation = () => {
                                 </a>
                                 <div className={`absolute left-full top-0 w-40 border border-border rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ${
                                   isDark ? 'bg-background/95' : 'bg-white/95'
-                                } backdrop-blur-md`}>
+                                } backdrop-blur-md text-foreground`}>
                                   {dropdownItem.subItems.map((subItem) => (
                                     subItem.name === 'ProtoPlanet' ? (
                                       <Link
@@ -148,12 +171,10 @@ const Navigation = () => {
                 )}
               </div>
             ))}
-            <DarkModeToggle />
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-4">
-            <DarkModeToggle />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className={`hover:opacity-80 focus:outline-none transition-opacity duration-200`}
@@ -174,7 +195,7 @@ const Navigation = () => {
         {isMenuOpen && (
           <div className={`md:hidden border-t border-border ${
             isDark ? 'bg-background/95' : 'bg-white/95'
-          } backdrop-blur-md`}>
+          } backdrop-blur-md text-foreground`}>
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navItems.map((item) => (
                 <div key={item.name}>

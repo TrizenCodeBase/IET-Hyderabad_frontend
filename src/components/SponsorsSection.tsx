@@ -31,7 +31,7 @@ const SponsorsSection = () => {
           <div className="space-y-6">
             <div className="flex items-center justify-center gap-2">
               <div className="w-8 h-8 bg-background rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                <Building2 className="w-4 h-4 text-white" />
+                <Building2 className="w-4 h-4 text-foreground" />
               </div>
               <h3 className="text-xl font-bold text-white">Sponsors</h3>
             </div>
@@ -58,7 +58,7 @@ const SponsorsSection = () => {
           <div className="space-y-6">
             <div className="flex items-center justify-center gap-2">
               <div className="w-8 h-8 bg-background rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                <Handshake className="w-4 h-4 text-white" />
+                <Handshake className="w-4 h-4 text-foreground" />
               </div>
               <h3 className="text-xl font-bold text-white">Partners</h3>
             </div>

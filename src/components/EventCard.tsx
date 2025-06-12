@@ -71,7 +71,7 @@ const EventCard: React.FC<EventCardProps> = ({
       </div>
       
       {status === 'open' && (
-        <button className="w-full bg-background text-white py-2.5 px-4 rounded-lg font-semibold text-sm transition-all duration-300 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+        <button className="w-full bg-background text-foreground py-2.5 px-4 rounded-lg font-semibold text-sm transition-all duration-300 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
           <span className="flex items-center justify-center gap-2">
             <Star className="w-4 h-4" />
             Register Now

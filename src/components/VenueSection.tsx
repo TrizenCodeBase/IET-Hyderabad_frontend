@@ -57,7 +57,7 @@ const VenueSection = () => {
                 <div className="p-4 bg-black/40 backdrop-blur-xl group-hover:bg-black/80 group-hover:backdrop-blur-none">
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-8 h-8 bg-background rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                      <MapPin className="w-4 h-4 text-white" />
+                      <MapPin className="w-4 h-4 text-foreground" />
                     </div>
                     <span className="text-purple-300 font-bold text-sm">{venue.role}</span>
                   </div>
@@ -92,7 +92,7 @@ const VenueSection = () => {
                     className="backdrop-blur-xl bg-black/40 rounded-lg p-4 text-center border border-[#B100FF]/20 shadow-[0_0_15px_rgba(110,0,255,0.15)] hover:shadow-[0_0_30px_rgba(110,0,255,0.3)] transform hover:scale-[1.02] transition-transform duration-500 group hover:backdrop-blur-none hover:bg-black/80"
                   >
                     <div className="w-12 h-12 bg-background rounded-lg flex items-center justify-center mx-auto mb-4 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                      <IconComponent className="w-6 h-6 text-white" />
+                      <IconComponent className="w-6 h-6 text-foreground" />
                     </div>
                     <h4 className="text-lg font-bold text-white mb-2 [text-shadow:_0_1px_10px_rgb(255_255_255_/_20%)]">{amenity.name}</h4>
                     <p className="text-gray-300 text-sm">{amenity.description}</p>

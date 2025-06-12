@@ -24,9 +24,9 @@ const PrizeSection = () => {
               <table className="w-full">
                 <thead>
                   <tr className="bg-background">
-                    <th className="px-6 py-4 text-left font-bold text-white text-base tracking-wide">Event</th>
-                    <th className="px-6 py-4 text-left font-bold text-white text-base tracking-wide">1st Prize</th>
-                    <th className="px-6 py-4 text-left font-bold text-white text-base tracking-wide">Runner-Up</th>
+                    <th className="px-6 py-4 text-left font-bold text-foreground text-base tracking-wide">Event</th>
+                    <th className="px-6 py-4 text-left font-bold text-foreground text-base tracking-wide">1st Prize</th>
+                    <th className="px-6 py-4 text-left font-bold text-foreground text-base tracking-wide">Runner-Up</th>
                   </tr>
                 </thead>
                 <tbody>

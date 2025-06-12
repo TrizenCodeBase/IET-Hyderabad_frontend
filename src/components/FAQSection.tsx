@@ -54,7 +54,7 @@ const FAQSection = () => {
                 >
                   <h3 className="text-lg font-bold text-white pr-6">{faq.question}</h3>
                   <div className={`w-8 h-8 bg-background rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)] transform transition-all duration-500 ${openFAQ === index ? 'rotate-180' : ''}`}>
-                    <ChevronDown className="w-4 h-4 text-white" />
+                    <ChevronDown className="w-4 h-4 text-foreground" />
                   </div>
                 </button>
                 {openFAQ === index && (

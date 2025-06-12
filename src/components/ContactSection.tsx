@@ -63,7 +63,7 @@ const ContactSection = () => {
                       className="backdrop-blur-xl bg-black/40 rounded-lg p-5 border border-[#B100FF]/20 shadow-[0_0_15px_rgba(110,0,255,0.15)] hover:shadow-[0_0_30px_rgba(110,0,255,0.3)] transform hover:scale-[1.02] transition-all duration-500"
                     >
                       <div className={`w-12 h-12 ${method.color} rounded-lg flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(255,255,255,0.1)]`}>
-                        <IconComponent className="w-5 h-5 text-white" />
+                        <IconComponent className="w-5 h-5 text-foreground" />
                       </div>
                       <h4 className="text-lg font-bold text-white mb-2">{method.title}</h4>
                       <p className="text-purple-300 font-bold mb-1 text-sm">{method.primary}</p>
@@ -80,7 +80,7 @@ const ContactSection = () => {
               <div className="backdrop-blur-xl bg-black/40 rounded-lg p-5 border border-[#B100FF]/20 shadow-[0_0_15px_rgba(110,0,255,0.15)] hover:shadow-[0_0_30px_rgba(110,0,255,0.3)] transition-all duration-500">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-background rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                    <Clock className="w-5 h-5 text-white" />
+                    <Clock className="w-5 h-5 text-foreground" />
                   </div>
                   <span className="text-lg font-bold text-white">Available Hours</span>
                 </div>

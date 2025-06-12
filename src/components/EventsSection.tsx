@@ -75,7 +75,7 @@ const EventsSection = () => {
       <div className="container mx-auto px-4 sm:px-6 max-w-screen-lg relative z-10">
         <div className="space-y-8 animate-fade-in">
           <div className="text-center space-y-4">
-            <h2 className="text-4xl md:text-5xl font-bold text-white [text-shadow:_0_1px_10px_rgb(255_255_255_/_20%)]">
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground [text-shadow:_0_1px_10px_rgb(255_255_255_/_20%)]">
               Our Events
             </h2>
             <div className="h-1 w-40 mx-auto rounded-full bg-background shadow-[0_0_20px_rgba(255,255,255,0.1)]"></div>
@@ -91,7 +91,7 @@ const EventsSection = () => {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-500 ${
                   selectedCategory === category
-                    ? 'bg-background text-white shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] scale-105'
+                    ? 'bg-background text-foreground shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] scale-105'
                     : 'bg-black/40 backdrop-blur-xl border border-[#B100FF]/20 text-white hover:border-[#B100FF]/40 hover:shadow-[0_0_30px_rgba(110,0,255,0.2)]'
                 }`}
               >
