@@ -252,7 +252,7 @@ const ProtoPlanet = () => {
       setIsSubmitting(true);
       setSubmissionStatus({
         status: 'submitting',
-        message: 'Preparing form data...'
+        message: 'Preparing submission...'
       });
 
       // Create form data for submission
@@ -329,21 +329,43 @@ const ProtoPlanet = () => {
         : 'http://localhost:5000/api/protoplan/register';
 
       try {
+        // First check if backend is accessible
+        setSubmissionStatus({
+          status: 'submitting',
+          message: 'Checking server connection...'
+        });
+
+        const healthCheck = await fetch(
+          process.env.NODE_ENV === 'production'
+            ? 'https://iet-hyderabad-backend.llp.trizenventures.com/health'
+            : 'http://localhost:5000/health'
+        );
+
+        if (!healthCheck.ok) {
+          throw new Error('Backend server is not responding. Please try again later.');
+        }
+
+        // Proceed with form submission
+        setSubmissionStatus({
+          status: 'submitting',
+          message: 'Uploading registration data...'
+        });
+
         console.log('Submitting to:', API_URL);
         
         const response = await fetch(API_URL, {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data',
             'Origin': window.location.origin
           },
-          mode: 'cors',
           credentials: 'include',
           body: submitData
         });
 
-        // Log response headers for debugging
+        // Log response details for debugging
+        console.log('Response status:', response.status);
         console.log('Response headers:', {
           'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
           'access-control-allow-credentials': response.headers.get('access-control-allow-credentials'),
@@ -352,11 +374,13 @@ const ProtoPlanet = () => {
 
         if (!response.ok) {
           if (response.status === 502) {
-            throw new Error('Backend server is not responding. Please try again later.');
+            throw new Error('Unable to reach the server. Please check your connection and try again.');
           }
+          
           const errorData = await response.json().catch(() => ({ 
-            message: `HTTP error! status: ${response.status}`
+            message: `Server error: ${response.status} ${response.statusText}` 
           }));
+          
           throw new Error(errorData.message || 'Registration failed');
         }
 
@@ -403,19 +427,23 @@ const ProtoPlanet = () => {
         console.error('Form submission error:', error);
         setSubmissionStatus({
           status: 'error',
-          message: 'Error: ' + (error as Error).message
+          message: error instanceof Error ? error.message : 'An unexpected error occurred'
         });
-        alert('Error submitting form: ' + (error as Error).message);
+        
+        // Show error in UI
+        alert(error instanceof Error ? error.message : 'Failed to submit registration. Please try again.');
+      } finally {
+        setIsSubmitting(false);
       }
     } catch (error) {
       console.error('Form submission error:', error);
       setSubmissionStatus({
         status: 'error',
-        message: 'Error: ' + (error as Error).message
+        message: error instanceof Error ? error.message : 'An unexpected error occurred'
       });
-      alert('Error submitting form: ' + (error as Error).message);
-    } finally {
-      setIsSubmitting(false);
+      
+      // Show error in UI
+      alert(error instanceof Error ? error.message : 'Failed to submit registration. Please try again.');
     }
   };
 
