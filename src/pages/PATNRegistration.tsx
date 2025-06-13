@@ -57,8 +57,12 @@ const PATNRegistration = () => {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            'Origin': 'https://iet-hyderabad-frontend.llp.trizenventures.com'
           },
-          withCredentials: true
+          withCredentials: true,
+          validateStatus: function (status) {
+            return status >= 200 && status < 500; // Accept any status code in this range
+          }
         }
       );
       
