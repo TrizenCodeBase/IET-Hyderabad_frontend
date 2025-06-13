@@ -50,7 +50,17 @@ const PATNRegistration = () => {
 
     try {
       // Make API call to backend
-      const response = await axios.post('https://iet-hyderabad-backend.llp.trizenventures.com/api/patn/register', formData);
+      const response = await axios.post(
+        'https://iet-hyderabad-backend.llp.trizenventures.com/api/patn/register',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          withCredentials: true
+        }
+      );
       
       if (response.data.success) {
         setShowSuccess(true);
