@@ -4,7 +4,6 @@ import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, Send, ArrowLeft, Loader2, Zap, Star, Calendar, MapPin, AlertCircle, User, GraduationCap, Building2, Phone, CalendarDays, ChevronDown } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
-import axios from 'axios';
 
 const PATNRegistration = () => {
   const navigate = useNavigate();
@@ -49,30 +48,27 @@ const PATNRegistration = () => {
     setError('');
 
     try {
-      // Configure axios defaults for CORS
-      axios.defaults.withCredentials = true;
-      
       // Make API call to backend
-      const response = await axios({
-        method: 'post',
-        url: 'https://iet-hyderabad-backend.llp.trizenventures.com/api/patn/register',
-        data: formData,
+      const response = await fetch('https://iet-hyderabad-backend.llp.trizenventures.com/api/patn/register', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
         },
-        withCredentials: true
+        // credentials: 'include',
+        body: JSON.stringify(formData)
       });
+
+      const data = await response.json();
       
-      if (response.data.success) {
+      if (data.success) {
         setShowSuccess(true);
         setShowNotification(true);
         setTimeout(() => setShowNotification(false), 5000);
       } else {
-        throw new Error(response.data.message || 'Registration failed');
+        throw new Error(data.message || 'Registration failed');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'An error occurred during registration. Please try again.');
+      setError(err.message || 'An error occurred during registration. Please try again.');
     } finally {
       setLoading(false);
     }
