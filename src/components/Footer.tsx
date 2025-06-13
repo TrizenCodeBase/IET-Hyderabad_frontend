@@ -3,9 +3,9 @@ import { Linkedin, Instagram } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-purple-900 relative">
+    <footer className="bg-black relative">
       {/* Top gradient divider */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#B100FF] to-transparent opacity-50"></div>
+      <div className="absolute top-0 left-0 right-0 h-px bg-white/20"></div>
       
       <div className="py-12">
         <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -27,10 +27,10 @@ const Footer = () => {
               <h3 className="font-bold text-white mb-4 text-lg">Contact</h3>
               <p className="text-white/80 mb-3 text-base">📧 ietln.hyderabad@gmail.com</p>
               <div className="flex space-x-3">
-                <a href="#" className="p-2 glassmorphism rounded-lg hover:border-[#B100FF]/50 transition-all duration-300 hover:scale-110">
+                <a href="#" className="p-2 glassmorphism rounded-lg border border-white/20 hover:border-white/50 transition-all duration-300 hover:scale-110">
                   <Linkedin className="w-5 h-5 text-white" />
                 </a>
-                <a href="#" className="p-2 glassmorphism rounded-lg hover:border-[#B100FF]/50 transition-all duration-300 hover:scale-110">
+                <a href="#" className="p-2 glassmorphism rounded-lg border border-white/20 hover:border-white/50 transition-all duration-300 hover:scale-110">
                   <Instagram className="w-5 h-5 text-white" />
                 </a>
               </div>

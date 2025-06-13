@@ -131,7 +131,7 @@ const ProtoPlanet = () => {
       }
       
       // Check file size (10MB = 10 * 1024 * 1024 bytes)
-      if (file.size > 20 * 1024 * 1024) {
+      if (file.size > 10 * 1024 * 1024) {
         alert('File size must be less than 10MB');
         return;
       }
@@ -252,117 +252,85 @@ const ProtoPlanet = () => {
       setIsSubmitting(true);
       setSubmissionStatus({
         status: 'submitting',
-        message: 'Preparing submission...'
+        message: 'Preparing form data...'
       });
 
-      const API_BASE_URL = process.env.NODE_ENV === 'production'
-        ? 'https://iet-hyderabad-backend.llp.trizenventures.com'
-        : 'http://localhost:5000';
-
-      // First check if backend is accessible
-      try {
-        console.log('Attempting health check...');
-        const healthCheck = await fetch(`${API_BASE_URL}/health`, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-            'Origin': window.location.origin
-          },
-          credentials: 'include',
-          mode: 'cors'
-        });
-
-        console.log('Health check response:', {
-          status: healthCheck.status,
-          statusText: healthCheck.statusText,
-          headers: {
-            'access-control-allow-origin': healthCheck.headers.get('access-control-allow-origin'),
-            'access-control-allow-credentials': healthCheck.headers.get('access-control-allow-credentials')
-          }
-        });
-
-        if (!healthCheck.ok) {
-          const errorText = await healthCheck.text();
-          console.error('Health check failed:', {
-            status: healthCheck.status,
-            statusText: healthCheck.statusText,
-            body: errorText
-          });
-          throw new Error(`Backend server error: ${healthCheck.status} ${healthCheck.statusText}`);
-        }
-
-        const healthData = await healthCheck.json();
-        console.log('Health check successful:', healthData);
-      } catch (healthError) {
-        console.error('Health check error:', healthError);
-        throw new Error(healthError instanceof Error ? healthError.message : 'Unable to connect to the server');
-      }
-
-      // Proceed with form submission
-      setSubmissionStatus({
-        status: 'submitting',
-        message: 'Uploading registration data...'
-      });
-
-      const submitFormData = new FormData();
+      // Create form data for submission
+      const submitData = new FormData();
       
-      // Append form fields to FormData
-      submitFormData.append('teamName', formData.teamName);
-      submitFormData.append('institutionName', formData.institutionName);
-      submitFormData.append('cityState', formData.cityState);
-      submitFormData.append('projectTitle', formData.projectTitle);
+      // Append team details
+      submitData.append('teamName', formData.teamName);
+      submitData.append('institutionName', formData.institutionName);
+      submitData.append('cityState', formData.cityState);
+      submitData.append('projectTitle', formData.projectTitle);
       
-      // Append project details
-      const projectDetails = {
+      // Combine all project details into projectAbstract
+      const projectAbstract = {
         track: formData.projectTrack,
         problemStatement: formData.problemStatement,
         proposedSolution: formData.proposedSolution,
         systemArchitecture: formData.systemArchitecture,
         technologicalImpact: formData.technologicalImpact
       };
-      submitFormData.append('projectDetails', JSON.stringify(projectDetails));
+      submitData.append('projectAbstract', JSON.stringify(projectAbstract));
       
-      // Append team members
-      submitFormData.append('member1', JSON.stringify(formData.member1));
-      submitFormData.append('member2', JSON.stringify(formData.member2));
-      if (formData.member3.name) {
-        submitFormData.append('member3', JSON.stringify(formData.member3));
+      submitData.append('feeType', formData.feeType);
+      submitData.append('transactionId', formData.transactionId);
+      submitData.append('termsAccepted', formData.termsAccepted.toString());
+
+      // Format team members data
+      const member1Data = {
+        ...formData.member1,
+        title: 'Mr',
+      };
+      const member2Data = {
+        ...formData.member2,
+        title: 'Mr',
+      };
+      const member3Data = formData.member3.name ? {
+        ...formData.member3,
+        title: 'Mr',
+      } : null;
+
+      // Append team members data
+      submitData.append('member1', JSON.stringify(member1Data));
+      submitData.append('member2', JSON.stringify(member2Data));
+      if (member3Data) {
+        submitData.append('member3', JSON.stringify(member3Data));
       }
-      
-      // Append payment details
-      submitFormData.append('feeType', formData.feeType);
-      submitFormData.append('transactionId', formData.transactionId);
-      
-      // Append screenshot if available
+
+      // Append the screenshot file
       if (fileInputRef.current?.files?.[0]) {
-        submitFormData.append('screenshot', fileInputRef.current.files[0]);
+        setSubmissionStatus({
+          status: 'submitting',
+          message: 'Processing payment screenshot...'
+        });
+        const file = fileInputRef.current.files[0];
+        submitData.append('screenshot', file, file.name);
+        console.log('Appending file:', file.name, file.type, file.size);
+      } else {
+        console.error('No screenshot file found');
+        throw new Error('Please upload the payment screenshot');
       }
 
-      console.log('Submitting to:', `${API_BASE_URL}/api/protoplan/register`);
-      
-      const response = await fetch(`${API_BASE_URL}/api/protoplan/register`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Origin': window.location.origin
-        },
-        credentials: 'include',
-        mode: 'cors',
-        body: submitFormData
-      });
+      // Log form data before submission
+      console.log('Form data entries:');
+      for (const [key, value] of submitData.entries()) {
+        console.log(key, ':', typeof value === 'string' ? value : 'File/Blob data');
+      }
 
-      // Log response details for debugging
-      console.log('Response status:', response.status);
-      console.log('Response headers:', {
-        'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
-        'access-control-allow-credentials': response.headers.get('access-control-allow-credentials'),
-        'content-type': response.headers.get('content-type')
+      setSubmissionStatus({
+        status: 'submitting',
+        message: 'Uploading registration data...'
+      });
+      
+      const response = await fetch('https://iet-hyderabad-backend.llp.trizenventures.com/api/protoplan/register', {
+        method: 'POST',
+        body: submitData
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ 
-          message: `Server error: ${response.status} ${response.statusText}` 
-        }));
+        const errorData = await response.json();
         throw new Error(errorData.message || 'Registration failed');
       }
 
@@ -409,11 +377,9 @@ const ProtoPlanet = () => {
       console.error('Form submission error:', error);
       setSubmissionStatus({
         status: 'error',
-        message: error instanceof Error ? error.message : 'An unexpected error occurred'
+        message: 'Error: ' + (error as Error).message
       });
-      
-      // Show error in UI
-      alert(error instanceof Error ? error.message : 'Failed to submit registration. Please try again.');
+      alert('Error submitting form: ' + (error as Error).message);
     } finally {
       setIsSubmitting(false);
     }
@@ -464,7 +430,7 @@ const ProtoPlanet = () => {
           {/* Add status message at the top of the form */}
           {renderStatusMessage()}
 
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 pt-8">
             <div className="inline-flex items-center gap-2 bg-purple-900/20 backdrop-blur-sm border border-purple-500/20 rounded-full px-4 py-2 mb-6">
               <span className="text-sm text-white">🚀 IET Hyderabad Local Network</span>
             </div>
@@ -540,23 +506,23 @@ const ProtoPlanet = () => {
           </div>
 
           {/* Form Section */}
-          <div className="bg-white shadow-[0_4px_20px_-2px_rgba(147,51,234,0.25),0_0_8px_0_rgba(147,51,234,0.1)] backdrop-blur-sm border border-purple-500/20 rounded-xl p-8 md:p-10">
+          <div className="bg-[#0A051C] backdrop-blur-sm border border-purple-500/20 rounded-xl p-8 md:p-10 shadow-[0_0_25px_-5px_rgba(147,51,234,0.3)]">
             <form onSubmit={handleSubmit} className="space-y-8">
               {currentStep === 'team-details' ? (
                 <>
                   <div className="flex items-center gap-3 mb-6">
-                    <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
-                      👥
-                    </span>
-                    <h2 className="text-2xl font-bold text-gray-900">Team Details</h2>
+                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <Users className="w-7 h-7 text-white" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-white">Team Details</h2>
                   </div>
-                  <p className="text-gray-600 mb-8">
+                  <p className="text-gray-300 mb-8">
                     Basic information about your team and institution
                   </p>
 
                   <div className="space-y-6 max-w-6xl mx-auto">
                     <div>
-                      <label className="block text-gray-700 font-medium mb-2" htmlFor="teamName">
+                      <label className="block text-white font-medium mb-2" htmlFor="teamName">
                         Team Name <span className="text-purple-500">*</span>
                       </label>
                       <input
@@ -565,15 +531,15 @@ const ProtoPlanet = () => {
                         placeholder="Enter team name"
                         value={formData.teamName}
                         onChange={(e) => handleInputChange('teamName', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                       />
-                      <p className="text-gray-500 text-sm mt-1">
+                      <p className="text-gray-400 text-sm mt-1">
                         Choose a short and unique name for your team
                       </p>
                     </div>
 
                     <div>
-                      <label className="block text-gray-700 font-medium mb-2" htmlFor="institutionName">
+                      <label className="block text-white font-medium mb-2" htmlFor="institutionName">
                         Institution Name <span className="text-purple-500">*</span>
                       </label>
                       <input
@@ -582,12 +548,12 @@ const ProtoPlanet = () => {
                         placeholder="College/University name"
                         value={formData.institutionName}
                         onChange={(e) => handleInputChange('institutionName', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-gray-700 font-medium mb-2" htmlFor="cityState">
+                      <label className="block text-white font-medium mb-2" htmlFor="cityState">
                         City & State <span className="text-purple-500">*</span>
                       </label>
                       <input
@@ -596,7 +562,7 @@ const ProtoPlanet = () => {
                         placeholder="e.g., Hyderabad, Telangana"
                         value={formData.cityState}
                         onChange={(e) => handleInputChange('cityState', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                       />
                     </div>
 
@@ -604,7 +570,7 @@ const ProtoPlanet = () => {
                       <button
                         type="button"
                         onClick={() => setCurrentStep('team-members')}
-                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-sm"
+                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-[0_0_15px_rgba(147,51,234,0.3)]"
                       >
                         Next →
                       </button>
@@ -614,21 +580,21 @@ const ProtoPlanet = () => {
               ) : currentStep === 'team-members' ? (
                 <>
                   <div className="flex items-center gap-3 mb-6">
-                    <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
-                      👥
-                    </span>
-                    <h2 className="text-2xl font-bold text-gray-900">Team Members</h2>
+                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <UserPlus className="w-7 h-7 text-white" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-white">Team Members</h2>
                   </div>
-                  <p className="text-gray-600 mb-8">
+                  <p className="text-gray-300 mb-8">
                     Enter the details of your team members
                   </p>
 
                   <div className="space-y-8 max-w-6xl mx-auto">
                     {/* Team Leader Section */}
                     <div className="space-y-6">
-                      <h3 className="text-xl font-semibold text-gray-900">Team Leader (Member 1) <span className="text-purple-500">*</span></h3>
+                      <h3 className="text-xl font-semibold text-white">Team Leader (Member 1) <span className="text-purple-500">*</span></h3>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">
+                        <label className="block text-white font-medium mb-2">
                           Full Name <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -636,11 +602,11 @@ const ProtoPlanet = () => {
                           placeholder="Enter full name"
                           value={formData.member1.name}
                           onChange={(e) => handleInputChange('member1', 'name', e.target.value)}
-                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">
+                        <label className="block text-white font-medium mb-2">
                           Email ID <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -648,11 +614,11 @@ const ProtoPlanet = () => {
                           placeholder="email@example.com"
                           value={formData.member1.email}
                           onChange={(e) => handleInputChange('member1', 'email', e.target.value)}
-                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">
+                        <label className="block text-white font-medium mb-2">
                           Phone Number <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -660,11 +626,11 @@ const ProtoPlanet = () => {
                           placeholder="+91 12345 67890"
                           value={formData.member1.phone}
                           onChange={(e) => handleInputChange('member1', 'phone', e.target.value)}
-                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">
+                        <label className="block text-white font-medium mb-2">
                           Year & Branch <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -672,7 +638,7 @@ const ProtoPlanet = () => {
                           placeholder="e.g., 3rd Year CSE"
                           value={formData.member1.yearBranch}
                           onChange={(e) => handleInputChange('member1', 'yearBranch', e.target.value)}
-                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div className="space-y-3">
@@ -682,15 +648,15 @@ const ProtoPlanet = () => {
                             id="leader-iet-member"
                             checked={formData.member1.isIETMember}
                             onChange={(e) => handleInputChange('member1', 'isIETMember', e.target.checked)}
-                            className="w-4 h-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500"
+                            className="w-4 h-4 rounded border-purple-500/20 text-purple-500 focus:ring-purple-500 bg-white/10"
                           />
-                          <label htmlFor="leader-iet-member" className="ml-2 text-gray-700">
+                          <label htmlFor="leader-iet-member" className="ml-2 text-white">
                             IET Student Member
                           </label>
                         </div>
                         {formData.member1.isIETMember && (
                           <div>
-                            <label className="block text-gray-700 font-medium mb-2">
+                            <label className="block text-white font-medium mb-2">
                               IET Membership ID <span className="text-purple-500">*</span>
                             </label>
                             <input
@@ -698,7 +664,7 @@ const ProtoPlanet = () => {
                               placeholder="Enter IET Membership ID"
                               value={formData.member1.ietMembershipId}
                               onChange={(e) => handleInputChange('member1', 'ietMembershipId', e.target.value)}
-                              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                              className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                             />
                           </div>
                         )}
@@ -707,9 +673,9 @@ const ProtoPlanet = () => {
 
                     {/* Member 2 Section */}
                     <div className="space-y-6">
-                      <h3 className="text-xl font-semibold text-gray-900">Member 2 <span className="text-purple-500">*</span></h3>
+                      <h3 className="text-xl font-semibold text-white">Member 2 <span className="text-purple-500">*</span></h3>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">
+                        <label className="block text-white font-medium mb-2">
                           Full Name <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -717,11 +683,11 @@ const ProtoPlanet = () => {
                           placeholder="Enter full name"
                           value={formData.member2.name}
                           onChange={(e) => handleInputChange('member2', 'name', e.target.value)}
-                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">
+                        <label className="block text-white font-medium mb-2">
                           Email ID <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -729,11 +695,11 @@ const ProtoPlanet = () => {
                           placeholder="email@example.com"
                           value={formData.member2.email}
                           onChange={(e) => handleInputChange('member2', 'email', e.target.value)}
-                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">
+                        <label className="block text-white font-medium mb-2">
                           Phone Number <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -741,11 +707,11 @@ const ProtoPlanet = () => {
                           placeholder="+91 12345 67890"
                           value={formData.member2.phone}
                           onChange={(e) => handleInputChange('member2', 'phone', e.target.value)}
-                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">
+                        <label className="block text-white font-medium mb-2">
                           Year & Branch <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -753,7 +719,7 @@ const ProtoPlanet = () => {
                           placeholder="e.g., 2nd Year ECE"
                           value={formData.member2.yearBranch}
                           onChange={(e) => handleInputChange('member2', 'yearBranch', e.target.value)}
-                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div className="space-y-3">
@@ -763,15 +729,15 @@ const ProtoPlanet = () => {
                             id="member2-iet-member"
                             checked={formData.member2.isIETMember}
                             onChange={(e) => handleInputChange('member2', 'isIETMember', e.target.checked)}
-                            className="w-4 h-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500"
+                            className="w-4 h-4 rounded border-purple-500/20 text-purple-500 focus:ring-purple-500 bg-white/10"
                           />
-                          <label htmlFor="member2-iet-member" className="ml-2 text-gray-700">
+                          <label htmlFor="member2-iet-member" className="ml-2 text-white">
                             IET Student Member
                           </label>
                         </div>
                         {formData.member2.isIETMember && (
                           <div>
-                            <label className="block text-gray-700 font-medium mb-2">
+                            <label className="block text-white font-medium mb-2">
                               IET Membership ID <span className="text-purple-500">*</span>
                             </label>
                             <input
@@ -779,7 +745,7 @@ const ProtoPlanet = () => {
                               placeholder="Enter IET Membership ID"
                               value={formData.member2.ietMembershipId}
                               onChange={(e) => handleInputChange('member2', 'ietMembershipId', e.target.value)}
-                              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                              className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                             />
                           </div>
                         )}
@@ -788,9 +754,9 @@ const ProtoPlanet = () => {
 
                     {/* Member 3 Section (Optional) */}
                     <div className="space-y-6">
-                      <h3 className="text-xl font-semibold text-gray-900">Member 3 (Optional)</h3>
+                      <h3 className="text-xl font-semibold text-white">Member 3 (Optional)</h3>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">
+                        <label className="block text-white font-medium mb-2">
                           Full Name
                         </label>
                         <input
@@ -798,11 +764,11 @@ const ProtoPlanet = () => {
                           placeholder="Enter full name"
                           value={formData.member3.name}
                           onChange={(e) => handleInputChange('member3', 'name', e.target.value)}
-                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">
+                        <label className="block text-white font-medium mb-2">
                           Email ID
                         </label>
                         <input
@@ -810,11 +776,11 @@ const ProtoPlanet = () => {
                           placeholder="email@example.com"
                           value={formData.member3.email}
                           onChange={(e) => handleInputChange('member3', 'email', e.target.value)}
-                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">
+                        <label className="block text-white font-medium mb-2">
                           Phone Number
                         </label>
                         <input
@@ -822,11 +788,11 @@ const ProtoPlanet = () => {
                           placeholder="+91 12345 67890"
                           value={formData.member3.phone}
                           onChange={(e) => handleInputChange('member3', 'phone', e.target.value)}
-                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">
+                        <label className="block text-white font-medium mb-2">
                           Year & Branch
                         </label>
                         <input
@@ -834,7 +800,7 @@ const ProtoPlanet = () => {
                           placeholder="e.g., 1st Year ME"
                           value={formData.member3.yearBranch}
                           onChange={(e) => handleInputChange('member3', 'yearBranch', e.target.value)}
-                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div className="space-y-3">
@@ -844,15 +810,15 @@ const ProtoPlanet = () => {
                             id="member3-iet-member"
                             checked={formData.member3.isIETMember}
                             onChange={(e) => handleInputChange('member3', 'isIETMember', e.target.checked)}
-                            className="w-4 h-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500"
+                            className="w-4 h-4 rounded border-purple-500/20 text-purple-500 focus:ring-purple-500 bg-white/10"
                           />
-                          <label htmlFor="member3-iet-member" className="ml-2 text-gray-700">
+                          <label htmlFor="member3-iet-member" className="ml-2 text-white">
                             IET Student Member
                           </label>
                         </div>
                         {formData.member3.isIETMember && (
                           <div>
-                            <label className="block text-gray-700 font-medium mb-2">
+                            <label className="block text-white font-medium mb-2">
                               IET Membership ID
                             </label>
                             <input
@@ -860,7 +826,7 @@ const ProtoPlanet = () => {
                               placeholder="Enter IET Membership ID"
                               value={formData.member3.ietMembershipId}
                               onChange={(e) => handleInputChange('member3', 'ietMembershipId', e.target.value)}
-                              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                              className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                             />
                           </div>
                         )}
@@ -871,14 +837,14 @@ const ProtoPlanet = () => {
                       <button
                         type="button"
                         onClick={() => setCurrentStep('team-details')}
-                        className="px-8 py-3 bg-white text-gray-700 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
+                        className="px-8 py-3 bg-white/10 text-white rounded-lg font-medium border border-purple-500/20 hover:bg-white/20 transition-colors"
                       >
                         ← Previous
                       </button>
                       <button
                         type="button"
                         onClick={() => setCurrentStep('project-abstract')}
-                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-sm"
+                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-[0_0_15px_rgba(147,51,234,0.3)]"
                       >
                         Next →
                       </button>
@@ -888,29 +854,29 @@ const ProtoPlanet = () => {
               ) : currentStep === 'project-abstract' ? (
                 <>
                   <div className="flex items-center gap-3 mb-6">
-                    <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
-                      💡
-                    </span>
-                    <h2 className="text-2xl font-bold text-gray-900">Project Abstract Submission - Level 1</h2>
+                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <Lightbulb className="w-7 h-7 text-white" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-white">Project Abstract Submission - Level 1</h2>
                   </div>
-                  <p className="text-gray-600 mb-8">
+                  <p className="text-gray-300 mb-8">
                     Describe your innovative hardware solution
                   </p>
 
                   <div className="space-y-6 max-w-6xl mx-auto">
                     <div>
-                      <label className="block text-gray-700 font-medium mb-2">
+                      <label className="block text-white font-medium mb-2">
                         Select Your Track <span className="text-purple-500">*</span>
                       </label>
                       <div className="space-y-3">
                         <button
                           type="button"
                           onClick={() => handleInputChange('projectTrack', '', 'IoT & Smart Environments')}
-                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white border ${
+                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white/10 border ${
                             formData.projectTrack === 'IoT & Smart Environments' 
                               ? 'border-purple-500 ring-1 ring-purple-500' 
-                              : 'border-gray-300'
-                          } rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm`}
+                              : 'border-purple-500/20'
+                          } rounded-lg text-white hover:bg-white/20 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left`}
                         >
                           <span className="text-xl">🌐</span>
                           IoT & Smart Environments
@@ -918,11 +884,11 @@ const ProtoPlanet = () => {
                         <button
                           type="button"
                           onClick={() => handleInputChange('projectTrack', '', 'Robotics & Intelligent Machines')}
-                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white border ${
+                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white/10 border ${
                             formData.projectTrack === 'Robotics & Intelligent Machines'
                               ? 'border-purple-500 ring-1 ring-purple-500'
-                              : 'border-gray-300'
-                          } rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm`}
+                              : 'border-purple-500/20'
+                          } rounded-lg text-white hover:bg-white/20 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left`}
                         >
                           <span className="text-xl">🤖</span>
                           Robotics & Intelligent Machines
@@ -930,11 +896,11 @@ const ProtoPlanet = () => {
                         <button
                           type="button"
                           onClick={() => handleInputChange('projectTrack', '', 'HealthTech & Human Augmentation')}
-                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white border ${
+                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white/10 border ${
                             formData.projectTrack === 'HealthTech & Human Augmentation'
                               ? 'border-purple-500 ring-1 ring-purple-500'
-                              : 'border-gray-300'
-                          } rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm`}
+                              : 'border-purple-500/20'
+                          } rounded-lg text-white hover:bg-white/20 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left`}
                         >
                           <span className="text-xl">🏥</span>
                           HealthTech & Human Augmentation
@@ -942,11 +908,11 @@ const ProtoPlanet = () => {
                         <button
                           type="button"
                           onClick={() => handleInputChange('projectTrack', '', 'Sustainable & Clean Tech')}
-                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white border ${
+                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white/10 border ${
                             formData.projectTrack === 'Sustainable & Clean Tech'
                               ? 'border-purple-500 ring-1 ring-purple-500'
-                              : 'border-gray-300'
-                          } rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm`}
+                              : 'border-purple-500/20'
+                          } rounded-lg text-white hover:bg-white/20 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left`}
                         >
                           <span className="text-xl">🌱</span>
                           Sustainable & Clean Tech
@@ -955,7 +921,7 @@ const ProtoPlanet = () => {
                     </div>
 
                     <div>
-                      <label className="block text-gray-700 font-medium mb-2">
+                      <label className="block text-white font-medium mb-2">
                         Project Title <span className="text-purple-500">*</span>
                       </label>
                       <input
@@ -963,12 +929,12 @@ const ProtoPlanet = () => {
                         placeholder="Concise and descriptive title"
                         value={formData.projectTitle}
                         onChange={(e) => handleInputChange('projectTitle', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-gray-700 font-medium mb-2">
+                      <label className="block text-white font-medium mb-2">
                         Problem Statement <span className="text-purple-500">*</span>
                       </label>
                       <textarea
@@ -976,12 +942,12 @@ const ProtoPlanet = () => {
                         placeholder="Brief description of the problem you're solving..."
                         value={formData.problemStatement}
                         onChange={(e) => handleInputChange('problemStatement', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm resize-none"
+                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
                       ></textarea>
                     </div>
 
                     <div>
-                      <label className="block text-gray-700 font-medium mb-2">
+                      <label className="block text-white font-medium mb-2">
                         Proposed Solution <span className="text-purple-500">*</span>
                       </label>
                       <textarea
@@ -989,12 +955,12 @@ const ProtoPlanet = () => {
                         placeholder="How your project addresses the problem..."
                         value={formData.proposedSolution}
                         onChange={(e) => handleInputChange('proposedSolution', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm resize-none"
+                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
                       ></textarea>
                     </div>
 
                     <div>
-                      <label className="block text-gray-700 font-medium mb-2">
+                      <label className="block text-white font-medium mb-2">
                         Basic System Architecture <span className="text-purple-500">*</span>
                       </label>
                       <textarea
@@ -1002,12 +968,12 @@ const ProtoPlanet = () => {
                         placeholder="Overview of hardware/system components..."
                         value={formData.systemArchitecture}
                         onChange={(e) => handleInputChange('systemArchitecture', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm resize-none"
+                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
                       ></textarea>
                     </div>
 
                     <div>
-                      <label className="block text-gray-700 font-medium mb-2">
+                      <label className="block text-white font-medium mb-2">
                         Expected Technological and Social Impact <span className="text-purple-500">*</span>
                       </label>
                       <textarea
@@ -1015,7 +981,7 @@ const ProtoPlanet = () => {
                         placeholder="Who benefits, and how?..."
                         value={formData.technologicalImpact}
                         onChange={(e) => handleInputChange('technologicalImpact', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm resize-none"
+                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
                       ></textarea>
                     </div>
 
@@ -1023,14 +989,14 @@ const ProtoPlanet = () => {
                       <button
                         type="button"
                         onClick={() => setCurrentStep('team-members')}
-                        className="px-8 py-3 bg-white text-gray-700 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
+                        className="px-8 py-3 bg-white/10 text-white rounded-lg font-medium border border-purple-500/20 hover:bg-white/20 transition-colors"
                       >
                         ← Previous
                       </button>
                       <button
                         type="button"
                         onClick={() => setCurrentStep('payment')}
-                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-sm"
+                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-[0_0_15px_rgba(147,51,234,0.3)]"
                       >
                         Next →
                       </button>
@@ -1043,24 +1009,24 @@ const ProtoPlanet = () => {
                   <div className="space-y-8 max-w-6xl mx-auto">
                     <div>
                       <div className="flex items-center gap-3 mb-6">
-                        <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
-                          💳
-                        </span>
-                        <h2 className="text-2xl font-bold text-gray-900">Registration Fee</h2>
+                        <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                          <CreditCard className="w-7 h-7 text-white" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-white">Registration Fee</h2>
                       </div>
 
                       <div className="space-y-3">
-                        <label className="block text-gray-700 font-medium mb-2">
+                        <label className="block text-white font-medium mb-2">
                           Fee Type <span className="text-purple-500">*</span>
                         </label>
                         <button
                           type="button"
                           onClick={() => handleInputChange('feeType', '', 'IET Member Team')}
-                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white border ${
+                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white/10 border ${
                             formData.feeType === 'IET Member Team' 
                               ? 'border-purple-500 ring-1 ring-purple-500' 
-                              : 'border-gray-300'
-                          } rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm`}
+                              : 'border-purple-500/20'
+                          } rounded-lg text-white hover:bg-white/20 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left`}
                         >
                           <input 
                             type="radio" 
@@ -1068,21 +1034,21 @@ const ProtoPlanet = () => {
                             value="IET Member Team" 
                             checked={formData.feeType === 'IET Member Team'}
                             onChange={() => handleInputChange('feeType', '', 'IET Member Team')}
-                            className="w-4 h-4 border-gray-300 text-purple-500 focus:ring-purple-500" 
+                            className="w-4 h-4 border-purple-500/20 text-purple-500 focus:ring-purple-500 bg-white/10" 
                           />
                           <div>
-                            <div className="font-medium">IET Member Team - ₹300</div>
-                            <div className="text-sm text-gray-500">At least one member must be an IET Student Member</div>
+                            <div className="font-medium text-white">IET Member Team - ₹300</div>
+                            <div className="text-sm text-gray-300">At least one member must be an IET Student Member</div>
                           </div>
                         </button>
                         <button
                           type="button"
                           onClick={() => handleInputChange('feeType', '', 'Non-Member Team')}
-                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white border ${
+                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white/10 border ${
                             formData.feeType === 'Non-Member Team'
                               ? 'border-purple-500 ring-1 ring-purple-500'
-                              : 'border-gray-300'
-                          } rounded-lg text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left shadow-sm`}
+                              : 'border-purple-500/20'
+                          } rounded-lg text-white hover:bg-white/20 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left`}
                         >
                           <input 
                             type="radio" 
@@ -1090,11 +1056,11 @@ const ProtoPlanet = () => {
                             value="Non-Member Team" 
                             checked={formData.feeType === 'Non-Member Team'}
                             onChange={() => handleInputChange('feeType', '', 'Non-Member Team')}
-                            className="w-4 h-4 border-gray-300 text-purple-500 focus:ring-purple-500" 
+                            className="w-4 h-4 border-purple-500/20 text-purple-500 focus:ring-purple-500 bg-white/10" 
                           />
                           <div>
-                            <div className="font-medium">Non-Member Team - ₹600</div>
-                            <div className="text-sm text-gray-500">For teams without IET membership</div>
+                            <div className="font-medium text-white">Non-Member Team - ₹600</div>
+                            <div className="text-sm text-gray-300">For teams without IET membership</div>
                           </div>
                         </button>
                       </div>
@@ -1103,31 +1069,31 @@ const ProtoPlanet = () => {
                     {/* Bank Details Section */}
                     <div>
                       <div className="flex items-center gap-3 mb-6">
-                        <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
-                          🏦
-                        </span>
-                        <h2 className="text-2xl font-bold text-gray-900">Bank Details for Payment</h2>
+                        <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                          <span className="text-2xl">🏦</span>
+                        </div>
+                        <h2 className="text-2xl font-bold text-white">Bank Details for Payment</h2>
                       </div>
 
-                      <div className="space-y-4 text-gray-900">
+                      <div className="space-y-4 text-white">
                         <div>
-                          <div className="text-gray-600">Bank Name:</div>
+                          <div className="text-gray-300">Bank Name:</div>
                           <div>Axis Bank</div>
                         </div>
                         <div>
-                          <div className="text-gray-600">Account Name:</div>
+                          <div className="text-gray-300">Account Name:</div>
                           <div>INSTITUTION OF ENGINEERING AND TECHNOLOGY-LOCAL NETWORK ACCOUNT HYDERABAD</div>
                         </div>
                         <div>
-                          <div className="text-gray-600">Account Number:</div>
+                          <div className="text-gray-300">Account Number:</div>
                           <div>92402004037404S</div>
                         </div>
                         <div>
-                          <div className="text-gray-600">IFSC Code:</div>
+                          <div className="text-gray-300">IFSC Code:</div>
                           <div>UTIB0000009</div>
                         </div>
                         <div>
-                          <div className="text-gray-600">Branch Name:</div>
+                          <div className="text-gray-300">Branch Name:</div>
                           <div>Bangalore Main Branch</div>
                         </div>
                       </div>
@@ -1136,26 +1102,26 @@ const ProtoPlanet = () => {
                     {/* Transaction Details Section */}
                     <div className="space-y-6">
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">
-                          Transaction Reference Number
+                        <label className="block text-white font-medium mb-2">
+                          Transaction Reference Number <span className="text-purple-500">*</span>
                         </label>
                         <input
                           type="text"
                           placeholder="Enter transaction ID after payment"
                           value={formData.transactionId}
                           onChange={(e) => handleInputChange('transactionId', '', e.target.value)}
-                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-sm"
+                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
-                        <p className="text-gray-500 text-sm mt-1">Enter the transaction ID received after payment</p>
+                        <p className="text-gray-300 text-sm mt-1">Enter the transaction ID received after payment</p>
                       </div>
 
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">
-                          Upload Transaction Screenshot
+                        <label className="block text-white font-medium mb-2">
+                          Upload Transaction Screenshot <span className="text-purple-500">*</span>
                         </label>
                         <div 
                           onClick={handleUploadClick}
-                          className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-purple-500 transition-colors cursor-pointer"
+                          className="border-2 border-dashed border-purple-500/20 rounded-lg p-8 hover:border-purple-500 transition-colors cursor-pointer bg-white/5"
                         >
                           <input
                             type="file"
@@ -1172,13 +1138,13 @@ const ProtoPlanet = () => {
                                   alt="Transaction Screenshot" 
                                   className="max-h-48 mx-auto mb-2"
                                 />
-                                <p className="text-sm text-gray-500">Click to change image</p>
+                                <p className="text-sm text-gray-300">Click to change image</p>
                               </div>
                             ) : (
                               <>
                                 <span className="text-2xl mb-2">⬆️</span>
-                                <div className="text-gray-900 font-medium">Click to upload screenshot</div>
-                                <div className="text-gray-500 text-sm">PNG, JPG up to 10MB</div>
+                                <div className="text-white font-medium">Click to upload screenshot</div>
+                                <div className="text-gray-300 text-sm">PNG, JPG up to 10MB</div>
                               </>
                             )}
                           </div>
@@ -1189,15 +1155,15 @@ const ProtoPlanet = () => {
                     {/* Declaration Section */}
                     <div>
                       <div className="flex items-center gap-3 mb-6">
-                        <span className="w-8 h-8 flex items-center justify-center bg-purple-500/20 rounded-lg text-xl">
-                          📝
-                        </span>
-                        <h2 className="text-2xl font-bold text-gray-900">Declaration</h2>
+                        <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                          <span className="text-2xl">📝</span>
+                        </div>
+                        <h2 className="text-2xl font-bold text-white">Declaration</h2>
                       </div>
 
                       <div className="space-y-4">
-                        <p className="text-gray-900">By submitting this form, we confirm that:</p>
-                        <ul className="list-disc text-gray-700 space-y-2 ml-5">
+                        <p className="text-white">By submitting this form, we confirm that:</p>
+                        <ul className="list-disc text-gray-300 space-y-2 ml-5">
                           <li>All project work is original and developed by the team</li>
                           <li>Our institution is located in Telangana, Andhra Pradesh, or Chhattisgarh</li>
                           <li>We agree to participate in both offline rounds if shortlisted</li>
@@ -1210,9 +1176,9 @@ const ProtoPlanet = () => {
                             id="terms"
                             checked={formData.termsAccepted}
                             onChange={(e) => handleInputChange('termsAccepted', '', e.target.checked)}
-                            className="w-4 h-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500"
+                            className="w-4 h-4 rounded border-purple-500/20 text-purple-500 focus:ring-purple-500 bg-white/10"
                           />
-                          <label htmlFor="terms" className="text-gray-700">
+                          <label htmlFor="terms" className="text-white">
                             I/We agree to the above terms and conditions <span className="text-purple-500">*</span>
                           </label>
                         </div>
@@ -1224,14 +1190,14 @@ const ProtoPlanet = () => {
                       <button
                         type="button"
                         onClick={() => setCurrentStep('project-abstract')}
-                        className="px-8 py-3 bg-white text-gray-700 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
+                        className="px-8 py-3 bg-white/10 text-white rounded-lg font-medium border border-purple-500/20 hover:bg-white/20 transition-colors"
                       >
                         ← Previous
                       </button>
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-[0_0_15px_rgba(147,51,234,0.3)] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isSubmitting ? (
                           <>

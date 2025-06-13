@@ -52,7 +52,7 @@ const Navigation = () => {
           subItems: [
             { name: 'InnoThon', href: '#events' },
             { name: 'ProtoPlanet', href: '/protoplanet' },
-            { name: 'StartupSphere', href: '#events' },
+            { name: 'StartupSphere', href: '/startupsphere' },
             { name: 'AppAstral', href: '#events' }
           ]
         },
@@ -65,11 +65,7 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isDark 
-        ? 'bg-background/95 backdrop-blur-md text-foreground' 
-        : 'bg-white/95 backdrop-blur-md text-foreground'
-    } ${isScrolled ? 'shadow-lg' : 'shadow-md'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-black border-b border-white/20 backdrop-blur-md text-white shadow-[0_4px_20px_-2px_rgba(255,255,255,0.1)]`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -98,9 +94,7 @@ const Navigation = () => {
                     
                     {isEventsDropdownOpen && (
                       <div 
-                        className={`absolute top-full left-0 mt-2 w-48 border border-border rounded-lg shadow-lg py-2 ${
-                          isDark ? 'bg-background/95' : 'bg-white/95'
-                        } backdrop-blur-md`}
+                        className={`absolute top-full left-0 mt-2 w-48 border border-white/20 rounded-lg shadow-[0_4px_20px_-2px_rgba(255,255,255,0.1)] py-2 bg-black backdrop-blur-md`}
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
                       >
@@ -110,39 +104,27 @@ const Navigation = () => {
                               <div className="group relative">
                                 <a
                                   href={dropdownItem.href}
-                                  className={`flex items-center justify-between px-4 py-2 hover:opacity-80 hover:bg-accent transition-all duration-200`}
+                                  className={`flex items-center justify-between px-4 py-2 hover:bg-white/10 hover:text-white transition-all duration-200 group`}
                                 >
                                   <span>{dropdownItem.name}</span>
-                                  <ChevronDown className="w-3 h-3 rotate-[-90deg]" />
+                                  <ChevronDown className="w-3 h-3 rotate-[-90deg] group-hover:text-white" />
                                 </a>
-                                <div className={`absolute left-full top-0 w-40 border border-border rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ${
-                                  isDark ? 'bg-background/95' : 'bg-white/95'
-                                } backdrop-blur-md text-foreground`}>
+                                <div className={`absolute left-full top-0 w-40 border border-white/20 rounded-lg shadow-[0_4px_20px_-2px_rgba(255,255,255,0.1)] py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 bg-black backdrop-blur-md text-white`}>
                                   {dropdownItem.subItems.map((subItem) => (
-                                    subItem.name === 'ProtoPlanet' ? (
-                                      <Link
-                                        key={subItem.name}
-                                        to={subItem.href}
-                                        className={`block px-4 py-2 hover:opacity-80 hover:bg-accent transition-all duration-200`}
-                                      >
-                                        {subItem.name}
-                                      </Link>
-                                    ) : (
-                                      <a
-                                        key={subItem.name}
-                                        href={subItem.href}
-                                        className={`block px-4 py-2 hover:opacity-80 hover:bg-accent transition-all duration-200`}
-                                      >
-                                        {subItem.name}
-                                      </a>
-                                    )
+                                    <a
+                                      key={subItem.name}
+                                      href={subItem.href}
+                                      className="block px-4 py-2 hover:bg-white/10 hover:text-white transition-all duration-200"
+                                    >
+                                      {subItem.name}
+                                    </a>
                                   ))}
                                 </div>
                               </div>
                             ) : (
                               <a
                                 href={dropdownItem.href}
-                                className={`block px-4 py-2 hover:opacity-80 hover:bg-accent transition-all duration-200`}
+                                className="block px-4 py-2 hover:bg-white/10 hover:text-white transition-all duration-200"
                               >
                                 {dropdownItem.name}
                               </a>
@@ -177,7 +159,7 @@ const Navigation = () => {
           <div className="md:hidden flex items-center gap-4">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`hover:opacity-80 focus:outline-none transition-opacity duration-200`}
+              className={`hover:bg-white/10 p-2 rounded-lg focus:outline-none transition-all duration-200`}
               aria-label="Toggle menu"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -193,50 +175,39 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className={`md:hidden border-t border-border ${
-            isDark ? 'bg-background/95' : 'bg-white/95'
-          } backdrop-blur-md text-foreground`}>
+          <div className={`md:hidden border-t border-white/20 bg-black backdrop-blur-md text-white`}>
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navItems.map((item) => (
                 <div key={item.name}>
                   {item.hasDropdown ? (
                     <div className="space-y-1">
-                      <div className={`px-3 py-2 font-medium border-b border-border`}>
+                      <div className={`px-3 py-2 font-medium border-b border-white/10 hover:bg-white/10 transition-all duration-200`}>
                         {item.name}
                       </div>
                       {item.dropdownItems?.map((dropdownItem) => (
                         <div key={dropdownItem.name} className="ml-4">
                           {dropdownItem.subItems ? (
                             <div className="space-y-1">
-                              <div className={`px-3 py-2 text-sm font-medium`}>
+                              <div className={`px-3 py-2 text-sm font-medium hover:bg-white/10 transition-all duration-200`}>
                                 {dropdownItem.name}
                               </div>
-                              {dropdownItem.subItems.map((subItem) => (
-                                subItem.name === 'ProtoPlanet' ? (
-                                  <Link
-                                    key={subItem.name}
-                                    to={subItem.href}
-                                    className={`block ml-4 px-3 py-2 text-sm hover:opacity-80 transition-opacity duration-200`}
-                                    onClick={() => setIsMenuOpen(false)}
-                                  >
-                                    {subItem.name}
-                                  </Link>
-                                ) : (
+                              <div className="ml-4 space-y-1">
+                                {dropdownItem.subItems.map((subItem) => (
                                   <a
                                     key={subItem.name}
                                     href={subItem.href}
-                                    className={`block ml-4 px-3 py-2 text-sm hover:opacity-80 transition-opacity duration-200`}
+                                    className="block px-3 py-2 text-sm hover:bg-white/10 hover:text-white transition-all duration-200"
                                     onClick={() => setIsMenuOpen(false)}
                                   >
                                     {subItem.name}
                                   </a>
-                                )
-                              ))}
+                                ))}
+                              </div>
                             </div>
                           ) : (
                             <a
                               href={dropdownItem.href}
-                              className={`block px-3 py-2 hover:opacity-80 hover:bg-accent transition-all duration-200`}
+                              className="block px-3 py-2 text-sm hover:bg-white/10 hover:text-white transition-all duration-200"
                               onClick={() => setIsMenuOpen(false)}
                             >
                               {dropdownItem.name}
@@ -249,7 +220,7 @@ const Navigation = () => {
                     item.name === 'Home' ? (
                       <Link
                         to={item.href}
-                        className={`block px-3 py-2 font-medium hover:opacity-80 transition-opacity duration-200`}
+                        className={`block px-3 py-2 font-medium hover:bg-white/10 hover:text-white transition-all duration-200`}
                         onClick={() => setIsMenuOpen(false)}
                       >
                         {item.name}
@@ -257,7 +228,7 @@ const Navigation = () => {
                     ) : (
                       <a
                         href={item.href}
-                        className={`block px-3 py-2 font-medium hover:opacity-80 transition-opacity duration-200`}
+                        className={`block px-3 py-2 font-medium hover:bg-white/10 hover:text-white transition-all duration-200`}
                         onClick={() => setIsMenuOpen(false)}
                       >
                         {item.name}
