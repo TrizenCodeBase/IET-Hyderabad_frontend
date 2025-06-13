@@ -49,18 +49,20 @@ const PATNRegistration = () => {
     setError('');
 
     try {
+      // Configure axios defaults for CORS
+      axios.defaults.withCredentials = true;
+      
       // Make API call to backend
-      const response = await axios.post(
-        'https://iet-hyderabad-backend.llp.trizenventures.com/api/patn/register',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          withCredentials: true
-        }
-      );
+      const response = await axios({
+        method: 'post',
+        url: 'https://iet-hyderabad-backend.llp.trizenventures.com/api/patn/register',
+        data: formData,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        withCredentials: true
+      });
       
       if (response.data.success) {
         setShowSuccess(true);
