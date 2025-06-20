@@ -324,7 +324,7 @@ const ProtoPlanet = () => {
         message: 'Uploading registration data...'
       });
       
-      const response = await fetch('http://localhost:5001/api/protoplan/register', {
+      const response = await fetch('https://iet-hyderabad-backend.llp.trizenventures.com/api/protoplan/register', {
         method: 'POST',
         body: submitData
       });
