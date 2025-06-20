@@ -1,71 +1,290 @@
-import React from 'react';
-import { CalendarDays, Users, Presentation, Trophy } from 'lucide-react';
+import React, { useEffect } from 'react';
+import ScrollReveal from 'scrollreveal';
+import { CalendarDays, Video,Presentation, Trophy, Clock } from 'lucide-react';
 
 const PATNTimelineSection = () => {
-  const timelineSteps = [
-    {
-      icon: <CalendarDays className="w-6 h-6 text-[#3B82F6]" />,
-      title: "Registration",
-      date: "Until July 20, 2025",
-      description: "Submit your application with presentation topic and abstract"
-    },
-    {
-      icon: <Users className="w-6 h-6 text-[#3B82F6]" />,
-      title: "Participant Selection",
-      date: "July 25, 2025",
-      description: "Selected participants will be notified via email"
-    },
-    {
-      icon: <Presentation className="w-6 h-6 text-[#3B82F6]" />,
-      title: "Competition Day",
-      date: "August 5, 2025",
-      description: "Present your topic to the jury panel and audience"
-    },
-    {
-      icon: <Trophy className="w-6 h-6 text-[#3B82F6]" />,
-      title: "Results & Awards",
-      date: "August 5, 2025",
-      description: "Winners announcement and prize distribution"
-    }
-  ];
+  useEffect(() => {
+    ScrollReveal().reveal('.timeline-header', {
+      origin: 'top',
+      distance: '50px',
+      duration: 800,
+      easing: 'ease-out',
+    });
+
+    ScrollReveal().reveal('.timeline-event', {
+      origin: 'right',
+      distance: '50px',
+      duration: 800,
+      easing: 'ease-out',
+      interval: 200,
+    });
+
+    ScrollReveal().reveal('.presentation-format-box', {
+      origin: 'bottom',
+      distance: '50px',
+      duration: 800,
+      easing: 'ease-out',
+    });
+  }, []);
 
   return (
-    <section className="py-16 bg-black">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 [text-shadow:_0_1px_10px_rgb(59_130_246_/_20%)]">
-            Event Timeline
-          </h2>
-          <div className="h-1 w-24 mx-auto bg-[#3B82F6] rounded-full shadow-[0_0_20px_rgba(59,130,246,0.3)]"></div>
-        </div>
+    <section className="timeline-container">
+      <style>{`
+        .timeline-container {
+           font-family: 'Times New Roman', Times, serif;
+          min-height: 100vh;
+          font-size: 1.3rem;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 3rem 1rem;
+          background: #000;
+          color: white;
+        }
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {timelineSteps.map((step, index) => (
-            <div
-              key={index}
-              className="relative overflow-hidden rounded-lg border border-[#3B82F6]/20 bg-black/40 p-6 
-              shadow-[0_4px_20px_-2px_rgba(59,130,246,0.25),0_0_8px_0_rgba(59,130,246,0.1)] 
-              hover:shadow-[0_8px_30px_-2px_rgba(59,130,246,0.35),0_0_12px_0_rgba(59,130,246,0.2)]
-              hover:border-[#3B82F6]/40 group backdrop-blur-sm transition-all duration-500
-              before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-b before:from-[#3B82F6]/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity"
-            >
-              <div className="relative flex flex-col items-center text-center">
-                <div className="p-3 rounded-full bg-[#3B82F6]/5 mb-4 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
-                  {step.icon}
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2 [text-shadow:_0_1px_5px_rgb(59_130_246_/_15%)]">
-                  {step.title}
-                </h3>
-                <div className="text-[#3B82F6] font-semibold mb-3 [text-shadow:_0_1px_8px_rgb(59_130_246_/_20%)]">
-                  {step.date}
-                </div>
-                <p className="text-gray-300">
-                  {step.description}
-                </p>
+        .timeline-header {
+          text-align: center;
+          max-width: 64rem;
+          width: 100%;
+          margin-bottom: 4rem;
+        }
+
+        .timeline-header h1 {
+          font-size: 2.5rem;
+          font-weight: 800;
+        }
+
+        .timeline-header p {
+          margin-top: 0.75rem;
+          font-size: 1.125rem;
+          color: #a0aec0;
+        }
+
+        .timeline-main {
+          position: relative;
+          max-width: 64rem;
+          width: 100%;
+        }
+
+        .timeline-event {
+          display: flex;
+          position: relative;
+          margin-bottom: 3rem;
+          z-index: 10;
+        }
+
+        .timeline-icon-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-top: 30px;
+          margin-right: 1rem;
+          position: relative;
+        }
+
+        .timeline-icon {
+          width: 3.5rem;
+          height: 3.5rem;
+          border-radius: 9999px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          z-index: 20;
+          flex-shrink: 0;
+        }
+
+        .timeline-yellow {
+          background: linear-gradient(145deg, #22BBE0, #0b4c5f);
+          color: white;
+        }
+
+        .timeline-connector {
+          position: absolute;
+          left: 50%;
+          top: 3.5rem;
+          width: 3px;
+          height: calc(100% + 3rem);
+          background-color: #fff;
+          transform: translateX(-50%);
+          z-index: 10;
+        }
+
+        .timeline-event:last-child .timeline-connector {
+          display: none;
+        }
+
+        .timeline-content {
+          background-color: #0a0a0a;
+          border-radius: 0.5rem;
+          padding: 1rem;
+          flex: 1;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-title {
+          display: flex;
+          justify-content: space-between;
+          align-items: start;
+        }
+
+        .timeline-title h2 {
+          font-size: 1.3rem;
+          font-weight: 700;
+          color: white;
+        }
+
+        .timeline-date {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.8rem;
+          color: #a0aec0;
+          border: 1px solid #374151;
+          border-radius: 9999px;
+          padding: 0.25rem 0.75rem;
+        }
+
+        .timeline-desc {
+          margin-top: 0.5rem;
+          font-size: 1rem;
+          color: #a0aec0;
+          line-height: 1.6;
+        }
+
+        .presentation-format-box {
+          background: #0a0a0a;
+          box-shadow: 0 0 25px rgba(6, 182, 212, 0.4);
+          border-radius: 1rem;
+          padding: 2rem;
+          max-width: 40rem;
+          width: 100%;
+          text-align: center;
+          margin: 3rem auto 0;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .presentation-format-box:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 0 40px rgba(6, 182, 212, 0.6);
+        }
+
+        .presentation-format-box svg {
+          color: #22BBE0;
+          width: 3rem;
+          height: 3rem;
+          margin-bottom: 1rem;
+        }
+
+        .presentation-format-box h2 {
+          color: #ffffff;
+          font-weight: 700;
+          font-size: 1.75rem;
+          margin-bottom: 1rem;
+        }
+
+        .presentation-format-box p {
+          color: #e2e8f0;
+          font-size: 1rem;
+          margin-bottom: 0.5rem;
+          line-height: 1.5;
+        }
+
+        .highlight {
+          color: #22BBE0;
+          font-weight: 700;
+          font-size: 1.1rem;
+        }
+          .icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+      `}</style>
+
+      <div className="timeline-header">
+        <h1>Event Timeline</h1>
+        <p>Follow these important dates to participate in PATN 2025</p>
+      </div>
+
+      <div className="timeline-main">
+        {/* Event 1 */}
+        <div className="timeline-event">
+          <div className="timeline-icon-wrapper">
+            <div className="timeline-icon timeline-yellow">
+              <Video />
+            </div>
+            <div className="timeline-connector"></div>
+          </div>
+          <div className="timeline-content">
+            <div className="timeline-title">
+              <h2>Registration Deadline</h2>
+              <div className="timeline-date">
+                <CalendarDays size={16} />
+                <span>July 20, 2025</span>
               </div>
             </div>
-          ))}
+            <p className="timeline-desc">
+              Last date to submit your 3-minute video presentation on YouTube
+            </p>
+          </div>
         </div>
+
+        {/* Event 2 */}
+        <div className="timeline-event">
+          <div className="timeline-icon-wrapper">
+            <div className="timeline-icon timeline-yellow">
+            <Presentation />
+              
+            </div>
+            <div className="timeline-connector"></div>
+          </div>
+          <div className="timeline-content">
+            <div className="timeline-title">
+              <h2>Zonal Level (Local Heats)</h2>
+              <div className="timeline-date">
+                <CalendarDays size={16} />
+                <span>August 2, 2025</span>
+              </div>
+            </div>
+            <p className="timeline-desc">
+              Present in person at your respective zonal center
+            </p>
+          </div>
+        </div>
+
+        {/* Event 3 */}
+        <div className="timeline-event">
+          <div className="timeline-icon-wrapper">
+            <div className="timeline-icon timeline-yellow">
+              <Trophy />
+            </div>
+          </div>
+          <div className="timeline-content">
+            <div className="timeline-title">
+              <h2>Grand Finale</h2>
+              <div className="timeline-date">
+                <CalendarDays size={16} />
+                <span>October 11, 2025</span>
+              </div>
+            </div>
+            <p className="timeline-desc">
+              Final competition at T-Hub, Hyderabad
+            </p>
+          </div>
+        </div>
+
+        {/* Presentation Format Box */}
+        <div className="presentation-format-box">
+  <div className="icon-container">
+    <Clock />
+  </div>
+  <h2>Presentation Format</h2>
+  <p><span className="highlight">10 minutes</span> presentation</p>
+  <p><span className="highlight">5 minutes</span> Q&amp;A session</p>
+  <p>Present on any engineering or technology topic of your choice</p>
+</div>
       </div>
     </section>
   );

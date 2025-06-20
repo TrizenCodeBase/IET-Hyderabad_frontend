@@ -1,123 +1,247 @@
-import React from 'react';
-import { Zap, Star, Calendar, MapPin } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ScrollReveal from 'scrollreveal';
+import { Calendar, MapPin, Trophy } from 'lucide-react';
 
 const PATNHeroSection = () => {
-  const scrollToRegistration = () => {
-    const registrationSection = document.getElementById('registration');
-    if (registrationSection) {
-      registrationSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Configure ScrollReveal animations
+    ScrollReveal().reveal('.patn-event-badge', {
+      origin: 'top',
+      distance: '30px',
+      duration: 800,
+      delay: 100,
+      easing: 'ease-in-out',
+      scale: 0.9,
+      beforeReveal: (el) => {
+        el.style.opacity = 0;
+        el.style.transform = 'translateY(-30px) scale(0.9)';
+      },
+      afterReveal: (el) => {
+        el.style.opacity = 1;
+        el.style.transform = 'translateY(0) scale(1)';
+      }
+    });
+
+    ScrollReveal().reveal('.patn-title-main, .patn-description', {
+      origin: 'top',
+      distance: '30px',
+      duration: 1000,
+      delay: 200,
+      easing: 'ease-in-out',
+      interval: 100,
+    });
+
+    ScrollReveal().reveal('.patn-event-info-item, .patn-prize-title, .patn-prize-subtext', {
+      origin: 'bottom',
+      distance: '30px',
+      duration: 1000,
+      delay: 300,
+      easing: 'ease-in-out',
+      interval: 100,
+    });
+
+    ScrollReveal().reveal('.patn-btn-register', {
+      origin: 'bottom',
+      distance: '20px',
+      duration: 1000,
+      delay: 500,
+      scale: 0.9,
+      easing: 'ease-in-out',
+    });
+  }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
-      {/* Background with subtle star-like dots */}
-      <div className="absolute inset-0">
-        {/* Animated stars/dots effect */}
-        <div className="absolute inset-0">
-          <div className="stars-small"></div>
-          <div className="stars-medium"></div>
-          <div className="stars-large"></div>
-        </div>
-        
-        {/* Floating orbs with subtle glow */}
-        <div className="absolute top-20 left-10 w-2 h-2 bg-[#3B82F6] rounded-full blur-sm animate-pulse shadow-[0_0_15px_rgba(59,130,246,0.4)]"></div>
-        <div className="absolute bottom-20 right-10 w-1.5 h-1.5 bg-[#3B82F6] rounded-full blur-sm animate-pulse shadow-[0_0_15px_rgba(59,130,246,0.4)]" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-20 w-3 h-3 bg-[#3B82F6] rounded-full blur-sm animate-pulse shadow-[0_0_15px_rgba(59,130,246,0.4)]" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/3 right-24 w-2 h-2 bg-[#3B82F6] rounded-full blur-sm animate-pulse shadow-[0_0_15px_rgba(59,130,246,0.4)]" style={{ animationDelay: '3s' }}></div>
-      </div>
-      
-      <div className="relative z-10 text-center px-4 sm:px-6 max-w-screen-lg mx-auto mt-16 md:mt-20">
-        <div className="animate-fade-in space-y-6">
-          <div className="mb-6">
-            <div className="relative overflow-hidden inline-flex items-center gap-2 bg-black/40 backdrop-blur-xl border border-[#3B82F6]/20 rounded-full px-4 py-1.5 mb-4 
-              shadow-[0_4px_20px_-2px_rgba(59,130,246,0.25),0_0_8px_0_rgba(59,130,246,0.1)] 
-              hover:shadow-[0_8px_30px_-2px_rgba(59,130,246,0.35),0_0_12px_0_rgba(59,130,246,0.2)]
-              hover:border-[#3B82F6]/40 transition-all duration-500
-              before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-b before:from-[#3B82F6]/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity">
-              <span className="inline-block w-1 h-1 rounded-full bg-[#3B82F6] animate-ping shadow-[0_0_10px_rgba(59,130,246,0.4)]"></span>
-              <p className="text-xs font-medium text-white tracking-wide">Registration Open</p>
-            </div>
-            
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-3 text-white [text-shadow:_0_2px_15px_rgb(59_130_246_/_25%)]">
-              Present Around <span className="text-[#1E90FF]">the Network</span>
-            </h1>
-            <div className="h-0.5 w-32 mx-auto mb-4 rounded-full bg-[#3B82F6] shadow-[0_0_30px_rgba(59,130,246,0.4)]"></div>
-          </div>
-          
-          <h2 className="text-xl md:text-2xl font-bold mb-2 text-[#3B82F6] tracking-wide [text-shadow:_0_1px_10px_rgb(59_130_246_/_30%)]">
-            PATN - 2025
-          </h2>
-          
-          <div className="relative overflow-hidden inline-flex items-center gap-2 bg-black/40 backdrop-blur-xl border border-[#3B82F6]/20 rounded-full px-4 py-2 mb-4 
-            shadow-[0_4px_20px_-2px_rgba(59,130,246,0.25),0_0_8px_0_rgba(59,130,246,0.1)] 
-            hover:shadow-[0_8px_30px_-2px_rgba(59,130,246,0.35),0_0_12px_0_rgba(59,130,246,0.2)]
-            hover:border-[#3B82F6]/40 transition-all duration-500
-            before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-b before:from-[#3B82F6]/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity">
-            <Zap className="w-3 h-3 text-white" />
-            <p className="text-sm font-semibold text-white tracking-wide">
-              Organized by IET Hyderabad Local Network
-            </p>
-          </div>
-          
-          <p className="text-lg md:text-xl text-gray-300 mb-6 max-w-3xl mx-auto [text-shadow:_0_1px_5px_rgb(0_0_0_/_50%)]">
-            Showcase your presentation skills and technical knowledge
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-white">
-            <div className="relative overflow-hidden inline-flex items-center gap-2 bg-black/40 backdrop-blur-xl border border-[#3B82F6]/20 rounded-full px-3 py-1.5 
-              shadow-[0_4px_20px_-2px_rgba(59,130,246,0.25),0_0_8px_0_rgba(59,130,246,0.1)] 
-              hover:shadow-[0_8px_30px_-2px_rgba(59,130,246,0.35),0_0_12px_0_rgba(59,130,246,0.2)]
-              hover:border-[#3B82F6]/40 transition-all duration-500
-              before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-b before:from-[#3B82F6]/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity">
-              <Calendar className="w-3 h-3 text-[#3B82F6]" />
-              <span className="text-sm">Registration: Until July 20, 2025</span>
-            </div>
-            <div className="relative overflow-hidden inline-flex items-center gap-2 bg-black/40 backdrop-blur-xl border border-[#3B82F6]/20 rounded-full px-3 py-1.5 
-              shadow-[0_4px_20px_-2px_rgba(59,130,246,0.25),0_0_8px_0_rgba(59,130,246,0.1)] 
-              hover:shadow-[0_8px_30px_-2px_rgba(59,130,246,0.35),0_0_12px_0_rgba(59,130,246,0.2)]
-              hover:border-[#3B82F6]/40 transition-all duration-500
-              before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-b before:from-[#3B82F6]/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity">
-              <MapPin className="w-3 h-3 text-[#3B82F6]" />
-              <span className="text-sm">VIT-AP University, Amaravati</span>
-            </div>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
-            
-          </div>
-        </div>
-      </div>
-
+    <>
       <style>
         {`
-          @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 0.7; }
+          .patn-hero-wrapper {
+            position: relative;
+            width: 100%;
+            font-family: 'Times New Roman', Times, serif;
+            color: white;
+            overflow-x: hidden;
+            padding: 20px 0;
           }
-          
-          .stars-small, .stars-medium, .stars-large {
+
+          .patn-content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+          }
+
+          .patn-circle-bg-1,
+          .patn-circle-bg-2,
+          .patn-circle-bg-3 {
             position: absolute;
-            inset: 0;
-            background-image: radial-gradient(2px 2px at var(--star-x, 50%) var(--star-y, 50%), rgba(255, 255, 255, 0.3), transparent);
-            background-size: 200px 200px;
-            animation: twinkle 4s infinite;
+            border-radius: 50%;
+            background-color: #003A66;
+            z-index: 0;
+            opacity: 0.4;
+            filter: blur(40px);
           }
-          
-          .stars-medium {
-            background-image: radial-gradient(3px 3px at var(--star-x, 30%) var(--star-y, 70%), rgba(255, 255, 255, 0.3), transparent);
-            background-size: 300px 300px;
-            animation-delay: 2s;
+
+          .patn-circle-bg-1 {
+            top: 5vh;
+            left: 5vw;
+            width: 15vw;
+            height: 15vw;
           }
-          
-          .stars-large {
-            background-image: radial-gradient(4px 4px at var(--star-x, 70%) var(--star-y, 30%), rgba(255, 255, 255, 0.3), transparent);
-            background-size: 400px 400px;
-            animation-delay: 3s;
+
+          .patn-circle-bg-2 {
+            bottom: 5vh;
+            right: 5vw;
+            width: 12vw;
+            height: 12vw;
+          }
+
+          .patn-circle-bg-3 {
+            top: 45%;
+            left: 2vw;
+            width: 10vw;
+            height: 10vw;
+          }
+
+          .patn-event-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: #facc15;
+            color: black;
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            margin-bottom: 2rem;
+            margin-top: 85px;
+            font-weight: bold;
+            font-size: 1.125rem;
+            user-select: none;
+            box-shadow: 0 4px 15px rgba(255, 255, 0, 0.3);
+            gap: 0.75rem;
+            opacity: 0; /* Initial state for animation */
+            transform: translateY(-30px) scale(0.9);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+          }
+
+          .patn-title-main {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #ffffff, #22BBE0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          }
+
+          .patn-description {
+            font-size: 1.125rem;
+            color: #ffffff;
+            margin-bottom: 2rem;
+            max-width: 72rem;
+            margin-left: auto;
+            margin-right: auto;
+          }
+
+          .patn-event-info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+          }
+
+          .patn-event-info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #22BBE0;
+          }
+
+          .patn-event-info-item span {
+            color: white;
+          }
+
+          .patn-prize-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #facc15;
+            margin-bottom: 0.25rem;
+          }
+
+          .patn-prize-subtext {
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #fcfcfc;
+            margin-bottom: 2.5rem;
+          }
+
+          .patn-btn-register {
+            background: linear-gradient(to right, #ffffff, #22BBE0);
+            color: black;
+            font-size: 1.125rem;
+            font-weight: 800;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: inline-block;
+            margin-bottom: 3.5rem;
+            box-shadow: 0 10px 25px rgba(34, 187, 224, 0.4);
+            cursor: pointer;
+            border: none;
+          }
+
+          .patn-btn-register:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(34, 187, 224, 0.6);
           }
         `}
       </style>
-    </section>
+
+      <div className="patn-hero-wrapper">
+        {/* Background Circles */}
+        <div className="patn-circle-bg-1"></div>
+        <div className="patn-circle-bg-2"></div>
+        <div className="patn-circle-bg-3"></div>
+
+        {/* Main Content */}
+        <div className="patn-content-container">
+          <div className="patn-event-badge">
+            <Trophy size={20} strokeWidth={2.5} color="black" />
+            PATN 2025
+          </div>
+
+          <h1 className="patn-title-main">Present Around the Network</h1>
+
+          <p className="patn-description">
+            A prestigious platform for students and young professionals to showcase their technical knowledge and presentation skills.
+          </p>
+
+          <div className="patn-event-info">
+            <div className="patn-event-info-item">
+              <Calendar size={18} />
+              <span>Oct 11, 2025</span>
+            </div>
+            <div className="patn-event-info-item">
+              <MapPin size={18} />
+              <span>T-Hub, Hyderabad</span>
+            </div>
+          </div>
+
+          <h2 className="patn-prize-title">Total Prize Money: ₹15,000</h2>
+          <p className="patn-prize-subtext">
+            Winner: <span style={{ color: 'white' }}>₹10,000</span> | Runner-up: <span style={{ color: 'white' }}>₹5,000</span>
+          </p>
+
+          <button className="patn-btn-register" onClick={() => navigate('/patn/register')}>
+            Register Now - Free Entry
+          </button>
+        </div>
+      </div>
+    </>
   );
 };
 

@@ -1,45 +1,118 @@
-import React, { useState } from 'react';
-import Navigation from '../components/Navigation';
-import Footer from '../components/Footer';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle, Send, ArrowLeft, Loader2, Zap, Star, Calendar, MapPin, AlertCircle, User, GraduationCap, Building2, Phone, CalendarDays, ChevronDown } from 'lucide-react';
-import { useTheme } from '../contexts/ThemeContext';
+import { FaUsers } from 'react-icons/fa';
+import axios from 'axios';
 
 const PATNRegistration = () => {
   const navigate = useNavigate();
-  const { isDark } = useTheme();
   const [showSuccess, setShowSuccess] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     fullName: '',
     category: '',
     department: '',
     instituteName: '',
-    isIETMember: '',
+    isIETMember: 'no',
+    ietMembershipId: '',
     mobileNumber: '',
     emailAddress: '',
     zoneVenue: '',
     youtubeLink: ''
   });
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    document.body.style.backgroundColor = '#121212';
+    document.body.style.color = '#e0e0e0';
+    document.body.style.fontFamily = "'Times New Roman', Times, serif";
+    document.body.style.minHeight = '100vh';
+    document.body.style.display = 'flex';
+    document.body.style.flexDirection = 'column';
+    document.body.style.alignItems = 'center';
+    document.body.style.padding = '2rem 1rem';
+    document.body.style.margin = '0';
+    document.body.style.animation = 'fadeIn 0.5s ease-out forwards';
+
+    return () => {
+      document.body.style.backgroundColor = '';
+      document.body.style.color = '';
+      document.body.style.fontFamily = '';
+      document.body.style.minHeight = '';
+      document.body.style.display = '';
+      document.body.style.flexDirection = '';
+      document.body.style.alignItems = '';
+      document.body.style.padding = '';
+      document.body.style.margin = '';
+      document.body.style.animation = '';
+    };
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    console.log('IET Member value changed to:', value);
-    setFormData(prev => ({
-      ...prev,
-      isIETMember: value
-    }));
+    setFormData(prev => ({ ...prev, isIETMember: e.target.value }));
+
+    if (errors.isIETMember) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.isIETMember;
+        return newErrors;
+      });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.title) newErrors.title = 'Please select a title';
+    if (!formData.fullName.trim()) newErrors.fullName = 'Please enter your full name';
+    if (!formData.category) newErrors.category = 'Please select your category';
+    if (!formData.department.trim()) newErrors.department = 'Please enter your department';
+    if (!formData.instituteName.trim()) newErrors.instituteName = 'Please enter your institute name';
+    if (!formData.isIETMember) newErrors.isIETMember = 'Please select an option';
+    if (formData.isIETMember === 'yes' && !formData.ietMembershipId.trim()) {
+      newErrors.ietMembershipId = 'Please enter your IET membership ID';
+    }
+
+    const mobileRegex = /^[0-9]{10,15}$/;
+    const cleanedMobile = formData.mobileNumber.replace(/\D/g, '');
+    if (!formData.mobileNumber.trim()) {
+      newErrors.mobileNumber = 'Please enter your mobile number';
+    } else if (!mobileRegex.test(cleanedMobile)) {
+      newErrors.mobileNumber = 'Please enter a valid mobile number (10-15 digits)';
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!formData.emailAddress.trim()) {
+      newErrors.emailAddress = 'Please enter your email address';
+    } else if (!emailRegex.test(formData.emailAddress)) {
+      newErrors.emailAddress = 'Please enter a valid email address';
+    }
+
+    if (!formData.zoneVenue) newErrors.zoneVenue = 'Please select a zone/venue';
+
+    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+    if (!formData.youtubeLink.trim()) {
+      newErrors.youtubeLink = 'Please enter the YouTube link';
+    } else if (!youtubeRegex.test(formData.youtubeLink)) {
+      newErrors.youtubeLink = 'Please enter a valid YouTube URL';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,470 +120,705 @@ const PATNRegistration = () => {
     setLoading(true);
     setError('');
 
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
+
     try {
       // Make API call to backend
-      const response = await fetch('https://iet-hyderabad-backend.llp.trizenventures.com/api/patn/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // credentials: 'include',
-        body: JSON.stringify(formData)
-      });
-
-      const data = await response.json();
-      
-      if (data.success) {
+      const response = await axios.post('http://localhost:5000/api/patn/register', formData);
+      if (response.data.success) {
         setShowSuccess(true);
-        setShowNotification(true);
-        setTimeout(() => setShowNotification(false), 5000);
       } else {
-        throw new Error(data.message || 'Registration failed');
+        throw new Error(response.data.message || 'Registration failed');
       }
     } catch (err: any) {
-      setError(err.message || 'An error occurred during registration. Please try again.');
+      setError(err.response?.data?.message || err.message || 'An error occurred during registration. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+  if (showSuccess) {
+    return (
+      <>
+        <style>
+          {`
+            @keyframes fadeIn {
+              from { opacity: 0; }
+              to { opacity: 1; }
+            }
+            @keyframes slideUp {
+              from {
+                opacity: 0;
+                transform: translateY(20px);
+              }
+              to {
+                opacity: 1;
+                transform: translateY(0);
+              }
+            }
+            @keyframes shake {
+              0%, 100% { transform: translateX(0); }
+              20%, 60% { transform: translateX(-5px); }
+              40%, 80% { transform: translateX(5px); }
+            }
+          `}
+        </style>
+        <div style={{
+          textAlign: 'center',
+          marginTop: '50px',
+          animation: 'slideUp 0.6s ease-out'
+        }}>
+          <h2>Registration Complete!</h2>
+          <p>Thank you for registering.</p>
+          <button
+            onClick={() => navigate('/')}
+            style={{
+              backgroundColor: '#22bbe0',
+              color: 'white',
+              fontWeight: '600',
+              fontSize: '0.875rem',
+              padding: '0.75rem',
+              border: 'none',
+              borderRadius: '0.375rem',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease, transform 0.2s ease',
+              marginTop: '1rem'
+            }}
+          >
+            Return to Home
+          </button>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
-      {showNotification && (
-        <div className="fixed bottom-4 right-4 bg-[#3B82F6] text-white px-6 py-4 rounded-xl shadow-[0_4px_20px_-2px_rgba(59,130,246,0.35),0_0_12px_0_rgba(59,130,246,0.2)] backdrop-blur-sm flex items-center gap-3 animate-fade-in-up z-50">
-          <CheckCircle className="w-5 h-5 text-white/90" />
-          <span className="font-medium">Registration submitted successfully!</span>
-        </div>
-      )}
-
-      {showSuccess ? (
-        <div className="min-h-screen bg-black flex items-center justify-center">
-          <div className="relative overflow-hidden bg-black/40 backdrop-blur-sm rounded-xl p-8 max-w-md w-full mx-4 text-center border border-[#3B82F6]/20
-            shadow-[0_4px_20px_-2px_rgba(59,130,246,0.25),0_0_8px_0_rgba(59,130,246,0.1)]
-            before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-b before:from-[#3B82F6]/5 before:to-transparent before:opacity-100">
-            <div className="relative mb-8 flex justify-center">
-              <div className="w-20 h-20 bg-[#3B82F6]/10 rounded-full flex items-center justify-center shadow-[0_0_25px_rgba(59,130,246,0.3)]">
-                <CheckCircle className="w-10 h-10 text-[#3B82F6]" />
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          @keyframes slideUp {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+          }
+        `}
+      </style>
+      <div style={{
+        maxWidth: '720px',
+        width: '100%',
+        animation: 'slideUp 0.6s ease-out 0.4s both'
+      }}>
+        <header style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          marginBottom: '1rem',
+          maxWidth: '720px',
+          width: '100%',
+          textAlign: 'center',
+          animation: 'slideUp 0.6s ease-out 0.2s both'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+            <div style={{
+              backgroundColor: '#22bbe0',
+              borderRadius: '50%',
+              padding: '0.5rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <FaUsers style={{ color: 'white', fontSize: '1.125rem' }} />
+            </div>
+            <h1 style={{
+              fontWeight: '600',
+              color: '#22bbe0',
+              fontSize: '1.5rem',
+              marginLeft: '0.5rem',
+              margin: '0'
+            }}>
+              PATN Event Registration
+            </h1>
+          </div>
+          <p style={{
+            color: '#b0b0b0',
+            fontSize: '0.875rem',
+            maxWidth: '580px'
+          }}>
+            Join us for an exciting technical event. Please fill out the form below to complete your registration.
+          </p>
+        </header>
+        <form onSubmit={handleSubmit} style={{
+          backgroundColor: '#1e1e1e',
+          borderRadius: '0.5rem',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
+          maxWidth: '720px',
+          width: '100%',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            background: 'linear-gradient(to right, #22bbe0, #1a9fc4)',
+            padding: '1rem',
+            color: 'white'
+          }}>
+            <h2 style={{
+              fontWeight: '600',
+              fontSize: '1.125rem',
+              margin: '0'
+            }}>
+              Registration Details
+            </h2>
+            <p style={{
+              fontSize: '0.75rem',
+              marginTop: '0.25rem',
+              marginBottom: '0'
+            }}>
+              Please provide your information to complete the registration process
+            </p>
+          </div>
+          <section style={{ padding: '1.5rem' }}>
+            {/* Personal Information */}
+            <div style={{ marginBottom: '1rem', animation: 'slideUp 0.5s ease-out 0.5s both' }}>
+              <h3 style={{
+                fontWeight: '600',
+                color: '#e0e0e0',
+                fontSize: '0.875rem',
+                marginBottom: '0.4rem'
+              }}>
+                Personal Information
+              </h3>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '1rem',
+                marginBottom: '0.4rem'
+              }}>
+                <div style={{ gridColumn: 'span 1' }}>
+                  <label style={{
+                    display: 'block',
+                    fontWeight: '600',
+                    color: '#b0b0b0',
+                    fontSize: '0.75rem',
+                    marginBottom: '0.25rem'
+                  }}>
+                    Full Name *
+                  </label>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <select
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      style={{
+                        width: '80px',
+                        borderRadius: '0.375rem',
+                        padding: '0.5rem 0.75rem',
+                        fontSize: '0.75rem',
+                        backgroundColor: '#2d2d2d',
+                        border: errors.title ? '1px solid #ff4444' : '1px solid #3d3d3d',
+                        color: '#e0e0e0',
+                        outline: 'none',
+                        transition: 'all 0.3s ease, transform 0.2s ease'
+                      }}
+                      required
+                    >
+                      <option value="">Title</option>
+                      <option value="Mr">Mr</option>
+                      <option value="Ms">Ms</option>
+                      <option value="Dr">Dr</option>
+                      <option value="Prof">Prof</option>
+                    </select>
+                    <input
+                      type="text"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      placeholder="Enter your full name"
+                      style={{
+                        flex: '1',
+                        borderRadius: '0.375rem',
+                        padding: '0.5rem 0.75rem',
+                        fontSize: '0.75rem',
+                        backgroundColor: '#2d2d2d',
+                        border: errors.fullName ? '1px solid #ff4444' : '1px solid #3d3d3d',
+                        color: '#e0e0e0',
+                        outline: 'none',
+                        transition: 'all 0.3s ease, transform 0.2s ease'
+                      }}
+                      required
+                    />
+                  </div>
+                  {(errors.title || errors.fullName) && (
+                    <div style={{
+                      color: '#ff4444',
+                      fontSize: '0.7rem',
+                      marginTop: '0.25rem'
+                    }}>
+                      {errors.title || errors.fullName}
+                    </div>
+                  )}
+                </div>
+                <div style={{ gridColumn: 'span 1' }}>
+                  <label style={{
+                    display: 'block',
+                    fontWeight: '600',
+                    color: '#b0b0b0',
+                    fontSize: '0.75rem',
+                    marginBottom: '0.25rem'
+                  }}>
+                    Category *
+                  </label>
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    style={{
+                      width: '100%',
+                      borderRadius: '0.375rem',
+                      padding: '0.5rem 0.75rem',
+                      fontSize: '0.75rem',
+                      backgroundColor: '#2d2d2d',
+                      border: errors.category ? '1px solid #ff4444' : '1px solid #3d3d3d',
+                      color: '#e0e0e0',
+                      outline: 'none',
+                      transition: 'all 0.3s ease, transform 0.2s ease'
+                    }}
+                    required
+                  >
+                    <option value="">Select your category</option>
+                    <option value="student">Student</option>
+                    <option value="young-professional">Young Professional</option>
+                  </select>
+                  {errors.category && (
+                    <div style={{
+                      color: '#ff4444',
+                      fontSize: '0.7rem',
+                      marginTop: '0.25rem'
+                    }}>
+                      {errors.category}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '1rem',
+                marginBottom: '0.4rem'
+              }}>
+                <div style={{ gridColumn: 'span 1' }}>
+                  <label style={{
+                    display: 'block',
+                    fontWeight: '600',
+                    color: '#b0b0b0',
+                    fontSize: '0.75rem',
+                    marginBottom: '0.25rem'
+                  }}>
+                    Department *
+                  </label>
+                  <input
+                    type="text"
+                    name="department"
+                    value={formData.department}
+                    onChange={handleChange}
+                    placeholder="e.g., Computer Science, ECE"
+                    style={{
+                      width: '100%',
+                      borderRadius: '0.375rem',
+                      padding: '0.5rem 0.75rem',
+                      fontSize: '0.75rem',
+                      backgroundColor: '#2d2d2d',
+                      border: errors.department ? '1px solid #ff4444' : '1px solid #3d3d3d',
+                      color: '#e0e0e0',
+                      outline: 'none',
+                      transition: 'all 0.3s ease, transform 0.2s ease'
+                    }}
+                    required
+                  />
+                  {errors.department && (
+                    <div style={{
+                      color: '#ff4444',
+                      fontSize: '0.7rem',
+                      marginTop: '0.25rem'
+                    }}>
+                      {errors.department}
+                    </div>
+                  )}
+                </div>
+                <div style={{ gridColumn: 'span 1' }}>
+                  <label style={{
+                    display: 'block',
+                    fontWeight: '600',
+                    color: '#b0b0b0',
+                    fontSize: '0.75rem',
+                    marginBottom: '0.25rem'
+                  }}>
+                    Institute Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="instituteName"
+                    value={formData.instituteName}
+                    onChange={handleChange}
+                    placeholder="Enter your institute/organization"
+                    style={{
+                      width: '100%',
+                      borderRadius: '0.375rem',
+                      padding: '0.5rem 0.75rem',
+                      fontSize: '0.75rem',
+                      backgroundColor: '#2d2d2d',
+                      border: errors.instituteName ? '1px solid #ff4444' : '1px solid #3d3d3d',
+                      color: '#e0e0e0',
+                      outline: 'none',
+                      transition: 'all 0.3s ease, transform 0.2s ease'
+                    }}
+                    required
+                  />
+                  {errors.instituteName && (
+                    <div style={{
+                      color: '#ff4444',
+                      fontSize: '0.7rem',
+                      marginTop: '0.25rem'
+                    }}>
+                      {errors.instituteName}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-            <h2 className="text-3xl font-bold text-white mb-4 [text-shadow:_0_1px_10px_rgb(59_130_246_/_20%)]">Registration Complete!</h2>
-            <p className="text-gray-300 mb-8 text-lg">
-              Thank you for registering. You will receive a confirmation email shortly.
-            </p>
-            <button
-              onClick={() => navigate('/')}
-              className="group relative overflow-hidden w-full bg-gradient-to-r from-[#3B82F6] to-[#60A5FA] text-white font-semibold py-4 px-6 rounded-xl 
-                shadow-[0_4px_20px_-2px_rgba(59,130,246,0.35),0_0_12px_0_rgba(59,130,246,0.2)]
-                hover:shadow-[0_8px_30px_-2px_rgba(59,130,246,0.45),0_0_20px_0_rgba(59,130,246,0.3)]
-                transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
-            >
-              <span className="relative z-10 flex items-center justify-center gap-3">
-                <ArrowLeft className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1" />
-                Return to Home Page
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-[#60A5FA] to-[#3B82F6] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute inset-0 bg-[length:10px_10px] bg-repeat opacity-0 group-hover:opacity-10 transition-opacity duration-300
-                [background-image:linear-gradient(45deg,rgba(255,255,255,0.2)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.2)_50%,rgba(255,255,255,0.2)_75%,transparent_75%,transparent)]"></div>
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div className="min-h-screen bg-black">
-          <Navigation />
-          
-          <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden pb-5">
-            <div className="relative z-10 text-center px-4 sm:px-6 max-w-screen-lg mx-auto mt-16 md:mt-20">
-              <div className="animate-fade-in space-y-6">
-                <div className="mb-6">
-                 
-                  
-                  <h1 className="text-4xl md:text-5xl lg:text-8xl font-black mb-3 text-white [text-shadow:_0_2px_15px_rgb(59_130_246_/_25%)]">
-              Present Around <span className="text-[#1E90FF]">the Network</span>
-            </h1>
-                  <div className="h-1 w-40 mx-auto mb-6 rounded-full bg-[#3B82F6] shadow-[0_0_30px_rgba(59,130,246,0.4)]"></div>
+            <div style={{ marginBottom: '1rem', animation: 'slideUp 0.5s ease-out 0.6s both' }}>
+              <h3 style={{
+                fontWeight: '600',
+                color: '#e0e0e0',
+                fontSize: '0.875rem',
+                marginBottom: '0.4rem'
+              }}>
+                IET Membership
+              </h3>
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontWeight: '600',
+                  color: '#b0b0b0',
+                  fontSize: '0.75rem',
+                  marginBottom: '0.25rem'
+                }}>
+                  Are you an IET Member? *
+                </label>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1.5rem',
+                  fontSize: '0.75rem',
+                  color: '#b0b0b0',
+                  marginTop: '0.5rem'
+                }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <input
+                      type="radio"
+                      name="isIETMember"
+                      value="yes"
+                      checked={formData.isIETMember === 'yes'}
+                      onChange={handleRadioChange}
+                      style={{ width: 'auto' }}
+                      required
+                    />
+                    <span>Yes</span>
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <input
+                      type="radio"
+                      name="isIETMember"
+                      value="no"
+                      checked={formData.isIETMember === 'no'}
+                      onChange={handleRadioChange}
+                      style={{ width: 'auto' }}
+                      required
+                    />
+                    <span>No</span>
+                  </label>
                 </div>
-                
-            
-                
-                <div className="relative overflow-hidden inline-flex items-center gap-2 bg-black/40 backdrop-blur-xl border border-[#3B82F6]/20 rounded-full px-6 py-3 mb-6 
-                  shadow-[0_4px_20px_-2px_rgba(59,130,246,0.25),0_0_8px_0_rgba(59,130,246,0.1)] 
-                  hover:shadow-[0_8px_30px_-2px_rgba(59,130,246,0.35),0_0_12px_0_rgba(59,130,246,0.2)]
-                  hover:border-[#3B82F6]/40 transition-all duration-500
-                  before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-b before:from-[#3B82F6]/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity">
-                  <Zap className="w-4 h-4 text-white" />
-                  <p className="text-base font-semibold text-white tracking-wide">
-                    Organized by IET Hyderabad Local Network
-                  </p>
+                {errors.isIETMember && (
+                  <div style={{
+                    color: '#ff4444',
+                    fontSize: '0.7rem',
+                    marginTop: '0.25rem'
+                  }}>
+                    {errors.isIETMember}
+                  </div>
+                )}
+              </div>
+              {formData.isIETMember === 'yes' && (
+                <div style={{ marginTop: '15px', animation: 'slideUp 0.4s ease-out' }}>
+                  <label style={{
+                    display: 'block',
+                    fontWeight: '600',
+                    color: '#b0b0b0',
+                    fontSize: '0.75rem',
+                    marginBottom: '0.25rem'
+                  }}>
+                    IET Membership ID *
+                  </label>
+                  <input
+                    type="text"
+                    name="ietMembershipId"
+                    value={formData.ietMembershipId}
+                    onChange={handleChange}
+                    placeholder="Enter your IET membership ID"
+                    style={{
+                      width: '100%',
+                      borderRadius: '0.375rem',
+                      padding: '0.5rem 0.75rem',
+                      fontSize: '0.75rem',
+                      backgroundColor: '#2d2d2d',
+                      border: errors.ietMembershipId ? '1px solid #ff4444' : '1px solid #3d3d3d',
+                      color: '#e0e0e0',
+                      outline: 'none',
+                      transition: 'all 0.3s ease, transform 0.2s ease'
+                    }}
+                    required={formData.isIETMember === 'yes'}
+                  />
+                  {errors.ietMembershipId && (
+                    <div style={{
+                      color: '#ff4444',
+                      fontSize: '0.7rem',
+                      marginTop: '0.25rem'
+                    }}>
+                      {errors.ietMembershipId}
+                    </div>
+                  )}
                 </div>
-               
+              )}
+            </div>
+            <div style={{ marginBottom: '1rem', animation: 'slideUp 0.5s ease-out 0.7s both' }}>
+              <h3 style={{
+                fontWeight: '600',
+                color: '#e0e0e0',
+                fontSize: '0.875rem',
+                marginBottom: '0.4rem'
+              }}>
+                Contact Information
+              </h3>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '1rem'
+              }}>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontWeight: '600',
+                    color: '#b0b0b0',
+                    fontSize: '0.75rem',
+                    marginBottom: '0.25rem'
+                  }}>
+                    Mobile Number *
+                  </label>
+                  <input
+                    type="tel"
+                    name="mobileNumber"
+                    value={formData.mobileNumber}
+                    onChange={handleChange}
+                    placeholder="+91 9876543210"
+                    style={{
+                      width: '100%',
+                      borderRadius: '0.375rem',
+                      padding: '0.5rem 0.75rem',
+                      fontSize: '0.75rem',
+                      backgroundColor: '#2d2d2d',
+                      border: errors.mobileNumber ? '1px solid #ff4444' : '1px solid #3d3d3d',
+                      color: '#e0e0e0',
+                      outline: 'none',
+                      transition: 'all 0.3s ease, transform 0.2s ease'
+                    }}
+                    required
+                  />
+                  {errors.mobileNumber && (
+                    <div style={{
+                      color: '#ff4444',
+                      fontSize: '0.7rem',
+                      marginTop: '0.25rem'
+                    }}>
+                      {errors.mobileNumber}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontWeight: '600',
+                    color: '#b0b0b0',
+                    fontSize: '0.75rem',
+                    marginBottom: '0.25rem'
+                  }}>
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    name="emailAddress"
+                    value={formData.emailAddress}
+                    onChange={handleChange}
+                    placeholder="your.email@example.com"
+                    style={{
+                      width: '100%',
+                      borderRadius: '0.375rem',
+                      padding: '0.5rem 0.75rem',
+                      fontSize: '0.75rem',
+                      backgroundColor: '#2d2d2d',
+                      border: errors.emailAddress ? '1px solid #ff4444' : '1px solid #3d3d3d',
+                      color: '#e0e0e0',
+                      outline: 'none',
+                      transition: 'all 0.3s ease, transform 0.2s ease'
+                    }}
+                    required
+                  />
+                  {errors.emailAddress && (
+                    <div style={{
+                      color: '#ff4444',
+                      fontSize: '0.7rem',
+                      marginTop: '0.25rem'
+                    }}>
+                      {errors.emailAddress}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div style={{ animation: 'slideUp 0.5s ease-out 0.8s both' }}>
+              <h3 style={{
+                fontWeight: '600',
+                color: '#e0e0e0',
+                fontSize: '0.875rem',
+                marginBottom: '0.4rem'
+              }}>
+                Event Details
+              </h3>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '1rem'
+              }}>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontWeight: '600',
+                    color: '#b0b0b0',
+                    fontSize: '0.75rem',
+                    marginBottom: '0.25rem'
+                  }}>
+                    Zone/Venue *
+                  </label>
+                  <select
+                    name="zoneVenue"
+                    value={formData.zoneVenue}
+                    onChange={handleChange}
+                    style={{
+                      width: '100%',
+                      borderRadius: '0.375rem',
+                      padding: '0.5rem 0.75rem',
+                      fontSize: '0.75rem',
+                      backgroundColor: '#2d2d2d',
+                      border: errors.zoneVenue ? '1px solid #ff4444' : '1px solid #3d3d3d',
+                      color: '#e0e0e0',
+                      outline: 'none',
+                      transition: 'all 0.3s ease, transform 0.2s ease'
+                    }}
+                    required
+                  >
+                    <option value="">Select your preferred zone</option>
+                    <option value="zone1">Zone 1 (NIT Warangal Telangana)</option>
+                    <option value="zone2">Zone 2 (VIT-AP university)</option>
+                    <option value="zone3">Zone 3 (Kalinga university Raipur)</option>
+                  </select>
+                  {errors.zoneVenue && (
+                    <div style={{
+                      color: '#ff4444',
+                      fontSize: '0.7rem',
+                      marginTop: '0.25rem'
+                    }}>
+                      {errors.zoneVenue}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontWeight: '600',
+                    color: '#b0b0b0',
+                    fontSize: '0.75rem',
+                    marginBottom: '0.25rem'
+                  }}>
+                    YouTube Link *
+                  </label>
+                  <input
+                    type="url"
+                    name="youtubeLink"
+                    value={formData.youtubeLink}
+                    onChange={handleChange}
+                    placeholder="https://youtube.com/..."
+                    style={{
+                      width: '100%',
+                      borderRadius: '0.375rem',
+                      padding: '0.5rem 0.75rem',
+                      fontSize: '0.75rem',
+                      backgroundColor: '#2d2d2d',
+                      border: errors.youtubeLink ? '1px solid #ff4444' : '1px solid #3d3d3d',
+                      color: '#e0e0e0',
+                      outline: 'none',
+                      transition: 'all 0.3s ease, transform 0.2s ease'
+                    }}
+                    required
+                  />
+                  {errors.youtubeLink && (
+                    <div style={{
+                      color: '#ff4444',
+                      fontSize: '0.7rem',
+                      marginTop: '0.25rem'
+                    }}>
+                      {errors.youtubeLink}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </section>
-
-          {/* Registration Form Section */}
-          <div className="container mx-auto px-4 py-12">
-            <div className="max-w-7xl mx-auto">
-              <div className="relative overflow-hidden bg-[#0A1628] border border-[#3B82F6]/20
-                shadow-[0_4px_20px_-2px_rgba(59,130,246,0.25)]">
-                
-                <div className="flex flex-col lg:flex-row">
-                  {/* Left Panel - Form Info */}
-                  <div className="lg:w-1/3 bg-[#0A1628] p-8 lg:p-12 relative">
-                    {/* Decorative Elements */}
-                    <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#3B82F6]/20 to-transparent"></div>
-                      <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-[#3B82F6]/20 via-transparent to-transparent"></div>
-                      <div className="absolute -top-32 -left-32 w-64 h-64 bg-[#3B82F6]/10 rounded-full blur-3xl"></div>
-                      <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-[#3B82F6]/10 rounded-full blur-3xl"></div>
-                    </div>
-
-                    <div className="sticky top-8 relative z-10">
-                      <div className="inline-flex items-center gap-2 bg-[#3B82F6]/10 backdrop-blur-sm border border-[#3B82F6]/20 rounded-full px-4 py-1 mb-6">
-                        <div className="w-2 h-2 rounded-full bg-[#3B82F6] animate-pulse"></div>
-                        <span className="text-sm font-medium text-[#3B82F6]">Registration Open</span>
-                      </div>
-
-                      <h1 className="text-4xl font-bold text-white mb-4 [text-shadow:_0_1px_10px_rgb(59_130_246_/_20%)]">
-                        PATN Registration
-                      </h1>
-                      <p className="text-gray-300 text-sm mb-12">Fill in your details to participate in Present Around the Network</p>
-                      
-                      <div className="space-y-8">
-                        <div className="relative">
-                          <div className="absolute -left-6 top-1/2 w-2 h-16 -translate-y-1/2 bg-gradient-to-b from-[#3B82F6] to-transparent rounded-full"></div>
-                          <div className="flex items-start gap-4 bg-[#3B82F6]/5 backdrop-blur-sm border border-[#3B82F6]/10 rounded-xl p-4">
-                            <div className="w-10 h-10 rounded-lg bg-[#3B82F6]/20 flex items-center justify-center shrink-0">
-                              <Star className="w-5 h-5 text-[#3B82F6]" />
-                            </div>
-                            <div>
-                              <h3 className="text-white font-medium mb-1">Global Platform</h3>
-                              <p className="text-sm text-gray-300">Share your innovative ideas and showcase your presentation skills on a global platform.</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="relative">
-                          <div className="absolute -left-6 top-1/2 w-2 h-16 -translate-y-1/2 bg-gradient-to-b from-[#3B82F6] to-transparent rounded-full"></div>
-                          <div className="flex items-start gap-4 bg-[#3B82F6]/5 backdrop-blur-sm border border-[#3B82F6]/10 rounded-xl p-4">
-                            <div className="w-10 h-10 rounded-lg bg-[#3B82F6]/20 flex items-center justify-center shrink-0">
-                              <Calendar className="w-5 h-5 text-[#3B82F6]" />
-                            </div>
-                            <div>
-                              <h3 className="text-white font-medium mb-1">Important Date</h3>
-                              <p className="text-sm text-gray-300">Registration deadline: July 20, 2025</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="relative">
-                          <div className="absolute -left-6 top-1/2 w-2 h-16 -translate-y-1/2 bg-gradient-to-b from-[#3B82F6] to-transparent rounded-full"></div>
-                          <div className="flex items-start gap-4 bg-[#3B82F6]/5 backdrop-blur-sm border border-[#3B82F6]/10 rounded-xl p-4">
-                            <div className="w-10 h-10 rounded-lg bg-[#3B82F6]/20 flex items-center justify-center shrink-0">
-                              <MapPin className="w-5 h-5 text-[#3B82F6]" />
-                            </div>
-                            <div>
-                              <h3 className="text-white font-medium mb-1">Event Venue</h3>
-                              <p className="text-sm text-gray-300">VIT-AP University, Amaravati</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right Panel - Form Fields */}
-                  <div className="lg:w-2/3 p-8 lg:p-12 border-t lg:border-l lg:border-t-0 border-[#3B82F6]/20 relative">
-                    {/* Decorative Elements */}
-                    <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                      <div className="absolute -top-32 -right-32 w-64 h-64 bg-[#3B82F6]/5 rounded-full blur-3xl"></div>
-                      <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-[#3B82F6]/5 rounded-full blur-3xl"></div>
-                    </div>
-
-                    <form onSubmit={handleSubmit} className="space-y-8 relative">
-                    {error && (
-                        <div className="bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl p-4 text-sm font-medium flex items-center gap-3">
-                          <div className="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center shrink-0">
-                            <AlertCircle className="w-5 h-5 text-red-400" />
-                          </div>
-                          <p>{error}</p>
-                      </div>
-                    )}
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
-                        {/* Personal Information Section */}
-                        <div className="space-y-6 md:col-span-2 bg-[#3B82F6]/5 backdrop-blur-sm border border-[#3B82F6]/10 rounded-xl p-6">
-                          <div className="flex items-center gap-3 pb-4 border-b border-[#3B82F6]/10">
-                            <div className="w-8 h-8 bg-[#3B82F6]/20 rounded-lg flex items-center justify-center shrink-0">
-                              <User className="w-5 h-5 text-[#3B82F6]" />
-                            </div>
-                            <h2 className="text-lg font-semibold text-white">Personal Information</h2>
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div>
-                              <label className="block text-sm font-medium text-white mb-2">Title *</label>
-                              <div className="relative">
-                        <select
-                          name="title"
-                          value={formData.title}
-                          onChange={handleChange}
-                                  className="w-full px-4 py-3 rounded-md border border-[#3B82F6]/20 bg-[#0A1628] text-white 
-                                    focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 text-sm transition-all
-                                    placeholder:text-gray-500 hover:border-[#3B82F6]/40 appearance-none pr-10"
-                          required
-                        >
-                                  <option value="" className="bg-[#0A1628] text-gray-400">Select Title</option>
-                                  <option value="Mr" className="bg-[#0A1628] text-white py-2">Mr</option>
-                                  <option value="Ms" className="bg-[#0A1628] text-white py-2">Ms</option>
-                                  <option value="Dr" className="bg-[#0A1628] text-white py-2">Dr</option>
-                                  <option value="Prof" className="bg-[#0A1628] text-white py-2">Prof</option>
-                        </select>
-                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3B82F6] pointer-events-none" />
-                              </div>
-                      </div>
-                      <div>
-                              <label className="block text-sm font-medium text-white mb-2">Full Name *</label>
-                        <input
-                          type="text"
-                          name="fullName"
-                          value={formData.fullName}
-                          onChange={handleChange}
-                          placeholder="Enter your full name"
-                                className="w-full px-4 py-3 rounded-lg border border-[#3B82F6]/20 bg-[#3B82F6]/5 text-white 
-                                  focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 text-sm transition-all
-                                  placeholder:text-gray-500 hover:border-[#3B82F6]/40"
-                          required
-                        />
-                            </div>
-                      </div>
-                    </div>
-
-                        {/* Academic Information */}
-                        <div className="space-y-6 bg-[#3B82F6]/5 backdrop-blur-sm border border-[#3B82F6]/10 rounded-xl p-6">
-                          <div className="flex items-center gap-3 pb-4 border-b border-[#3B82F6]/10">
-                            <div className="w-8 h-8 bg-[#3B82F6]/20 rounded-lg flex items-center justify-center shrink-0">
-                              <GraduationCap className="w-5 h-5 text-[#3B82F6]" />
-                            </div>
-                            <h2 className="text-lg font-semibold text-white">Academic Details</h2>
-                          </div>
-                          <div className="space-y-6">
-                      <div>
-                              <label className="block text-sm font-medium text-white mb-2">Category *</label>
-                              <div className="relative">
-                        <select
-                          name="category"
-                          value={formData.category}
-                          onChange={handleChange}
-                                  className="w-full px-4 py-3 rounded-md border border-[#3B82F6]/20 bg-[#0A1628] text-white 
-                                    focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 text-sm transition-all
-                                    placeholder:text-gray-500 hover:border-[#3B82F6]/40 appearance-none pr-10"
-                          required
-                        >
-                                  <option value="" className="bg-[#0A1628] text-gray-400">Select Category</option>
-                                  <option value="student" className="bg-[#0A1628] text-white py-2">Student</option>
-                                  <option value="young-professional" className="bg-[#0A1628] text-white py-2">Young Professional</option>
-                        </select>
-                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3B82F6] pointer-events-none" />
-                              </div>
-                      </div>
-                      <div>
-                              <label className="block text-sm font-medium text-white mb-2">Department *</label>
-                        <input
-                          type="text"
-                          name="department"
-                          value={formData.department}
-                          onChange={handleChange}
-                          placeholder="e.g., Computer Science, ECE"
-                                className="w-full px-4 py-3 rounded-lg border border-[#3B82F6]/20 bg-[#3B82F6]/5 text-white 
-                                  focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 text-sm transition-all
-                                  placeholder:text-gray-500 hover:border-[#3B82F6]/40"
-                          required
-                        />
-                            </div>
-                      </div>
-                    </div>
-
-                        {/* Institute & Membership */}
-                        <div className="space-y-6 bg-[#3B82F6]/5 backdrop-blur-sm border border-[#3B82F6]/10 rounded-xl p-6">
-                          <div className="flex items-center gap-3 pb-4 border-b border-[#3B82F6]/10">
-                            <div className="w-8 h-8 bg-[#3B82F6]/20 rounded-lg flex items-center justify-center shrink-0">
-                              <Building2 className="w-5 h-5 text-[#3B82F6]" />
-                            </div>
-                            <h2 className="text-lg font-semibold text-white">Institute & Membership</h2>
-                          </div>
-                          <div className="space-y-6">
-                    <div>
-                              <label className="block text-sm font-medium text-white mb-2">Institute Name *</label>
-                      <input
-                        type="text"
-                        name="instituteName"
-                        value={formData.instituteName}
-                        onChange={handleChange}
-                        placeholder="Enter your institute/organization"
-                                className="w-full px-4 py-3 rounded-lg border border-[#3B82F6]/20 bg-[#3B82F6]/5 text-white 
-                                  focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 text-sm transition-all
-                                  placeholder:text-gray-500 hover:border-[#3B82F6]/40"
-                        required
-                      />
-                    </div>
-                    <div>
-                              <label className="block text-sm font-medium text-white mb-3">Are you an IET Member? *</label>
-                      <div className="flex gap-4">
-                                <label className="flex-1 flex items-center p-4 border border-[#3B82F6]/20 rounded-lg bg-[#3B82F6]/5 cursor-pointer hover:bg-[#3B82F6]/10 transition-all group">
-                          <input
-                            type="radio"
-                            name="isIETMember"
-                            value="yes"
-                            checked={formData.isIETMember === 'yes'}
-                            onChange={handleRadioChange}
-                                    className="w-4 h-4 text-[#3B82F6] border-[#3B82F6]/20 focus:ring-[#3B82F6] bg-[#3B82F6]/5"
-                            required
-                          />
-                                  <span className="ml-3 text-sm text-white group-hover:text-[#3B82F6] transition-colors">Yes</span>
-                        </label>
-                                <label className="flex-1 flex items-center p-4 border border-[#3B82F6]/20 rounded-lg bg-[#3B82F6]/5 cursor-pointer hover:bg-[#3B82F6]/10 transition-all group">
-                          <input
-                            type="radio"
-                            name="isIETMember"
-                            value="no"
-                            checked={formData.isIETMember === 'no'}
-                            onChange={handleRadioChange}
-                                    className="w-4 h-4 text-[#3B82F6] border-[#3B82F6]/20 focus:ring-[#3B82F6] bg-[#3B82F6]/5"
-                            required
-                          />
-                                  <span className="ml-3 text-sm text-white group-hover:text-[#3B82F6] transition-colors">No</span>
-                        </label>
-                              </div>
-                            </div>
-                      </div>
-                    </div>
-
-                        {/* Contact Information */}
-                        <div className="space-y-6 md:col-span-2 bg-[#3B82F6]/5 backdrop-blur-sm border border-[#3B82F6]/10 rounded-xl p-6">
-                          <div className="flex items-center gap-3 pb-4 border-b border-[#3B82F6]/10">
-                            <div className="w-8 h-8 bg-[#3B82F6]/20 rounded-lg flex items-center justify-center shrink-0">
-                              <Phone className="w-5 h-5 text-[#3B82F6]" />
-                            </div>
-                            <h2 className="text-lg font-semibold text-white">Contact Information</h2>
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div>
-                              <label className="block text-sm font-medium text-white mb-2">Mobile Number *</label>
-                        <input
-                          type="tel"
-                          name="mobileNumber"
-                          value={formData.mobileNumber}
-                          onChange={handleChange}
-                          placeholder="Enter your mobile number"
-                                className="w-full px-4 py-3 rounded-lg border border-[#3B82F6]/20 bg-[#3B82F6]/5 text-white 
-                                  focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 text-sm transition-all
-                                  placeholder:text-gray-500 hover:border-[#3B82F6]/40"
-                          required
-                        />
-                      </div>
-                      <div>
-                              <label className="block text-sm font-medium text-white mb-2">Email Address *</label>
-                        <input
-                          type="email"
-                          name="emailAddress"
-                          value={formData.emailAddress}
-                          onChange={handleChange}
-                          placeholder="your.email@example.com"
-                                className="w-full px-4 py-3 rounded-lg border border-[#3B82F6]/20 bg-[#3B82F6]/5 text-white 
-                                  focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 text-sm transition-all
-                                  placeholder:text-gray-500 hover:border-[#3B82F6]/40"
-                          required
-                        />
-                            </div>
-                      </div>
-                    </div>
-
-                        {/* Event Details */}
-                        <div className="space-y-6 md:col-span-2 bg-[#3B82F6]/5 backdrop-blur-sm border border-[#3B82F6]/10 rounded-xl p-6">
-                          <div className="flex items-center gap-3 pb-4 border-b border-[#3B82F6]/10">
-                            <div className="w-8 h-8 bg-[#3B82F6]/20 rounded-lg flex items-center justify-center shrink-0">
-                              <CalendarDays className="w-5 h-5 text-[#3B82F6]" />
-                            </div>
-                            <h2 className="text-lg font-semibold text-white">Event Details</h2>
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div>
-                              <label className="block text-sm font-medium text-white mb-2">Zone/Venue *</label>
-                              <div className="relative">
-                        <select
-                          name="zoneVenue"
-                          value={formData.zoneVenue}
-                          onChange={handleChange}
-                                  className="w-full px-4 py-3 rounded-md border border-[#3B82F6]/20 bg-[#0A1628] text-white 
-                                    focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 text-sm transition-all
-                                    placeholder:text-gray-500 hover:border-[#3B82F6]/40 appearance-none pr-10"
-                          required
-                        >
-                                  <option value="" className="bg-[#0A1628] text-gray-400">Select Zone</option>
-                                  <option value="zone1" className="bg-[#0A1628] text-white py-2">Zone 1 ( NIT Warangal Telangana )</option>
-                                  <option value="zone2" className="bg-[#0A1628] text-white py-2">Zone 2 ( VIT-AP university )</option>
-                                  <option value="zone3" className="bg-[#0A1628] text-white py-2">Zone 3 ( Kalinga university Raipur )</option>
-                        </select>
-                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3B82F6] pointer-events-none" />
-                              </div>
-                      </div>
-                      <div>
-                              <label className="block text-sm font-medium text-white mb-2">YouTube Link *</label>
-                        <input
-                          type="url"
-                          name="youtubeLink"
-                          value={formData.youtubeLink}
-                          onChange={handleChange}
-                          placeholder="https://youtube.com/..."
-                                className="w-full px-4 py-3 rounded-lg border border-[#3B82F6]/20 bg-[#3B82F6]/5 text-white 
-                                  focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 text-sm transition-all
-                                  placeholder:text-gray-500 hover:border-[#3B82F6]/40"
-                          required
-                        />
-                            </div>
-                          </div>
-                      </div>
-                    </div>
-
-                      <div className="flex justify-end mt-8">
-                    <button
-                      type="submit"
-                      disabled={loading}
-                          className="group relative overflow-hidden inline-flex bg-[#3B82F6] text-white font-semibold px-8 py-4 rounded-md  
-                            hover:bg-[#2563EB] transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200
-                            disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0"
-                        >
-                          <span className="relative z-10 flex items-center justify-center gap-3">
-                            {loading ? (
-                              <>
-                                <Loader2 className="w-5 h-5 animate-spin" />
-                                <span>Submitting...</span>
-                              </>
-                            ) : (
-                              <>
-                                <span>Register</span>
-                                <Send className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-                              </>
-                            )}
-                          </span>
-                    </button>
-                      </div>
-                  </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <style>{`
-            @keyframes twinkle {
-              0%, 100% { opacity: 0.2; }
-              50% { opacity: 0.7; }
-            }
-          `}</style>
-
-          <Footer />
-        </div>
-      )}
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              backgroundColor: '#22bbe0',
+              color: 'white',
+              fontWeight: '600',
+              fontSize: '0.875rem',
+              padding: '0.75rem',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease, transform 0.2s ease'
+            }}
+          >
+            {loading ? 'Submitting...' : 'Complete Registration'}
+          </button>
+        </form>
+        {error && (
+          <div style={{ color: '#ff4444', textAlign: 'center', margin: '1rem 0', fontSize: '0.9rem' }}>{error}</div>
+        )}
+      </div>
     </>
   );
 };

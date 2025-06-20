@@ -1,11 +1,15 @@
-# InnoVerse Future Frontier Web
+# IET Hyderabad Local network Future Frontier Web
 
 ## Environment Setup
 
 ### Backend Setup (.env)
 Create a `.env` file in the `backend` directory with the following variables:
 
-
+```env
+PORT=5000
+MONGODB_URI=mongodb+srv://projectstrizen:YOUR_PASSWORD_HERE@cluster0.p1pxurw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+CORS_ORIGIN=http://localhost:8080
+```
 
 Replace `YOUR_PASSWORD_HERE` with your actual MongoDB password.
 
@@ -46,7 +50,7 @@ npm run dev
 ## Project Structure
 
 ```
-innoverse-future-frontier-web/
+IET Hyderabad Local network-future-frontier-web/
 ├── src/                    # Frontend source files
 │   ├── components/        # React components
 │   ├── pages/            # Page components
