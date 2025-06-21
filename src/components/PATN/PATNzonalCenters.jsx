@@ -198,7 +198,6 @@ const PATNzonalCenters = () => {
 
   return (
     <div style={styles.container}>
-      {/* Header */}
       <div className="page-header" style={styles.pageHeader}>
         <h1 style={styles.pageHeaderH1}>Zonal Centers</h1>
         <p style={styles.pageHeaderP}>Local heats will be conducted at these regional centers for PATN 2025</p>
@@ -208,13 +207,12 @@ const PATNzonalCenters = () => {
         </div>
       </div>
 
-      {/* Zonal Centers */}
       <div style={styles.zonalCenters}>
         {/* Zone 1 */}
         <div className="zone-card" style={styles.zoneCard}>
           <div style={{ ...styles.zoneHeader, ...styles.zone1 }}>
             <span style={{ ...styles.zoneBadge, ...styles.zone1Badge }}>Zone 1</span>
-            <h2 style={styles.zoneTitle}>Telangana</h2>
+            <h2 style={styles.zoneTitle}>Telangana & Andhra Pradesh</h2>
             <FaMapMarkerAlt style={styles.mapIcon} />
           </div>
           <div style={styles.zoneBody}>
@@ -225,19 +223,20 @@ const PATNzonalCenters = () => {
                 <div style={styles.locationAddress}>Warangal, Telangana</div>
               </div>
             </div>
+
             <div style={styles.divider}></div>
+
             <div style={styles.coordinator}>
               <FaUserTie style={styles.iconStyle} />
               <div style={styles.coordinatorDetails}>
-                <div style={styles.coordinatorTitle}>Regional Coordinators</div>
-                <div>
-                  <div style={styles.coordinatorName}>1. Dr. Palash Mishra</div>
-                  <div style={styles.coordinatorInfo}>
-                    Assistant Professor<br />
-                    Department of Electrical Engineering<br />
-                    NIT Warangal
-                  </div>
+                <div style={styles.coordinatorTitle}>Event Coordinators</div>
+                <div style={styles.coordinatorName}>1. Dr. Palash Mishra</div>
+                <div style={styles.coordinatorInfo}>
+                  Assistant Professor<br />
+                  Department of Electrical Engineering<br />
+                  NIT Warangal
                 </div>
+
                 <div style={{ marginTop: '1rem' }}>
                   <div style={styles.coordinatorName}>2. Dr. K Anil Naik</div>
                   <div style={styles.coordinatorInfo}>
@@ -248,6 +247,22 @@ const PATNzonalCenters = () => {
                 </div>
               </div>
             </div>
+
+            <div style={styles.divider}></div>
+
+            <div style={styles.coordinator}>
+              <FaUserTie style={styles.iconStyle} />
+              <div style={styles.coordinatorDetails}>
+                <div style={styles.coordinatorTitle}>Zonal Coordinators</div>
+                <div style={styles.coordinatorName}>1. Mrs. G B Christina</div>
+                <div style={styles.coordinatorInfo}>📞 +916300743773</div>
+
+                <div style={{ marginTop: '1rem' }}>
+                  <div style={styles.coordinatorName}>2. Ms.Bhurva Rajiv Sharma</div>
+                  <div style={styles.coordinatorInfo}>📞 +919987479510</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -255,37 +270,6 @@ const PATNzonalCenters = () => {
         <div className="zone-card" style={styles.zoneCard}>
           <div style={{ ...styles.zoneHeader, ...styles.zone2 }}>
             <span style={{ ...styles.zoneBadge, ...styles.zone2Badge }}>Zone 2</span>
-            <h2 style={styles.zoneTitle}>Andhra Pradesh</h2>
-            <FaMapMarkerAlt style={styles.mapIcon} />
-          </div>
-          <div style={styles.zoneBody}>
-            <div style={styles.location}>
-              <FaBuilding style={styles.iconStyle} />
-              <div style={styles.locationDetails}>
-                <div style={styles.locationName}>VIT-AP University</div>
-                <div style={styles.locationAddress}>Amaravati, Andhra Pradesh</div>
-              </div>
-            </div>
-            <div style={styles.divider}></div>
-            <div style={styles.coordinator}>
-              <FaUserTie style={styles.iconStyle} />
-              <div style={styles.coordinatorDetails}>
-                <div style={styles.coordinatorTitle}>Regional Coordinator</div>
-                <div style={styles.coordinatorName}>Dr. Nagendra Panini Challa</div>
-                <div style={styles.coordinatorInfo}>
-                  Associate Professor Grade-1<br />
-                  SCOPE<br />
-                  VIT-AP Amaravati Campus
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Zone 3 */}
-        <div className="zone-card" style={styles.zoneCard}>
-          <div style={{ ...styles.zoneHeader, ...styles.zone1 }}>
-            <span style={{ ...styles.zoneBadge, ...styles.zone1Badge }}>Zone 3</span>
             <h2 style={styles.zoneTitle}>Chhattisgarh</h2>
             <FaMapMarkerAlt style={styles.mapIcon} />
           </div>
