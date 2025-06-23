@@ -10,7 +10,7 @@ import PATNRegistration from "./pages/PATNRegistration";
 import ProtoPlanetLanding from "./pages/ProtoPlanetLanding";
 import ProtoPlanet from "./pages/ProtoPlanet";
 import NotFound from "./pages/NotFound";
-import StartupSphere from "./pages/StartupSphere";
+import StartupSphere from "./pages/StartupSphereLanding";
 
 const queryClient = new QueryClient();
 
