@@ -1,7 +1,8 @@
 import React, { useState, useRef, FormEvent } from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
-import { Users, UserPlus, Lightbulb, CreditCard } from 'lucide-react';
+import { Users, UserPlus, Lightbulb, CreditCard, Copy } from 'lucide-react';
+import { useIsMobile } from '../hooks/use-mobile';
 
 interface TeamMember {
   name: string;
@@ -90,6 +91,8 @@ const ProtoPlanet = () => {
     transactionId: '',
     termsAccepted: false
   });
+
+  const isMobile = useIsMobile();
 
   const handleInputChange = (section: string, field: string, value: string | boolean) => {
     setFormData(prev => {
@@ -403,7 +406,7 @@ const ProtoPlanet = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black w-full overflow-x-hidden">
       <div className="fixed top-0 w-full text-center py-1 bg-purple-900/80 backdrop-blur-sm z-50">
         <span className="text-sm text-white">💜 IET Hyderabad Local Network</span>
       </div>
@@ -419,14 +422,14 @@ const ProtoPlanet = () => {
         </div>
         
         {/* Floating orbs with subtle glow */}
-        <div className="absolute top-20 left-10 w-2 h-2 bg-purple-500 rounded-full blur-sm animate-pulse shadow-[0_0_15px_rgba(147,51,234,0.4)]"></div>
-        <div className="absolute bottom-20 right-10 w-1.5 h-1.5 bg-purple-500 rounded-full blur-sm animate-pulse shadow-[0_0_15px_rgba(147,51,234,0.4)]" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-20 w-3 h-3 bg-purple-500 rounded-full blur-sm animate-pulse shadow-[0_0_15px_rgba(147,51,234,0.4)]" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/3 right-24 w-2 h-2 bg-purple-500 rounded-full blur-sm animate-pulse shadow-[0_0_15px_rgba(147,51,234,0.4)]" style={{ animationDelay: '3s' }}></div>
+        <div className="absolute top-20 left-10 w-2 h-2 rounded-full blur-sm animate-pulse" style={{ backgroundColor: '#a046b4', boxShadow: '0 0 15px rgba(160,70,180,0.4)' }}></div>
+        <div className="absolute bottom-20 right-10 w-1.5 h-1.5 rounded-full blur-sm animate-pulse" style={{ backgroundColor: '#a046b4', boxShadow: '0 0 15px rgba(160,70,180,0.4)', animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-20 w-3 h-3 rounded-full blur-sm animate-pulse" style={{ backgroundColor: '#a046b4', boxShadow: '0 0 15px rgba(160,70,180,0.4)', animationDelay: '2s' }}></div>
+        <div className="absolute top-1/3 right-24 w-2 h-2 rounded-full blur-sm animate-pulse" style={{ backgroundColor: '#a046b4', boxShadow: '0 0 15px rgba(160,70,180,0.4)', animationDelay: '3s' }}></div>
       </div>
 
       <main className="pt-20 pb-16 relative z-10">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-2 sm:px-4 w-full max-w-6xl md:w-auto md:max-w-6xl">
           {/* Add status message at the top of the form */}
           {renderStatusMessage()}
 
@@ -438,7 +441,7 @@ const ProtoPlanet = () => {
             <div className="mb-6">
               <h1 className="text-6xl md:text-7xl lg:text-8xl font-black mb-4">
                 <span className="text-white">Proto</span>
-                <span className="text-purple-500">Planet</span>
+                <span style={{ color: '#a046b4' }}>Planet</span>
               </h1>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-300 mb-4">
                 Hardware Innovation Sprint
@@ -458,71 +461,102 @@ const ProtoPlanet = () => {
           </div>
 
           {/* Tabs Navigation */}
-          <div className="flex items-center justify-center gap-2 mb-8">
+          <div className="flex items-center justify-center gap-2 mb-8 w-full">
             <button
               onClick={() => setCurrentStep('team-details')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`flex items-center justify-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg transition-colors ${
                 currentStep === 'team-details'
-                  ? 'bg-[#9333EA] text-white'
+                  ? 'text-white'
                   : 'bg-black/40 text-gray-400 hover:text-white'
               }`}
+              style={currentStep === 'team-details' ? { backgroundColor: '#a046b4' } : {}}
             >
-              <Users className="w-5 h-5" />
-              Team Details
+              <Users className="w-6 h-6 md:w-5 md:h-5" />
+              {!isMobile && <span>Team Details</span>}
             </button>
+            {/* Gradient Separator */}
+            <div
+              className="hidden md:block w-8 h-1 mx-1 rounded-full"
+              style={{ background: 'linear-gradient(to right, #a046b4, #000)' }}
+            ></div>
+            <div
+              className="block md:hidden w-8 h-1 my-1 rounded-full"
+              style={{ background: 'linear-gradient(to right, #a046b4, #000)' }}
+            ></div>
             <button
               onClick={() => setCurrentStep('team-members')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`flex items-center justify-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg transition-colors ${
                 currentStep === 'team-members'
-                  ? 'bg-[#9333EA] text-white'
+                  ? 'text-white'
                   : 'bg-black/40 text-gray-400 hover:text-white'
               }`}
+              style={currentStep === 'team-members' ? { backgroundColor: '#a046b4' } : {}}
             >
-              <UserPlus className="w-5 h-5" />
-              Team Members
+              <UserPlus className="w-6 h-6 md:w-5 md:h-5" />
+              {!isMobile && <span>Team Members</span>}
             </button>
+            {/* Gradient Separator */}
+            <div
+              className="hidden md:block w-8 h-1 mx-1 rounded-full"
+              style={{ background: 'linear-gradient(to right, #a046b4, #000)' }}
+            ></div>
+            <div
+              className="block md:hidden w-8 h-1 my-1 rounded-full"
+              style={{ background: 'linear-gradient(to right, #a046b4, #000)' }}
+            ></div>
             <button
               onClick={() => setCurrentStep('project-abstract')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`flex items-center justify-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg transition-colors ${
                 currentStep === 'project-abstract'
-                  ? 'bg-[#9333EA] text-white'
+                  ? 'text-white'
                   : 'bg-black/40 text-gray-400 hover:text-white'
               }`}
+              style={currentStep === 'project-abstract' ? { backgroundColor: '#a046b4' } : {}}
             >
-              <Lightbulb className="w-5 h-5" />
-              Project Abstract
+              <Lightbulb className="w-6 h-6 md:w-5 md:h-5" />
+              {!isMobile && <span>Project Abstract</span>}
             </button>
+            {/* Gradient Separator */}
+            <div
+              className="hidden md:block w-8 h-1 mx-1 rounded-full"
+              style={{ background: 'linear-gradient(to right, #a046b4, #000)' }}
+            ></div>
+            <div
+              className="block md:hidden w-8 h-1 my-1 rounded-full"
+              style={{ background: 'linear-gradient(to right, #a046b4, #000)' }}
+            ></div>
             <button
               onClick={() => setCurrentStep('payment')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`flex items-center justify-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg transition-colors ${
                 currentStep === 'payment'
-                  ? 'bg-[#9333EA] text-white'
+                  ? 'text-white'
                   : 'bg-black/40 text-gray-400 hover:text-white'
               }`}
+              style={currentStep === 'payment' ? { backgroundColor: '#a046b4' } : {}}
             >
-              <CreditCard className="w-5 h-5" />
-              Payment & Declaration
+              <CreditCard className="w-6 h-6 md:w-5 md:h-5" />
+              {!isMobile && <span>Payment & Declaration</span>}
             </button>
           </div>
 
           {/* Form Section */}
-          <div className="bg-[#0A051C] backdrop-blur-sm border border-purple-500/20 rounded-xl p-8 md:p-10 shadow-[0_0_25px_-5px_rgba(147,51,234,0.3)]">
-            <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="bg-[#000] backdrop-blur-sm rounded-2xl p-4 sm:p-8 md:p-12 
+  shadow-[rgba(160,70,180,0.3)_0px_19px_38px,rgba(160,70,180,0.22)_0px_15px_12px] w-full max-w-4xl mx-auto overflow-x-auto">                      <form className="space-y-8">
               {currentStep === 'team-details' ? (
                 <>
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                      <Users className="w-7 h-7 text-white" />
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <Users className="w-6 h-6 text-white" />
                     </div>
-                    <h2 className="text-2xl font-bold text-white">Team Details</h2>
+                    <h2 className="text-xl font-bold text-white">Team Details</h2>
                   </div>
-                  <p className="text-gray-300 mb-8">
+                  <p className="text-gray-300 mb-4 text-sm">
                     Basic information about your team and institution
                   </p>
 
-                  <div className="space-y-6 max-w-6xl mx-auto">
+                  <div className="space-y-3 max-w-3xl mx-auto">
                     <div>
-                      <label className="block text-white font-medium mb-2" htmlFor="teamName">
+                      <label className="block text-white font-medium mb-1" htmlFor="teamName">
                         Team Name <span className="text-purple-500">*</span>
                       </label>
                       <input
@@ -531,15 +565,15 @@ const ProtoPlanet = () => {
                         placeholder="Enter team name"
                         value={formData.teamName}
                         onChange={(e) => handleInputChange('teamName', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                        className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                       />
-                      <p className="text-gray-400 text-sm mt-1">
+                      <p className="text-gray-400 text-xs mt-1">
                         Choose a short and unique name for your team
                       </p>
                     </div>
 
                     <div>
-                      <label className="block text-white font-medium mb-2" htmlFor="institutionName">
+                      <label className="block text-white font-medium mb-1" htmlFor="institutionName">
                         Institution Name <span className="text-purple-500">*</span>
                       </label>
                       <input
@@ -548,12 +582,12 @@ const ProtoPlanet = () => {
                         placeholder="College/University name"
                         value={formData.institutionName}
                         onChange={(e) => handleInputChange('institutionName', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                        className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-white font-medium mb-2" htmlFor="cityState">
+                      <label className="block text-white font-medium mb-1" htmlFor="cityState">
                         City & State <span className="text-purple-500">*</span>
                       </label>
                       <input
@@ -562,39 +596,28 @@ const ProtoPlanet = () => {
                         placeholder="e.g., Hyderabad, Telangana"
                         value={formData.cityState}
                         onChange={(e) => handleInputChange('cityState', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                        className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                       />
-                    </div>
-
-                    <div className="pt-6">
-                      <button
-                        type="button"
-                        onClick={() => setCurrentStep('team-members')}
-                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-[0_0_15px_rgba(147,51,234,0.3)]"
-                      >
-                        Next →
-                      </button>
                     </div>
                   </div>
                 </>
               ) : currentStep === 'team-members' ? (
                 <>
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                      <UserPlus className="w-7 h-7 text-white" />
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <UserPlus className="w-6 h-6 text-white" />
                     </div>
-                    <h2 className="text-2xl font-bold text-white">Team Members</h2>
+                    <h2 className="text-xl font-bold text-white">Team Members</h2>
                   </div>
-                  <p className="text-gray-300 mb-8">
+                  <p className="text-gray-300 mb-4 text-sm">
                     Enter the details of your team members
                   </p>
-
-                  <div className="space-y-8 max-w-6xl mx-auto">
+                  <div className="space-y-6 max-w-3xl mx-auto">
                     {/* Team Leader Section */}
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-semibold text-white">Team Leader (Member 1) <span className="text-purple-500">*</span></h3>
+                    <div className="space-y-2 bg-white/5 border border-purple-500/30 rounded-xl p-4">
+                      <h3 className="text-lg font-semibold text-white">Team Leader (Member 1) <span className="text-purple-500">*</span></h3>
                       <div>
-                        <label className="block text-white font-medium mb-2">
+                        <label className="block text-white font-medium mb-1">
                           Full Name <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -602,11 +625,11 @@ const ProtoPlanet = () => {
                           placeholder="Enter full name"
                           value={formData.member1.name}
                           onChange={(e) => handleInputChange('member1', 'name', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-white font-medium mb-2">
+                        <label className="block text-white font-medium mb-1">
                           Email ID <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -614,11 +637,11 @@ const ProtoPlanet = () => {
                           placeholder="email@example.com"
                           value={formData.member1.email}
                           onChange={(e) => handleInputChange('member1', 'email', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-white font-medium mb-2">
+                        <label className="block text-white font-medium mb-1">
                           Phone Number <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -626,11 +649,11 @@ const ProtoPlanet = () => {
                           placeholder="+91 12345 67890"
                           value={formData.member1.phone}
                           onChange={(e) => handleInputChange('member1', 'phone', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-white font-medium mb-2">
+                        <label className="block text-white font-medium mb-1">
                           Year & Branch <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -638,10 +661,10 @@ const ProtoPlanet = () => {
                           placeholder="e.g., 3rd Year CSE"
                           value={formData.member1.yearBranch}
                           onChange={(e) => handleInputChange('member1', 'yearBranch', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
-                      <div className="space-y-3">
+                      <div className="space-y-1">
                         <div className="flex items-center">
                           <input
                             type="checkbox"
@@ -656,7 +679,7 @@ const ProtoPlanet = () => {
                         </div>
                         {formData.member1.isIETMember && (
                           <div>
-                            <label className="block text-white font-medium mb-2">
+                            <label className="block text-white font-medium mb-1">
                               IET Membership ID <span className="text-purple-500">*</span>
                             </label>
                             <input
@@ -664,18 +687,17 @@ const ProtoPlanet = () => {
                               placeholder="Enter IET Membership ID"
                               value={formData.member1.ietMembershipId}
                               onChange={(e) => handleInputChange('member1', 'ietMembershipId', e.target.value)}
-                              className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                              className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                             />
                           </div>
                         )}
                       </div>
                     </div>
-
                     {/* Member 2 Section */}
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-semibold text-white">Member 2 <span className="text-purple-500">*</span></h3>
+                    <div className="space-y-2 bg-white/5 border border-purple-500/30 rounded-xl p-4">
+                      <h3 className="text-lg font-semibold text-white">Member 2 <span className="text-purple-500">*</span></h3>
                       <div>
-                        <label className="block text-white font-medium mb-2">
+                        <label className="block text-white font-medium mb-1">
                           Full Name <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -683,11 +705,11 @@ const ProtoPlanet = () => {
                           placeholder="Enter full name"
                           value={formData.member2.name}
                           onChange={(e) => handleInputChange('member2', 'name', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-white font-medium mb-2">
+                        <label className="block text-white font-medium mb-1">
                           Email ID <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -695,11 +717,11 @@ const ProtoPlanet = () => {
                           placeholder="email@example.com"
                           value={formData.member2.email}
                           onChange={(e) => handleInputChange('member2', 'email', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-white font-medium mb-2">
+                        <label className="block text-white font-medium mb-1">
                           Phone Number <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -707,11 +729,11 @@ const ProtoPlanet = () => {
                           placeholder="+91 12345 67890"
                           value={formData.member2.phone}
                           onChange={(e) => handleInputChange('member2', 'phone', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-white font-medium mb-2">
+                        <label className="block text-white font-medium mb-1">
                           Year & Branch <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -719,10 +741,10 @@ const ProtoPlanet = () => {
                           placeholder="e.g., 2nd Year ECE"
                           value={formData.member2.yearBranch}
                           onChange={(e) => handleInputChange('member2', 'yearBranch', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
-                      <div className="space-y-3">
+                      <div className="space-y-1">
                         <div className="flex items-center">
                           <input
                             type="checkbox"
@@ -737,7 +759,7 @@ const ProtoPlanet = () => {
                         </div>
                         {formData.member2.isIETMember && (
                           <div>
-                            <label className="block text-white font-medium mb-2">
+                            <label className="block text-white font-medium mb-1">
                               IET Membership ID <span className="text-purple-500">*</span>
                             </label>
                             <input
@@ -745,18 +767,17 @@ const ProtoPlanet = () => {
                               placeholder="Enter IET Membership ID"
                               value={formData.member2.ietMembershipId}
                               onChange={(e) => handleInputChange('member2', 'ietMembershipId', e.target.value)}
-                              className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                              className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                             />
                           </div>
                         )}
                       </div>
                     </div>
-
                     {/* Member 3 Section (Optional) */}
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-semibold text-white">Member 3 (Optional)</h3>
+                    <div className="space-y-2 bg-white/5 border border-purple-500/30 rounded-xl p-4">
+                      <h3 className="text-lg font-semibold text-white">Member 3 (Optional)</h3>
                       <div>
-                        <label className="block text-white font-medium mb-2">
+                        <label className="block text-white font-medium mb-1">
                           Full Name
                         </label>
                         <input
@@ -764,11 +785,11 @@ const ProtoPlanet = () => {
                           placeholder="Enter full name"
                           value={formData.member3.name}
                           onChange={(e) => handleInputChange('member3', 'name', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-white font-medium mb-2">
+                        <label className="block text-white font-medium mb-1">
                           Email ID
                         </label>
                         <input
@@ -776,11 +797,11 @@ const ProtoPlanet = () => {
                           placeholder="email@example.com"
                           value={formData.member3.email}
                           onChange={(e) => handleInputChange('member3', 'email', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-white font-medium mb-2">
+                        <label className="block text-white font-medium mb-1">
                           Phone Number
                         </label>
                         <input
@@ -788,11 +809,11 @@ const ProtoPlanet = () => {
                           placeholder="+91 12345 67890"
                           value={formData.member3.phone}
                           onChange={(e) => handleInputChange('member3', 'phone', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-white font-medium mb-2">
+                        <label className="block text-white font-medium mb-1">
                           Year & Branch
                         </label>
                         <input
@@ -800,10 +821,10 @@ const ProtoPlanet = () => {
                           placeholder="e.g., 1st Year ME"
                           value={formData.member3.yearBranch}
                           onChange={(e) => handleInputChange('member3', 'yearBranch', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
                       </div>
-                      <div className="space-y-3">
+                      <div className="space-y-1">
                         <div className="flex items-center">
                           <input
                             type="checkbox"
@@ -818,7 +839,7 @@ const ProtoPlanet = () => {
                         </div>
                         {formData.member3.isIETMember && (
                           <div>
-                            <label className="block text-white font-medium mb-2">
+                            <label className="block text-white font-medium mb-1">
                               IET Membership ID
                             </label>
                             <input
@@ -826,102 +847,83 @@ const ProtoPlanet = () => {
                               placeholder="Enter IET Membership ID"
                               value={formData.member3.ietMembershipId}
                               onChange={(e) => handleInputChange('member3', 'ietMembershipId', e.target.value)}
-                              className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                              className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                             />
                           </div>
                         )}
                       </div>
                     </div>
-
-                    <div className="flex justify-between pt-6">
-                      <button
-                        type="button"
-                        onClick={() => setCurrentStep('team-details')}
-                        className="px-8 py-3 bg-white/10 text-white rounded-lg font-medium border border-purple-500/20 hover:bg-white/20 transition-colors"
-                      >
-                        ← Previous
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setCurrentStep('project-abstract')}
-                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-[0_0_15px_rgba(147,51,234,0.3)]"
-                      >
-                        Next →
-                      </button>
-                    </div>
                   </div>
                 </>
               ) : currentStep === 'project-abstract' ? (
                 <>
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                      <Lightbulb className="w-7 h-7 text-white" />
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <Lightbulb className="w-6 h-6 text-white" />
                     </div>
-                    <h2 className="text-2xl font-bold text-white">Project Abstract Submission - Level 1</h2>
+                    <h2 className="text-xl font-bold text-white">Project Abstract Submission - Level 1</h2>
                   </div>
-                  <p className="text-gray-300 mb-8">
+                  <p className="text-gray-300 mb-4 text-sm">
                     Describe your innovative hardware solution
                   </p>
-
-                  <div className="space-y-6 max-w-6xl mx-auto">
+                  <div className="space-y-3 max-w-3xl mx-auto">
                     <div>
-                      <label className="block text-white font-medium mb-2">
+                      <label className="block text-white font-medium mb-1">
                         Select Your Track <span className="text-purple-500">*</span>
                       </label>
-                      <div className="space-y-3">
+                      <div className="space-y-2">
                         <button
                           type="button"
                           onClick={() => handleInputChange('projectTrack', '', 'IoT & Smart Environments')}
-                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white/10 border ${
+                          className={`w-full px-3 py-2 flex items-center gap-2 bg-white/10 border ${
                             formData.projectTrack === 'IoT & Smart Environments' 
                               ? 'border-purple-500 ring-1 ring-purple-500' 
                               : 'border-purple-500/20'
                           } rounded-lg text-white hover:bg-white/20 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left`}
                         >
-                          <span className="text-xl">🌐</span>
+                          <span className="text-sm">🌐</span>
                           IoT & Smart Environments
                         </button>
                         <button
                           type="button"
                           onClick={() => handleInputChange('projectTrack', '', 'Robotics & Intelligent Machines')}
-                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white/10 border ${
+                          className={`w-full px-3 py-2 flex items-center gap-2 bg-white/10 border ${
                             formData.projectTrack === 'Robotics & Intelligent Machines'
                               ? 'border-purple-500 ring-1 ring-purple-500'
                               : 'border-purple-500/20'
                           } rounded-lg text-white hover:bg-white/20 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left`}
                         >
-                          <span className="text-xl">🤖</span>
+                          <span className="text-sm">🤖</span>
                           Robotics & Intelligent Machines
                         </button>
                         <button
                           type="button"
                           onClick={() => handleInputChange('projectTrack', '', 'HealthTech & Human Augmentation')}
-                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white/10 border ${
+                          className={`w-full px-3 py-2 flex items-center gap-2 bg-white/10 border ${
                             formData.projectTrack === 'HealthTech & Human Augmentation'
                               ? 'border-purple-500 ring-1 ring-purple-500'
                               : 'border-purple-500/20'
                           } rounded-lg text-white hover:bg-white/20 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left`}
                         >
-                          <span className="text-xl">🏥</span>
+                          <span className="text-sm">🏥</span>
                           HealthTech & Human Augmentation
                         </button>
                         <button
                           type="button"
                           onClick={() => handleInputChange('projectTrack', '', 'Sustainable & Clean Tech')}
-                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white/10 border ${
+                          className={`w-full px-3 py-2 flex items-center gap-2 bg-white/10 border ${
                             formData.projectTrack === 'Sustainable & Clean Tech'
                               ? 'border-purple-500 ring-1 ring-purple-500'
                               : 'border-purple-500/20'
                           } rounded-lg text-white hover:bg-white/20 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-left`}
                         >
-                          <span className="text-xl">🌱</span>
+                          <span className="text-sm">🌱</span>
                           Sustainable & Clean Tech
                         </button>
                       </div>
                     </div>
-
                     <div>
-                      <label className="block text-white font-medium mb-2">
+                      <label className="block text-white font-medium mb-1">
                         Project Title <span className="text-purple-500">*</span>
                       </label>
                       <input
@@ -929,12 +931,11 @@ const ProtoPlanet = () => {
                         placeholder="Concise and descriptive title"
                         value={formData.projectTitle}
                         onChange={(e) => handleInputChange('projectTitle', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                        className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                       />
                     </div>
-
                     <div>
-                      <label className="block text-white font-medium mb-2">
+                      <label className="block text-white font-medium mb-1">
                         Problem Statement <span className="text-purple-500">*</span>
                       </label>
                       <textarea
@@ -942,12 +943,11 @@ const ProtoPlanet = () => {
                         placeholder="Brief description of the problem you're solving..."
                         value={formData.problemStatement}
                         onChange={(e) => handleInputChange('problemStatement', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
+                        className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
                       ></textarea>
                     </div>
-
                     <div>
-                      <label className="block text-white font-medium mb-2">
+                      <label className="block text-white font-medium mb-1">
                         Proposed Solution <span className="text-purple-500">*</span>
                       </label>
                       <textarea
@@ -955,12 +955,11 @@ const ProtoPlanet = () => {
                         placeholder="How your project addresses the problem..."
                         value={formData.proposedSolution}
                         onChange={(e) => handleInputChange('proposedSolution', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
+                        className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
                       ></textarea>
                     </div>
-
                     <div>
-                      <label className="block text-white font-medium mb-2">
+                      <label className="block text-white font-medium mb-1">
                         Basic System Architecture <span className="text-purple-500">*</span>
                       </label>
                       <textarea
@@ -968,12 +967,11 @@ const ProtoPlanet = () => {
                         placeholder="Overview of hardware/system components..."
                         value={formData.systemArchitecture}
                         onChange={(e) => handleInputChange('systemArchitecture', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
+                        className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
                       ></textarea>
                     </div>
-
                     <div>
-                      <label className="block text-white font-medium mb-2">
+                      <label className="block text-white font-medium mb-1">
                         Expected Technological and Social Impact <span className="text-purple-500">*</span>
                       </label>
                       <textarea
@@ -981,48 +979,29 @@ const ProtoPlanet = () => {
                         placeholder="Who benefits, and how?..."
                         value={formData.technologicalImpact}
                         onChange={(e) => handleInputChange('technologicalImpact', '', e.target.value)}
-                        className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
+                        className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
                       ></textarea>
-                    </div>
-
-                    <div className="flex justify-between pt-6">
-                      <button
-                        type="button"
-                        onClick={() => setCurrentStep('team-members')}
-                        className="px-8 py-3 bg-white/10 text-white rounded-lg font-medium border border-purple-500/20 hover:bg-white/20 transition-colors"
-                      >
-                        ← Previous
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setCurrentStep('payment')}
-                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-[0_0_15px_rgba(147,51,234,0.3)]"
-                      >
-                        Next →
-                      </button>
                     </div>
                   </div>
                 </>
               ) : currentStep === 'payment' ? (
                 <>
-                  {/* Registration Fee Section */}
-                  <div className="space-y-8 max-w-6xl mx-auto">
+                  <div className="space-y-6 max-w-3xl mx-auto">
                     <div>
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                          <CreditCard className="w-7 h-7 text-white" />
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                          <CreditCard className="w-6 h-6 text-white" />
                         </div>
-                        <h2 className="text-2xl font-bold text-white">Registration Fee</h2>
+                        <h2 className="text-xl font-bold text-white">Registration Fee</h2>
                       </div>
-
-                      <div className="space-y-3">
-                        <label className="block text-white font-medium mb-2">
+                      <div className="space-y-2">
+                        <label className="block text-white font-medium mb-1">
                           Fee Type <span className="text-purple-500">*</span>
                         </label>
                         <button
                           type="button"
                           onClick={() => handleInputChange('feeType', '', 'IET Member Team')}
-                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white/10 border ${
+                          className={`w-full px-3 py-2 flex items-center gap-2 bg-white/10 border ${
                             formData.feeType === 'IET Member Team' 
                               ? 'border-purple-500 ring-1 ring-purple-500' 
                               : 'border-purple-500/20'
@@ -1044,7 +1023,7 @@ const ProtoPlanet = () => {
                         <button
                           type="button"
                           onClick={() => handleInputChange('feeType', '', 'Non-Member Team')}
-                          className={`w-full px-4 py-3 flex items-center gap-3 bg-white/10 border ${
+                          className={`w-full px-3 py-2 flex items-center gap-2 bg-white/10 border ${
                             formData.feeType === 'Non-Member Team'
                               ? 'border-purple-500 ring-1 ring-purple-500'
                               : 'border-purple-500/20'
@@ -1065,44 +1044,47 @@ const ProtoPlanet = () => {
                         </button>
                       </div>
                     </div>
-
-                    {/* Bank Details Section */}
-                    <div>
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                    {/* Bank Details Section - visually distinct */}
+                    <div className="my-4 p-6 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md shadow-lg">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0 shadow-md">
                           <span className="text-2xl">🏦</span>
                         </div>
-                        <h2 className="text-2xl font-bold text-white">Bank Details for Payment</h2>
+                        <h2 className="text-2xl font-bold text-white tracking-tight">Bank Details for Payment</h2>
                       </div>
-
-                      <div className="space-y-4 text-white">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-white text-sm">
                         <div>
-                          <div className="text-gray-300">Bank Name:</div>
-                          <div>Axis Bank</div>
+                          <div className="text-gray-300 font-medium">Bank Name</div>
+                          <div className="font-semibold text-white">Axis Bank</div>
                         </div>
                         <div>
-                          <div className="text-gray-300">Account Name:</div>
-                          <div>INSTITUTION OF ENGINEERING AND TECHNOLOGY-LOCAL NETWORK ACCOUNT HYDERABAD</div>
+                          <div className="text-gray-300 font-medium">Account Name</div>
+                          <div className="font-semibold text-white">INSTITUTION OF ENGINEERING AND TECHNOLOGY-LOCAL NETWORK ACCOUNT HYDERABAD</div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div>
+                            <div className="text-gray-300 font-medium">Account Number</div>
+                            <div className="font-semibold text-white select-all">924020040374045</div>
+                          </div>
+                          <button type="button" onClick={() => navigator.clipboard.writeText('92402004037404S')} aria-label="Copy Account Number"><Copy className="w-4 h-4" /></button>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div>
+                            <div className="text-gray-300 font-medium">IFSC Code</div>
+                            <div className="font-semibold text-white select-all">UTIB0000009</div>
+                          </div>
+                          <button type="button" onClick={() => navigator.clipboard.writeText('UTIB0000009')} aria-label="Copy IFSC Code"><Copy className="w-4 h-4" /></button>
                         </div>
                         <div>
-                          <div className="text-gray-300">Account Number:</div>
-                          <div>92402004037404S</div>
-                        </div>
-                        <div>
-                          <div className="text-gray-300">IFSC Code:</div>
-                          <div>UTIB0000009</div>
-                        </div>
-                        <div>
-                          <div className="text-gray-300">Branch Name:</div>
-                          <div>Bangalore Main Branch</div>
+                          <div className="text-gray-300 font-medium">Branch Name</div>
+                          <div className="font-semibold text-white">Bangalore Main Branch</div>
                         </div>
                       </div>
                     </div>
-
                     {/* Transaction Details Section */}
-                    <div className="space-y-6">
+                    <div className="space-y-2">
                       <div>
-                        <label className="block text-white font-medium mb-2">
+                        <label className="block text-white font-medium mb-1">
                           Transaction Reference Number <span className="text-purple-500">*</span>
                         </label>
                         <input
@@ -1110,13 +1092,12 @@ const ProtoPlanet = () => {
                           placeholder="Enter transaction ID after payment"
                           value={formData.transactionId}
                           onChange={(e) => handleInputChange('transactionId', '', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="w-full px-3 py-2 bg-white/10 border border-purple-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         />
-                        <p className="text-gray-300 text-sm mt-1">Enter the transaction ID received after payment</p>
+                        <p className="text-gray-300 text-xs mt-1">Enter the transaction ID received after payment</p>
                       </div>
-
                       <div>
-                        <label className="block text-white font-medium mb-2">
+                        <label className="block text-white font-medium mb-1">
                           Upload Transaction Screenshot <span className="text-purple-500">*</span>
                         </label>
                         <div 
@@ -1144,33 +1125,30 @@ const ProtoPlanet = () => {
                               <>
                                 <span className="text-2xl mb-2">⬆️</span>
                                 <div className="text-white font-medium">Click to upload screenshot</div>
-                                <div className="text-gray-300 text-sm">PNG, JPG up to 10MB</div>
+                                <div className="text-gray-300 text-xs">PNG, JPG up to 10MB</div>
                               </>
                             )}
                           </div>
                         </div>
                       </div>
                     </div>
-
-                    {/* Declaration Section */}
+                    {/* Declaration Section - normal design */}
                     <div>
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                          <span className="text-2xl">📝</span>
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                          <span className="text-xl">📝</span>
                         </div>
-                        <h2 className="text-2xl font-bold text-white">Declaration</h2>
+                        <h2 className="text-xl font-bold text-white">Declaration</h2>
                       </div>
-
-                      <div className="space-y-4">
+                      <div className="space-y-2">
                         <p className="text-white">By submitting this form, we confirm that:</p>
-                        <ul className="list-disc text-gray-300 space-y-2 ml-5">
+                        <ul className="list-disc text-gray-300 space-y-1 ml-5">
                           <li>All project work is original and developed by the team</li>
                           <li>Our institution is located in Telangana, Andhra Pradesh, or Chhattisgarh</li>
                           <li>We agree to participate in both offline rounds if shortlisted</li>
                           <li>We understand and accept all rules and eligibility criteria</li>
                         </ul>
-
-                        <div className="flex items-center gap-2 mt-4">
+                        <div className="flex items-center gap-2 mt-2">
                           <input
                             type="checkbox"
                             id="terms"
@@ -1184,38 +1162,60 @@ const ProtoPlanet = () => {
                         </div>
                       </div>
                     </div>
-
-                    {/* Submit Form Button */}
-                    <div className="flex justify-between pt-6">
-                      <button
-                        type="button"
-                        onClick={() => setCurrentStep('project-abstract')}
-                        className="px-8 py-3 bg-white/10 text-white rounded-lg font-medium border border-purple-500/20 hover:bg-white/20 transition-colors"
-                      >
-                        ← Previous
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="px-8 py-3 bg-[#9333EA] text-white rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-[0_0_15px_rgba(147,51,234,0.3)] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            {submissionStatus.message}
-                          </>
-                        ) : (
-                          <>Submit Registration <span>📨</span></>
-                        )}
-                      </button>
-                    </div>
                   </div>
                 </>
               ) : null}
             </form>
+          </div>
+
+          {/* Navigation Buttons OUTSIDE the form */}
+          <div className="flex justify-between items-center max-w-3xl mx-auto mt-16 gap-2">
+            {currentStep !== 'team-details' && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (currentStep === 'team-members') setCurrentStep('team-details');
+                  else if (currentStep === 'project-abstract') setCurrentStep('team-members');
+                  else if (currentStep === 'payment') setCurrentStep('project-abstract');
+                }}
+                className="outline-btn px-6 py-2 rounded-lg font-medium flex items-center gap-2"
+              >
+                <span className="arrow-left">←</span> Previous
+              </button>
+            )}
+            <div className="flex-1"></div>
+            {currentStep !== 'payment' ? (
+              <button
+                type="button"
+                onClick={() => {
+                  if (currentStep === 'team-details') setCurrentStep('team-members');
+                  else if (currentStep === 'team-members') setCurrentStep('project-abstract');
+                  else if (currentStep === 'project-abstract') setCurrentStep('payment');
+                }}
+                className="gradient-btn px-6 py-2 rounded-lg font-medium flex items-center gap-2"
+              >
+                Next <span className="arrow-right">→</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={handleSubmit}
+                className="gradient-btn px-6 py-2 rounded-lg font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    {submissionStatus.message}
+                  </>
+                ) : (
+                  <>Submit Registration <span className="arrow-right">📨</span></>
+                )}
+              </button>
+            )}
           </div>
         </div>
       </main>
@@ -1231,25 +1231,85 @@ const ProtoPlanet = () => {
         .stars-small, .stars-medium, .stars-large {
           position: absolute;
           inset: 0;
-          background-image: radial-gradient(2px 2px at var(--star-x, 50%) var(--star-y, 50%), rgba(255, 255, 255, 0.3), transparent);
+          background-image: radial-gradient(2px 2px at var(--star-x, 50%) var(--star-y, 50%), rgba(160, 70, 180, 0.3), transparent);
           background-size: 200px 200px;
           animation: twinkle 4s infinite;
         }
         
         .stars-medium {
-          background-image: radial-gradient(3px 3px at var(--star-x, 30%) var(--star-y, 70%), rgba(255, 255, 255, 0.3), transparent);
+          background-image: radial-gradient(3px 3px at var(--star-x, 30%) var(--star-y, 70%), rgba(160, 70, 180, 0.3), transparent);
           background-size: 300px 300px;
           animation-delay: 2s;
         }
         
         .stars-large {
-          background-image: radial-gradient(4px 4px at var(--star-x, 70%) var(--star-y, 30%), rgba(255, 255, 255, 0.3), transparent);
+          background-image: radial-gradient(4px 4px at var(--star-x, 70%) var(--star-y, 30%), rgba(160, 70, 180, 0.3), transparent);
           background-size: 400px 400px;
           animation-delay: 3s;
+        }
+
+        @media (max-width: 768px) {
+          .container, .max-w-6xl, .md\:max-w-6xl {
+            max-width: 100vw !important;
+            width: 100vw !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+          }
+        }
+
+        .gradient-btn {
+          background: linear-gradient(135deg, #a046b4 0%, #9b4df5 100%);
+          color: #fff;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+          transition: all 0.2s cubic-bezier(.4,0,.2,1);
+          position: relative;
+          overflow: hidden;
+        }
+        .gradient-btn:hover, .gradient-btn:focus {
+          background: linear-gradient(135deg, #9b4df5 0%, #a046b4 100%);
+          box-shadow: 0 10px 15px rgba(138,43,226,0.2), 0 4px 6px rgba(138,43,226,0.1);
+          transform: translateY(-2px);
+        }
+        .gradient-btn .arrow-right {
+          display: inline-block;
+          transition: transform 0.2s cubic-bezier(.4,0,.2,1);
+        }
+        .gradient-btn:hover .arrow-right {
+          transform: translateX(3px);
+        }
+        .outline-btn {
+          border: 2px solid #a046b4;
+          color: #a046b4;
+          background: transparent;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+          transition: all 0.2s cubic-bezier(.4,0,.2,1);
+          position: relative;
+          overflow: hidden;
+        }
+        .outline-btn:hover, .outline-btn:focus {
+          background: rgba(138,43,226,0.1);
+          border-color: #9b4df5;
+          color: #9b4df5;
+          box-shadow: 0 4px 6px rgba(138,43,226,0.1);
+          transform: translateY(-2px);
+        }
+        .outline-btn .arrow-left {
+          display: inline-block;
+          transition: transform 0.2s cubic-bezier(.4,0,.2,1);
+        }
+        .outline-btn:hover .arrow-left {
+          transform: translateX(-3px);
+        }
+        .error-message {
+          color: #ef4444;
+          font-size: 0.95em;
+          margin-top: 0.25rem;
+          margin-bottom: 0.25rem;
+          font-weight: 500;
         }
       `}</style>
     </div>
   );
 };
 
-export default ProtoPlanet; 
+export default ProtoPlanet;

@@ -30,7 +30,7 @@ const PATNzonalCenters = () => {
   const styles = {
     pageHeader: {
       textAlign: 'center',
-      marginBottom: '3rem',
+      marginBottom: '1rem',
       fontFamily: "'Times New Roman', Times, serif",
       padding: '0 1.5rem'
     },
@@ -255,11 +255,19 @@ const PATNzonalCenters = () => {
               <div style={styles.coordinatorDetails}>
                 <div style={styles.coordinatorTitle}>Zonal Coordinators</div>
                 <div style={styles.coordinatorName}>1. Mrs. G B Christina</div>
+                <div style={styles.coordinatorInfo}>
+                  Assistant Professor<br />
+                  SCET Narsapur A.P<br />
+                </div>
                 <div style={styles.coordinatorInfo}>📞 +916300743773</div>
 
                 <div style={{ marginTop: '1rem' }}>
-                  <div style={styles.coordinatorName}>2. Ms.Bhurva Rajiv Sharma</div>
-                  <div style={styles.coordinatorInfo}>📞 +919987479510</div>
+                  <div style={styles.coordinatorName}>2. Ms.Bhavya</div>
+                  <div style={styles.coordinatorInfo}>
+                  Associate Engineer <br />
+                 KPIT Technologies<br />
+                </div>
+                  <div style={styles.coordinatorInfo}>📞 +917981123992</div>
                 </div>
               </div>
             </div>
@@ -277,24 +285,43 @@ const PATNzonalCenters = () => {
             <div style={styles.location}>
               <FaBuilding style={styles.iconStyle} />
               <div style={styles.locationDetails}>
-                <div style={styles.locationName}>Venue to be confirmed</div>
+                <div style={styles.locationName}> Kalinga University</div>
                 <div style={styles.locationAddress}>Raipur, Chhattisgarh</div>
               </div>
             </div>
+
             <div style={styles.divider}></div>
+
             <div style={styles.coordinator}>
               <FaUserTie style={styles.iconStyle} />
               <div style={styles.coordinatorDetails}>
-                <div style={styles.coordinatorTitle}>Regional Coordinator</div>
+                <div style={styles.coordinatorTitle}>Event Coordinator</div>
+                <div style={styles.coordinatorName}>Lavanya Tiwari</div>
+                <div style={styles.coordinatorInfo}>📞 +91 6264906510</div>
+              </div>
+            </div>
+
+            <div style={styles.divider}></div>
+
+            <div style={styles.coordinator}>
+              <FaUserTie style={styles.iconStyle} />
+              <div style={styles.coordinatorDetails}>
+                <div style={styles.coordinatorTitle}>Zonal Coordinator</div>
                 <div style={styles.coordinatorName}>Dr. Sunayana Shukla</div>
                 <div style={styles.coordinatorInfo}>
                   Assistant Professor and Senior Manager<br />
                   Kalinga University, Raipur
                 </div>
+                <div style={styles.coordinatorInfo}>📞 +91 79910 56030</div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Contact Info */}
+      <div style={{ textAlign: 'center', margin: '2rem 0', fontFamily: "'Times New Roman', Times, serif", color: 'white', fontWeight: 'bold', fontSize: '1.1rem' }}>
+        For any queries: <a href="mailto:yp@iethlnevents.in" style={{ color: '#22BBE0', textDecoration: 'none', fontWeight: 'bold' }}>yp@iethlnevents.in</a>
       </div>
 
       {/* Important Note */}

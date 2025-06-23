@@ -29,7 +29,7 @@ const PATNEventDetails = () => {
       backgroundColor: '#000000',
       padding: '2rem',
       borderRadius: '1.5rem',
-      boxShadow: '0 4px 30px rgba(34, 187, 224, 0.4)',
+      
       margin: '2rem auto',
       maxWidth: '1200px',
       color: 'white',

@@ -77,6 +77,7 @@ const PATNCallToAction: React.FC = () => {
         <button className="patn-btn-register" onClick={() => navigate('/patn/register')}>
             Register Now - Free Entry
           </button>
+        
       </div>
     </>
   );

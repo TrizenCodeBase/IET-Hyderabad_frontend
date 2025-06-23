@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
-  Cpu, Rocket, BrainCircuit, Leaf, Wifi, HeartPulse, Trophy, Calendar, Users, IndianRupee, Flag, Laptop,
+  Rocket, BrainCircuit, Leaf, Wifi, HeartPulse, Trophy, Calendar, Users, IndianRupee, Flag, Laptop,
   Mail, Instagram, Twitter, ArrowRight, Network, Smartphone, Gauge, Lightbulb, Award, Bookmark,
-  ShieldCheck, ClipboardCheck, Phone, CalendarDays, ChevronRight, ArrowUp, Home
+  ShieldCheck, ClipboardCheck, Phone, Cpu, CalendarDays, ChevronRight, ArrowUp, Home
 } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 
-const ProtoPlanetLanding = () => {
+const StartupSphereLanding = () => {
   const navigate = useNavigate();
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isScrollingToTop, setIsScrollingToTop] = useState(false);
 
   const handleRegister = () => {
-    navigate('/protoplanet/register');
+    navigate('/startupsphere/register');
   };
 
   const handleBackToTop = () => {
@@ -62,9 +62,9 @@ const ProtoPlanetLanding = () => {
   useEffect(() => {
     // Typing effect for the header
     const words = [
-      { id: "hardware", text: "Hardware " },
-      { id: "innovation", text: "Innovation " },
-      { id: "sprint", text: "Challenge" }
+      { id: "future", text: "Future " },
+      { id: "founders", text: "Founders " },
+      { id: "pi", text: "Pitch" }
     ];
 
     const typingSpeed = 150;
@@ -77,9 +77,9 @@ const ProtoPlanetLanding = () => {
     let isErasing = false;
 
     let currentText = {
-      hardware: "",
-      innovation: "",
-      sprint: ""
+      future: "",
+      founders: "",
+      pi: ""
     };
 
     const type = () => {
@@ -121,7 +121,7 @@ const ProtoPlanetLanding = () => {
             isErasing = false;
             wordIndex = 0;
             charIndex = 0;
-            currentText = { hardware: "", innovation: "", sprint: "" };
+            currentText = { future: "", founders: "", pi: "" };
             setTimeout(type, typingSpeed);
           }
         }
@@ -180,7 +180,7 @@ const ProtoPlanetLanding = () => {
 
   return (
     <>
-      <div className="proto-planet-landing">
+      <div className="startup-sphere-landing">
         <Navigation />
         
         {/* Breadcrumb Navigation */}
@@ -195,7 +195,7 @@ const ProtoPlanetLanding = () => {
           </Link>
           <ChevronRight size={16} className="breadcrumb-separator" />
           <span className="breadcrumb-item active">
-            <span>ProtoPlanet</span>
+            <span>StartupSphere</span>
           </span>
         </div>
 
@@ -205,13 +205,13 @@ const ProtoPlanetLanding = () => {
             padding: 0;
             min-height: 100vh;
             background-color: #000000 !important;
+            scroll-behavior: smooth;
           }
 
-          .proto-planet-landing {
+          .startup-sphere-landing {
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-           
             padding: 1rem;
             padding-bottom: 50px;
             box-sizing: border-box;
@@ -254,7 +254,7 @@ const ProtoPlanetLanding = () => {
           }
 
           .highlight {
-            color: #a046b4;
+            color: #EE7520;
           }
 
           .typing-wrapper-container {
@@ -284,7 +284,7 @@ const ProtoPlanetLanding = () => {
             justify-content: space-around;
             align-items: center;
             gap: 1.5rem;
-            box-shadow: 0 0 20px 2px #a046b4;
+            box-shadow: 0 0 20px 2px #EE7520;
             opacity: 0;
             transform: scale(0.9);
             transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -304,7 +304,7 @@ const ProtoPlanetLanding = () => {
             width: 100%;
             border-radius: 1rem;
             padding: 1.5rem;
-            box-shadow: 0 0 20px 2px #a046b4;
+            box-shadow: 0 0 20px 2px #EE7520;
             opacity: 0;
             transition: all 0.8s ease-out;
             transform: translateY(30px);
@@ -321,7 +321,7 @@ const ProtoPlanetLanding = () => {
             font-weight: bold;
             margin-bottom: 1rem;
             text-align: center;
-            border-bottom: 2px solid #a046b4;
+            border-bottom: 2px solid #EE7520;
             padding-bottom: 0.5rem;
             font-family: 'Times New Roman', serif !important;
           }
@@ -396,7 +396,7 @@ const ProtoPlanetLanding = () => {
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #a046b4 0%, #6a0dad 100%);
+            background: linear-gradient(135deg, #EE7520 0%, #D45B00 100%);
           }
 
           .icon-container svg {
@@ -437,7 +437,7 @@ const ProtoPlanetLanding = () => {
             border-radius: 0.5rem;
             padding: 1rem;
             margin-bottom: 1rem;
-            border-left: 4px solid #a046b4;
+            border-left: 4px solid #EE7520;
             transition: all 0.6s ease-out;
             opacity: 0;
             transform: translateY(30px);
@@ -454,7 +454,7 @@ const ProtoPlanetLanding = () => {
             border-radius: 0.5rem;
             padding: 1rem;
             margin-bottom: 1rem;
-            border-top: 4px solid #a046b4;
+            border-top: 4px solid #EE7520;
             transition: all 0.6s ease-out;
             opacity: 0;
             transform: translateY(30px);
@@ -467,7 +467,7 @@ const ProtoPlanetLanding = () => {
           }
 
           .level-title {
-            color: #a046b4;
+            color: #EE7520;
             font-weight: bold;
             margin-bottom: 0.5rem;
             display: flex;
@@ -483,7 +483,7 @@ const ProtoPlanetLanding = () => {
           }
 
           .track-title {
-            color: #a046b4;
+            color: #EE7520;
             font-weight: bold;
             margin-bottom: 0.5rem;
             display: flex;
@@ -499,7 +499,7 @@ const ProtoPlanetLanding = () => {
           }
 
           .date-badge {
-            background-color: #a046b4;
+            background-color: #EE7520;
             color: white;
             padding: 0.25rem 0.5rem;
             border-radius: 0.25rem;
@@ -569,7 +569,7 @@ const ProtoPlanetLanding = () => {
 
           .list-icon {
             margin-right: 0.5rem;
-            color: #a046b4;
+            color: #EE7520;
             min-width: 1.2rem;
           }
 
@@ -703,7 +703,7 @@ const ProtoPlanetLanding = () => {
           }
 
           .register-btn {
-            background-color: #a046b4;
+            background-color: #EE7520;
             color: white;
             border: none;
             padding: 12px 30px;
@@ -711,7 +711,7 @@ const ProtoPlanetLanding = () => {
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(160, 70, 180, 0.4);
+            box-shadow: 0 4px 15px rgba(238, 117, 32, 0.4);
             display: block;
             margin: 40px auto;
             text-align: center;
@@ -725,9 +725,9 @@ const ProtoPlanetLanding = () => {
           }
 
           .register-btn:hover {
-            background-color: #8a3ab9;
+            background-color: #D45B00;
             transform: translateY(-3px);
-            box-shadow: 0 7px 20px rgba(160, 70, 180, 0.6);
+            box-shadow: 0 7px 20px rgba(238, 117, 32, 0.6);
           }
 
           .register-btn:active {
@@ -775,23 +775,25 @@ const ProtoPlanetLanding = () => {
 
           /* Section-specific margins */
           .about-event-section {
-            margin: 1.5rem 0;
+            margin: 3rem 0;
           }
 
           .competition-structure-section {
-            margin: 1rem 0;
+            margin: 1.2rem 0;
           }
 
-          .thematic-tracks-section {
-            margin-top: 8rem
+          .focus-areas-section {
+            margin-top: 4rem;
+            margin-bottom: 0rem;
           }
 
           .eligibility-criteria-section {
-            margin: 4.5rem 0;
+            margin-top: 7.5rem;
           }
 
           .registration-fee-section {
-            margin: 2rem 0;
+            margin-top: 4.5rem;
+            margin-bottom:-0.5rem;
           }
 
           .awards-recognition-section {
@@ -799,7 +801,8 @@ const ProtoPlanetLanding = () => {
           }
 
           .contact-information-section {
-            margin-top: 8rem
+            margin-top: 8rem;
+            margin-bottom:-1rem;
           }
 
           /* Interactive Tabs Styles */
@@ -809,7 +812,7 @@ const ProtoPlanetLanding = () => {
 
           .tracks-tabs {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
             gap: 1rem;
             margin-bottom: 2rem;
             justify-content: center;
@@ -817,7 +820,7 @@ const ProtoPlanetLanding = () => {
 
           .track-tab {
             background: rgba(0, 0, 0, 0.3);
-            border: 2px solid #a046b4;
+            border: 2px solid #EE7520;
             color: white;
             padding: 1rem 1.5rem;
             border-radius: 0.5rem;
@@ -834,15 +837,15 @@ const ProtoPlanetLanding = () => {
           }
 
           .track-tab:hover {
-            background: rgba(160, 70, 180, 0.2);
+            background: rgba(238, 117, 32, 0.2);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(160, 70, 180, 0.3);
+            box-shadow: 0 4px 12px rgba(238, 117, 32, 0.3);
           }
 
           .track-tab.active {
-            background: linear-gradient(135deg, #a046b4 0%, #6a0dad 100%);
-            border-color: #a046b4;
-            box-shadow: 0 4px 15px rgba(160, 70, 180, 0.5);
+            background: linear-gradient(135deg, #EE7520 0%, #D45B00 100%);
+            border-color: #EE7520;
+            box-shadow: 0 4px 15px rgba(238, 117, 32, 0.5);
           }
 
           .track-content {
@@ -850,7 +853,7 @@ const ProtoPlanetLanding = () => {
             background-color: rgba(0, 0, 0, 0.2);
             border-radius: 0.5rem;
             padding: 1.5rem;
-            border-left: 4px solid #a046b4;
+            border-left: 4px solid #EE7520;
             transition: all 0.6s ease-out;
             opacity: 0;
             transform: translateY(30px);
@@ -865,7 +868,7 @@ const ProtoPlanetLanding = () => {
 
           @media (max-width: 768px) {
             .tracks-tabs {
-              grid-template-columns: 1fr;
+              grid-template-columns: 1fr 1fr;
               gap: 0.75rem;
             }
 
@@ -873,6 +876,13 @@ const ProtoPlanetLanding = () => {
               width: 100%;
               min-height: 50px;
               padding: 0.75rem 1rem;
+            }
+          }
+
+          @media (max-width: 576px) {
+            .tracks-tabs {
+              grid-template-columns: 1fr;
+              gap: 0.5rem;
             }
           }
 
@@ -897,7 +907,7 @@ const ProtoPlanetLanding = () => {
           }
 
           .breadcrumb-item:hover {
-            color: #a046b4;
+            color: #EE7520;
           }
 
           .breadcrumb-item.active {
@@ -915,7 +925,7 @@ const ProtoPlanetLanding = () => {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            background: linear-gradient(135deg, #a046b4 0%, #6a0dad 100%);
+            background: linear-gradient(135deg, #EE7520 0%, #D45B00 100%);
             color: white;
             border: none;
             border-radius: 50%;
@@ -929,7 +939,7 @@ const ProtoPlanetLanding = () => {
             opacity: 0;
             visibility: hidden;
             transform: translateY(20px) scale(0.9);
-            box-shadow: 0 4px 15px rgba(160, 70, 180, 0.4);
+            box-shadow: 0 4px 15px rgba(238, 117, 32, 0.4);
             z-index: 1000;
           }
 
@@ -940,9 +950,9 @@ const ProtoPlanetLanding = () => {
           }
 
           .back-to-top:hover {
-            background: linear-gradient(135deg, #8a3ab9 0%, #5a0b9d 100%);
+            background: linear-gradient(135deg, #D45B00 0%, #B84A00 100%);
             transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 7px 20px rgba(160, 70, 180, 0.6);
+            box-shadow: 0 7px 20px rgba(238, 117, 32, 0.6);
           }
 
           .back-to-top:active {
@@ -966,13 +976,13 @@ const ProtoPlanetLanding = () => {
 
         <div className="header-content animate-section animate-top">
           <h1 style={{ fontSize: '8vw', fontSizeAdjust: '4.5rem', fontWeight: 800, margin: 0, lineHeight: 1.2 }}>
-            <b style={{ color: 'white' }}>ProtoPlanet</b>
+            <b style={{ color: 'white' }}>StartupSphere</b>
           </h1>
           <h2 style={{ fontSize: '3vw', fontWeight: 800, margin: '0.5rem 0', color: 'white', lineHeight: 1.4 }}>
             <span className="typing-wrapper-container">
-              <span id="hardware" className="typing-wrapper" style={{ color: 'white' }}></span>
-              <span id="innovation" className="typing-wrapper" style={{ color: '#a046b4' }}></span>
-              <span id="sprint" className="typing-wrapper" style={{ color: 'white' }}></span>
+              <span id="future" className="typing-wrapper" style={{ color: 'white' }}></span>
+              <span id="founders" className="typing-wrapper" style={{ color: '#EE7520' }}></span>
+              <span id="pi" className="typing-wrapper" style={{ color: 'white' }}></span>
             </span>
           </h2>
         </div>
@@ -995,7 +1005,7 @@ const ProtoPlanetLanding = () => {
               </div>
               <div className="info-text">
                 <p className="label">Registration Fee</p>
-                <p className="value">₹300-600</p>
+                <p className="value">₹300-600/-</p>
               </div>
             </div>
             <div className="info-item">
@@ -1004,7 +1014,7 @@ const ProtoPlanetLanding = () => {
               </div>
               <div className="info-text">
                 <p className="label">Date</p>
-                <p className="value">August-October 2025</p>
+                <p className="value">August 9, 2025</p>
               </div>
             </div>
           </div>
@@ -1015,7 +1025,162 @@ const ProtoPlanetLanding = () => {
           <div className="content-box animate-section animate-left">
             <div className="content-heading">About the Event</div>
             <div className="content-text">
-              ProtoPlanet is a regional-level hardware innovation competition designed to empower undergraduate engineering students to develop and demonstrate impactful solutions using emerging and future technologies. The competition emphasizes innovation, functionality, and societal relevance—encouraging teams to build what the future needs today.
+              StartupSphere is an exciting platform designed to empower and showcase student-led startup ideas harnessing emerging technologies like AI, Blockchain, and IoT. This competition encourages young innovators from Telangana, Andhra Pradesh, and Chhattisgarh to pitch scalable and impactful business models that leverage future tech to solve real-world problems.
+            </div>
+          </div>
+        </div>
+
+        {/* Focus Areas */}
+        <div className="info-box-container focus-areas-section">
+          <div className="content-box animate-section animate-right">
+            <div className="content-heading">Focus Areas</div>
+            <div className="tracks-container">
+              <div className="tracks-tabs">
+                <button className="track-tab active" data-track="ai-ml">
+                  <BrainCircuit size={20} /> AI & ML
+                </button>
+                <button className="track-tab" data-track="iot">
+                  <Wifi size={20} /> IoT Solutions
+                </button>
+                <button className="track-tab" data-track="blockchain">
+                  <Network size={20} /> Blockchain & FinTech
+                </button>
+                <button className="track-tab" data-track="sustainable">
+                  <Leaf size={20} /> Sustainable Tech
+                </button>
+                <button className="track-tab" data-track="healthtech">
+                  <HeartPulse size={20} /> HealthTech & BioTech
+                </button>
+                <button className="track-tab" data-track="spacetech">
+                  <Rocket size={20} /> SpaceTech & Robotics
+                </button>
+                <button className="track-tab" data-track="edtech">
+                  <Bookmark size={20} /> EdTech
+                </button>
+                <button className="track-tab" data-track="digital">
+                  <Smartphone size={20} /> Digital Transformation
+                </button>
+              </div>
+              
+              <div className="track-content active" id="ai-ml">
+                <div className="track-title">
+                  <BrainCircuit size={20} /> AI & ML
+                </div>
+                <div className="content-text">
+                  Artificial Intelligence & Machine Learning applications
+                  <p><strong>Examples:</strong></p>
+                  <ul className="content-list">
+                    <li><span className="bullet-point">Predictive analytics solutions</span></li>
+                    <li><span className="bullet-point">Computer vision applications</span></li>
+                    <li><span className="bullet-point">AI-powered automation</span></li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="track-content" id="iot">
+                <div className="track-title">
+                  <Wifi size={20} /> IoT Solutions
+                </div>
+                <div className="content-text">
+                  Internet of Things implementations
+                  <p><strong>Examples:</strong></p>
+                  <ul className="content-list">
+                    <li><span className="bullet-point">Smart city solutions</span></li>
+                    <li><span className="bullet-point">Industrial IoT applications</span></li>
+                    <li><span className="bullet-point">Connected healthcare</span></li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="track-content" id="blockchain">
+                <div className="track-title">
+                  <Network size={20} /> Blockchain & FinTech
+                </div>
+                <div className="content-text">
+                  Decentralized and financial technologies
+                  <p><strong>Examples:</strong></p>
+                  <ul className="content-list">
+                    <li><span className="bullet-point">Smart contract platforms</span></li>
+                    <li><span className="bullet-point">Digital identity solutions</span></li>
+                    <li><span className="bullet-point">Payment innovations</span></li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="track-content" id="sustainable">
+                <div className="track-title">
+                  <Leaf size={20} /> Sustainable Tech
+                </div>
+                <div className="content-text">
+                  Renewable and Sustainable Technologies
+                  <p><strong>Examples:</strong></p>
+                  <ul className="content-list">
+                    <li><span className="bullet-point">Clean energy solutions</span></li>
+                    <li><span className="bullet-point">Circular economy models</span></li>
+                    <li><span className="bullet-point">Carbon footprint reduction</span></li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="track-content" id="healthtech">
+                <div className="track-title">
+                  <HeartPulse size={20} /> HealthTech & BioTech
+                </div>
+                <div className="content-text">
+                  Healthcare and biological innovations
+                  <p><strong>Examples:</strong></p>
+                  <ul className="content-list">
+                    <li><span className="bullet-point">Medical diagnostics</span></li>
+                    <li><span className="bullet-point">Digital therapeutics</span></li>
+                    <li><span className="bullet-point">Biotech applications</span></li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="track-content" id="spacetech">
+                <div className="track-title">
+                  <Rocket size={20} /> SpaceTech & Robotics
+                </div>
+                <div className="content-text">
+                  Advanced aerospace and robotics
+                  <p><strong>Examples:</strong></p>
+                  <ul className="content-list">
+                    <li><span className="bullet-point">Satellite technologies</span></li>
+                    <li><span className="bullet-point">Drone applications</span></li>
+                    <li><span className="bullet-point">Advanced robotics</span></li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="track-content" id="edtech">
+                <div className="track-title">
+                  <Bookmark size={20} /> EdTech
+                </div>
+                <div className="content-text">
+                  Educational technology innovations
+                  <p><strong>Examples:</strong></p>
+                  <ul className="content-list">
+                    <li><span className="bullet-point">Learning platforms</span></li>
+                    <li><span className="bullet-point">AR/VR education</span></li>
+                    <li><span className="bullet-point">Skill development</span></li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="track-content" id="digital">
+                <div className="track-title">
+                  <Smartphone size={20} /> Digital Transformation
+                </div>
+                <div className="content-text">
+                  Solutions driving digital change
+                  <p><strong>Examples:</strong></p>
+                  <ul className="content-list">
+                    <li><span className="bullet-point">Enterprise solutions</span></li>
+                    <li><span className="bullet-point">Digital inclusion</span></li>
+                    <li><span className="bullet-point">Workplace innovations</span></li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1027,34 +1192,34 @@ const ProtoPlanetLanding = () => {
             {/* Level 1 */}
             <div className="level-card animate-section animate-delay-1">
               <div className="level-title">
-                <Flag size={20} /> Level 1: Online Abstract Submission
+                <Flag size={20} /> Level 1: Idea Submission
                 <div className="timeline-date">
                   <CalendarDays size={16} />
                   <span>August 9, 2025</span>
                 </div>
               </div>
               <div className="content-text">
-                Teams must submit a brief proposal outlining:
+                Teams submit a detailed startup concept including:
                 <ul className="content-list">
-                  <li><span className="bullet-point">Problem Statement</span></li>
-                  <li><span className="bullet-point">Proposed Solution</span></li>
-                  <li><span className="bullet-point">Basic System Architecture</span></li>
-                  <li><span className="bullet-point">Expected Technological and Social Impact</span></li>
+                  <li><span className="bullet-point">Problem statement and solution overview</span></li>
+                  <li><span className="bullet-point">Business model canvas or equivalent</span></li>
+                  <li><span className="bullet-point">Market opportunity and competitive landscape</span></li>
+                  <li><span className="bullet-point">Go-to-market strategy and financial projections</span></li>
+                  <li><span className="bullet-point">Social and/or business impact assessment</span></li>
                 </ul>
-                <p>Shortlisted teams will be notified and invited to the next round.</p>
               </div>
             </div>
             {/* Level 2 */}
             <div className="level-card animate-section animate-delay-2">
               <div className="level-title">
-                <Laptop size={20} /> Level 2: Regional Prototype Presentation
+                <Laptop size={20} /> Level 2: Regional Pitch Round
                 <div className="timeline-date">
                   <CalendarDays size={16} />
                   <span>August 23, 2025</span>
                 </div>
               </div>
               <div className="content-text">
-                Shortlisted teams will be invited to showcase their working prototypes at a regional in-person event.
+                Shortlisted teams present their ideas at an in-person event.
                 <p><strong>Venue:</strong> VIT-AP University (Tentative)</p>
               </div>
             </div>
@@ -1068,91 +1233,8 @@ const ProtoPlanetLanding = () => {
                 </div>
               </div>
               <div className="content-text">
-                Top-performing teams will pitch their innovations at IET Hyderabad's flagship event.
+                Top finalists will pitch to a panel of experts, including industry leaders and investors.
                 <p><strong>Venue:</strong> T-Hub, Hyderabad</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Thematic Tracks */}
-        <div className="info-box-container thematic-tracks-section">
-          <div className="content-box animate-section animate-right">
-            <div className="content-heading">Thematic Tracks (Based on Future Technologies)</div>
-            <div className="tracks-container">
-              <div className="tracks-tabs">
-                <button className="track-tab active" data-track="iot">
-                  <Wifi size={20} /> IoT & Smart Environments
-                </button>
-                <button className="track-tab" data-track="robotics">
-                  <Rocket size={20} /> Robotics & Intelligent Machines
-                </button>
-                <button className="track-tab" data-track="healthtech">
-                  <HeartPulse size={20} /> HealthTech & Human Augmentation
-                </button>
-                <button className="track-tab" data-track="cleantech">
-                  <Leaf size={20} /> Sustainable & Clean Tech
-                </button>
-              </div>
-              
-              <div className="track-content active" id="iot">
-                <div className="track-title">
-                  <Wifi size={20} /> IoT & Smart Environments
-                </div>
-                <div className="content-text">
-                  Connected devices and intelligent systems for smart homes, cities, agriculture, and industries.
-                  <p><strong>Examples:</strong></p>
-                  <ul className="content-list">
-                    <li><span className="bullet-point">Smart energy and water tracking systems</span></li>
-                    <li><span className="bullet-point">IoT-enabled agriculture solutions</span></li>
-                    <li><span className="bullet-point">Smart waste or pollution monitoring systems</span></li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div className="track-content" id="robotics">
-                <div className="track-title">
-                  <Rocket size={20} /> Robotics & Intelligent Machines
-                </div>
-                <div className="content-text">
-                  Hardware innovations using robotics, embedded systems, or automation.
-                  <p><strong>Examples:</strong></p>
-                  <ul className="content-list">
-                    <li><span className="bullet-point">Assistive robots or exoskeletons</span></li>
-                    <li><span className="bullet-point">Autonomous service bots</span></li>
-                    <li><span className="bullet-point">Intelligent embedded control systems</span></li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div className="track-content" id="healthtech">
-                <div className="track-title">
-                  <HeartPulse size={20} /> HealthTech & Human Augmentation
-                </div>
-                <div className="content-text">
-                  Next-gen tools for healthcare, rehabilitation, and accessibility.
-                  <p><strong>Examples:</strong></p>
-                  <ul className="content-list">
-                    <li><span className="bullet-point">Health monitoring wearables</span></li>
-                    <li><span className="bullet-point">Smart assistive technologies</span></li>
-                    <li><span className="bullet-point">Rehabilitation support systems</span></li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div className="track-content" id="cleantech">
-                <div className="track-title">
-                  <Leaf size={20} /> Sustainable & Clean Tech
-                </div>
-                <div className="content-text">
-                  Technological solutions to promote sustainability and resource efficiency.
-                  <p><strong>Examples:</strong></p>
-                  <ul className="content-list">
-                    <li><span className="bullet-point">Solar-powered devices</span></li>
-                    <li><span className="bullet-point">Smart irrigation controllers</span></li>
-                    <li><span className="bullet-point">Green energy or eco-monitoring systems</span></li>
-                  </ul>
-                </div>
               </div>
             </div>
           </div>
@@ -1163,11 +1245,11 @@ const ProtoPlanetLanding = () => {
           <div className="content-box animate-section animate-left">
             <div className="content-heading">Eligibility Criteria</div>
             <ul className="content-list">
-              <li><span className="bullet-point">Open to undergraduate students (any year) from any branch of engineering</span></li>
-              <li><span className="bullet-point">Institutions must be located in Telangana, Andhra Pradesh, or Chhattisgarh</span></li>
-              <li><span className="bullet-point">Teams must consist of 2 to 3 members (no solo participation allowed)</span></li>
+              <li><span className="bullet-point">Team Size: Maximum 3 members, minimum 2 members</span></li>
+              <li><span className="bullet-point">Participants must be undergraduate engineering students from Telangana, Andhra Pradesh, or Chhattisgarh</span></li>
+              <li><span className="bullet-point">Solo participation is not allowed</span></li>
               <li><span className="bullet-point">At least two members from each team must attend both offline rounds in person</span></li>
-              <li><span className="bullet-point">All projects must be original and developed solely by the participating team</span></li>
+              <li><span className="bullet-point">Startup ideas must be original and developed by the team</span></li>
             </ul>
           </div>
         </div>
@@ -1178,14 +1260,14 @@ const ProtoPlanetLanding = () => {
             <div className="content-heading">Registration Fee</div>
             <div className="two-column">
               <div className="animate-section animate-left">
-                <h4 style={{ color: '#a046b4', marginBottom: '0.5rem',fontSize:'24px'}}>IET Member Team</h4>
+                <h4 style={{ color: '#EE7520', marginBottom: '0.5rem', fontSize: '24px' }}>IET Member Team</h4>
                 <ul className="content-list">
                   <li><span className="bullet-point"><strong>Fee:</strong> ₹300</span></li>
                   <li><span className="bullet-point"><em>(At least one team member must be a current IET student member to avail this rate)</em></span></li>
                 </ul>
               </div>
               <div className="animate-section animate-right">
-                <h4 style={{ color: '#a046b4', marginBottom: '0.5rem',fontSize:'24px' }}>Non-Member Team</h4>
+                <h4 style={{ color: '#EE7520', marginBottom: '0.5rem', fontSize: '24px' }}>Non-Member Team</h4>
                 <ul className="content-list">
                   <li><span className="bullet-point"><strong>Fee:</strong> ₹600</span></li>
                 </ul>
@@ -1198,21 +1280,13 @@ const ProtoPlanetLanding = () => {
         <div className="info-box-container awards-recognition-section">
           <div className="content-box animate-section animate-bottom">
             <div className="content-heading">Awards & Recognition</div>
-            <div className="two-column">
-              <div className="animate-section animate-left">
-                <h4 className="main-prizes" style={{ color: '#a046b4', marginBottom: '0.5rem' }}>Main Prizes</h4>
-                <ul className="content-list">
-                  <li><span className="bullet-point"><strong>1st Prize:</strong> ₹10,000</span></li>
-                  <li><span className="bullet-point"><strong>2nd Prize:</strong> ₹5,000</span></li>
-                </ul>
-              </div>
-              <div className="animate-section animate-right">
-                <h4 className="additional-benefits" style={{ color: '#a046b4', marginBottom: '0.5rem' }}>Additional Benefits</h4>
-                <ul className="content-list">
-                  <li><span className="bullet-point">All finalists receive Certificates of Merit from IET Hyderabad LN</span></li>
-                  <li><span className="bullet-point">Top teams will present at the Future Technology Conclave 2025</span></li>
-                </ul>
-              </div>
+            <div className="content-text">
+              <ul className="content-list">
+                <li><span className="bullet-point">Opportunity to network with industry leaders and investors</span></li>
+                <li><span className="bullet-point">Mentorship and incubation support from IET partners</span></li>
+                <li><span className="bullet-point">Recognition certificates and prizes for winning teams</span></li>
+                <li><span className="bullet-point">Platform to launch startup ideas on a regional and national stage</span></li>
+              </ul>
             </div>
           </div>
         </div>
@@ -1225,7 +1299,7 @@ const ProtoPlanetLanding = () => {
             <div className="content-heading">Contact Information</div>
             <div className="two-column">
               <div className="animate-section animate-left">
-                <h4 style={{ color: '#a046b4', marginBottom: '0.5rem', fontSize: '24px' }}>Event Coordinators</h4>
+                <h4 style={{ color: '#EE7520', marginBottom: '0.5rem', fontSize: '24px' }}>Event Coordinators</h4>
                 <ul className="content-list" style={{ listStyleType: 'none', paddingLeft: 0 }}>
                   <li>
                     <span className="social-icon">
@@ -1240,21 +1314,21 @@ const ProtoPlanetLanding = () => {
                 </ul>
               </div>
               <div className="animate-section animate-right">
-                <h4 style={{ color: '#a046b4', marginBottom: '0.5rem', fontSize: '24px' }}>Email & Social</h4>
+                <h4 style={{ color: '#EE7520', marginBottom: '0.5rem', fontSize: '24px' }}>Email & Social</h4>
                 <ul className="content-list" style={{ listStyleType: 'none', paddingLeft: 0 }}>
                   <li>
                     <span className="social-icon">
-                      <Mail size={24} strokeWidth={2} /> protoplanet@college.edu
+                      <Mail size={24} strokeWidth={2} /> startupsphere@iet.org
                     </span>
                   </li>
                   <li>
                     <span className="social-icon">
-                      <Instagram size={24} strokeWidth={2} /> @protoplanet_official
+                      <Instagram size={24} strokeWidth={2} /> @startupsphere_iet
                     </span>
                   </li>
                   <li>
                     <span className="social-icon">
-                      <Twitter size={24} strokeWidth={2} /> @protoplanet
+                      <Twitter size={24} strokeWidth={2} /> @iet_startupsphere
                     </span>
                   </li>
                 </ul>
@@ -1282,4 +1356,4 @@ const ProtoPlanetLanding = () => {
   );
 };
 
-export default ProtoPlanetLanding;
+export default StartupSphereLanding;
