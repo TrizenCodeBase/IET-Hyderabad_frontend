@@ -265,70 +265,7 @@ const PATNRegistration = () => {
           </p>
         </header>
         
-        {/* Reference Video Section */}
-        <div style={{
-          backgroundColor: '#1e1e1e',
-          borderRadius: '0.5rem',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
-          maxWidth: '720px',
-          width: '100%',
-          marginBottom: '1.5rem',
-          overflow: 'hidden',
-          animation: 'slideUp 0.6s ease-out 0.3s both'
-        }}>
-          <div style={{
-            background: 'linear-gradient(to right, #22bbe0, #1a9fc4)',
-            padding: '1rem',
-            color: 'white'
-          }}>
-            <h3 style={{
-              fontWeight: '600',
-              fontSize: '1rem',
-              margin: '0',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem'
-            }}>
-              📹 Registration Guide Video
-            </h3>
-            <p style={{
-              fontSize: '0.75rem',
-              marginTop: '0.25rem',
-              marginBottom: '0',
-              opacity: '0.9'
-            }}>
-              Watch this video to understand the registration process before proceeding
-            </p>
-          </div>
-          <div style={{
-            padding: '1rem',
-            display: 'flex',
-            justifyContent: 'center'
-          }}>
-            <div style={{
-              position: 'relative',
-              width: '100%',
-              maxWidth: '600px',
-              aspectRatio: '16/9',
-              borderRadius: '0.375rem',
-              overflow: 'hidden',
-              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)'
-            }}>
-              <iframe
-                src="https://www.youtube.com/embed/lzCwxFxRXOA"
-                title="PATN Registration Guide"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  border: 'none',
-                  borderRadius: '0.375rem'
-                }}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          </div>
-        </div>
+
         
         <form onSubmit={handleSubmit} style={{
           backgroundColor: '#1e1e1e',
@@ -860,6 +797,23 @@ const PATNRegistration = () => {
                       {errors.youtubeLink}
                     </div>
                   )}
+                  <div style={{
+                    marginTop: '0.5rem',
+                    fontSize: '0.7rem',
+                    color: '#b0b0b0'
+                  }}>
+                    📹 <a
+                      href="https://www.youtube.com/watch?v=lzCwxFxRXOA"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        color: '#22bbe0',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      Watch presentation reference video
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
