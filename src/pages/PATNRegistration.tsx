@@ -476,7 +476,7 @@ const PATNRegistration = () => {
                     name="instituteName"
                     value={formData.instituteName}
                     onChange={handleChange}
-                    placeholder="Enter your institute/organization"
+                    placeholder="Enter your institute name/organization"
                     style={{
                       width: '100%',
                       borderRadius: '0.375rem',
