@@ -430,7 +430,7 @@ const PATNRegistration = () => {
                     fontSize: '0.75rem',
                     marginBottom: '0.25rem'
                   }}>
-                    Department *
+                    Department / Designation*
                   </label>
                   <input
                     type="text"
@@ -469,7 +469,7 @@ const PATNRegistration = () => {
                     fontSize: '0.75rem',
                     marginBottom: '0.25rem'
                   }}>
-                    Institute Name *
+                    Institute / Company Name *
                   </label>
                   <input
                     type="text"
