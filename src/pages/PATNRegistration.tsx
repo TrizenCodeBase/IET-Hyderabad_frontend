@@ -403,6 +403,7 @@ const PATNRegistration = () => {
                     <option value="">Select your category</option>
                     <option value="student">Student</option>
                     <option value="young-professional">Young Professional</option>
+                    <option value="young-professional">Department/Designation</option>
                   </select>
                   {errors.category && (
                     <div style={{
@@ -742,8 +743,8 @@ const PATNRegistration = () => {
                   >
                     <option value="">Select your preferred zone</option>
                     <option value="zone1">Zone 1 (NIT Warangal Telangana)</option>
-                    <option value="zone2">Zone 2 (VIT-AP university)</option>
-                    <option value="zone3">Zone 3 (Kalinga university Raipur)</option>
+{/*                     <option value="zone2">Zone 2 (VIT-AP university)</option> */}
+                    <option value="zone3">Zone 2 (Kalinga university Raipur)</option>
                   </select>
                   {errors.zoneVenue && (
                     <div style={{
