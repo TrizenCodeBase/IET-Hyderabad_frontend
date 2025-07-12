@@ -403,7 +403,7 @@ const PATNRegistration = () => {
                     <option value="">Select your category</option>
                     <option value="student">Student</option>
                     <option value="young-professional">Young Professional</option>
-                    <option value="young-professional">Department/Designation</option>
+{/*                     <option value="young-professional">Department/Designation</option> */}
                   </select>
                   {errors.category && (
                     <div style={{
