@@ -48,10 +48,10 @@ const Navigation = () => {
           name: 'Innoverse',
           href: '#events',
           subItems: [
-            { name: 'InnoThon', href: '#events' },
+            { name: 'InnoThon', href: '/innothon' },
             { name: 'ProtoPlanet', href: '/protoplanet' },
             { name: 'StartupSphere', href: '/startupsphere' },
-            { name: 'AppAstral', href: '#events' }
+            { name: 'AppAstral', href: '/appastral' }
           ]
         },
         { name: 'TechTalk', href: '#techtalk' }
