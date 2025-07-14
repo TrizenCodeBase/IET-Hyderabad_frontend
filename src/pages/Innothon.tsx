@@ -3,6 +3,9 @@ import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { Users, UserPlus, Smartphone, CreditCard, CheckCircle, Copy, Linkedin, Mail, Phone, User, Book, Briefcase, MessageSquare, Shield } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
+import { problemStatements, ProblemStatement } from '../lib/problemStatements';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '../components/ui/card';
+import ReactDOM from 'react-dom';
 
 interface TeamMember {
   name: string;
@@ -36,6 +39,7 @@ interface FormData {
   feeType: string;
   transactionId: string;
   transactionScreenshot: string;
+  customProblemStatement?: string;
 }
 
 const InnothonRegistration = () => {
@@ -55,15 +59,6 @@ const InnothonRegistration = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const roles = ['Leader', 'Developer', 'Designer', 'Presenter', 'Other'];
-  const problemStatements = [
-    'AI for Social Good',
-    'Sustainable Technology Solutions',
-    'Healthcare Innovation',
-    'Education Technology',
-    'Smart City Solutions',
-    'Financial Inclusion',
-    'Agriculture Technology'
-  ];
 
   const [formData, setFormData] = useState<FormData>({
     teamName: '',
@@ -114,14 +109,43 @@ const InnothonRegistration = () => {
     consentAccepted: false,
     feeType: '',
     transactionId: '',
-    transactionScreenshot: ''
+    transactionScreenshot: '',
+    customProblemStatement: ''
   });
 
   const isMobile = useIsMobile();
 
+  const [showProblemDropdown, setShowProblemDropdown] = useState(false);
+  const problemDropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{top: number, left: number, width: number} | null>(null);
+  const problemDropdownButtonRef = useRef<HTMLButtonElement>(null);
+
+  const [otherSelected, setOtherSelected] = useState(false);
+
+  // Close dropdown on outside click
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        problemDropdownRef.current &&
+        !problemDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowProblemDropdown(false);
+      }
+    }
+    if (showProblemDropdown) {
+      document.addEventListener('click', handleClickOutside);
+    } else {
+      document.removeEventListener('click', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [showProblemDropdown]);
+
   const handleInputChange = (section: string, field: string, value: string | boolean) => {
     setFormData(prev => {
       if (field === '') {
+        console.log('Updating', section, 'to', value); // <-- Add this line
         return {
           ...prev,
           [section]: value
@@ -175,7 +199,10 @@ const InnothonRegistration = () => {
     if (!formData.teamName) missingFields.push('Team Name');
     if (!formData.institutionName) missingFields.push('Institution/Organization Name');
     if (!formData.cityState) missingFields.push('City & State');
-    if (!formData.problemStatement) missingFields.push('Preferred Problem Statement');
+    if (!formData.problemStatement && !formData.customProblemStatement) {
+      missingFields.push('Preferred Problem Statement');
+    }
+    
 
     // Leader validation
     if (!formData.leaderName) missingFields.push('Team Leader - Full Name');
@@ -272,10 +299,24 @@ const InnothonRegistration = () => {
         message: 'Submitting registration...'
       });
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Make real API call to backend
+      const response = await fetch('http://localhost:5001/api/innothon/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...formData,
+          transactionScreenshot: uploadedImage // send image as base64 string
+        })
+      });
+      const result = await response.json();
 
-      const confId = generateConfirmationId();
+      if (!response.ok) {
+        throw new Error(result.message || 'Registration failed');
+      }
+
+      const confId = result.data?.registrationId || generateConfirmationId();
       setConfirmationId(confId);
 
       setSubmissionStatus({
@@ -314,6 +355,42 @@ const InnothonRegistration = () => {
       </div>
     );
   };
+
+  const tabOrder = [
+    { key: 'problem-statements', label: 'Problem Statements', icon: MessageSquare },
+    { key: 'team-details', label: 'Team Details', icon: Users },
+    { key: 'team-members', label: 'Team Members', icon: UserPlus },
+    { key: 'additional-info', label: 'Additional Info', icon: MessageSquare },
+    { key: 'payment', label: 'Payment', icon: CreditCard },
+  ];
+
+  // Open dropdown and set position
+  const openDropdown = () => {
+    setShowProblemDropdown(true);
+    if (problemDropdownButtonRef.current) {
+      const rect = problemDropdownButtonRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width
+      });
+    }
+  };
+
+  // When selecting a problem statement
+  const handleProblemStatementSelect = (value: string) => {
+    if (value === 'Other (please specify)') {
+      handleInputChange('problemStatement', '', '');
+      setOtherSelected(true);
+    } else {
+      handleInputChange('problemStatement', '', value);
+      handleInputChange('customProblemStatement', '', '');
+      setOtherSelected(false);
+    }
+    setTimeout(() => setShowProblemDropdown(false), 0);
+  };
+
+  // Derive otherSelected from formData
 
   return (
     <div className="min-h-screen bg-black w-full overflow-x-hidden">
@@ -367,83 +444,61 @@ const InnothonRegistration = () => {
 
           {/* Tabs Navigation */}
           <div className="flex items-center justify-center gap-2 mb-8 w-full">
-            <button
-              onClick={() => setCurrentStep('team-details')}
-              className={`flex items-center justify-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg transition-colors ${
-                currentStep === 'team-details'
-                  ? 'text-black font-semibold'
-                  : 'bg-black/40 text-gray-300 hover:text-white'
-              }`}
-              style={currentStep === 'team-details' ? { backgroundColor: '#AAC81E' } : {}}
-            >
-              <Users className="w-6 h-6 md:w-5 md:h-5" />
-              {!isMobile && <span>Team Details</span>}
-            </button>
-            <div
-              className="hidden md:block w-8 h-1 mx-1 rounded-full"
-              style={{ background: 'linear-gradient(to right, #AAC81E, #000)' }}
-            ></div>
-            <div
-              className="block md:hidden w-8 h-1 my-1 rounded-full"
-              style={{ background: 'linear-gradient(to right, #AAC81E, #000)' }}
-            ></div>
-            <button
-              onClick={() => setCurrentStep('team-members')}
-              className={`flex items-center justify-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg transition-colors ${
-                currentStep === 'team-members'
-                  ? 'text-black font-semibold'
-                  : 'bg-black/40 text-gray-300 hover:text-white'
-              }`}
-              style={currentStep === 'team-members' ? { backgroundColor: '#AAC81E' } : {}}
-            >
-              <UserPlus className="w-6 h-6 md:w-5 md:h-5" />
-              {!isMobile && <span>Team Members</span>}
-            </button>
-            <div
-              className="hidden md:block w-8 h-1 mx-1 rounded-full"
-              style={{ background: 'linear-gradient(to right, #AAC81E, #000)' }}
-            ></div>
-            <div
-              className="block md:hidden w-8 h-1 my-1 rounded-full"
-              style={{ background: 'linear-gradient(to right, #AAC81E, #000)' }}
-            ></div>
-            <button
-              onClick={() => setCurrentStep('additional-info')}
-              className={`flex items-center justify-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg transition-colors ${
-                currentStep === 'additional-info'
-                  ? 'text-black font-semibold'
-                  : 'bg-black/40 text-gray-300 hover:text-white'
-              }`}
-              style={currentStep === 'additional-info' ? { backgroundColor: '#AAC81E' } : {}}
-            >
-              <MessageSquare className="w-6 h-6 md:w-5 md:h-5" />
-              {!isMobile && <span>Additional Info</span>}
-            </button>
-            <div
-              className="hidden md:block w-8 h-1 mx-1 rounded-full"
-              style={{ background: 'linear-gradient(to right, #AAC81E, #000)' }}
-            ></div>
-            <div
-              className="block md:hidden w-8 h-1 my-1 rounded-full"
-              style={{ background: 'linear-gradient(to right, #AAC81E, #000)' }}
-            ></div>
-            <button
-              onClick={() => setCurrentStep('payment')}
-              className={`flex items-center justify-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg transition-colors ${
-                currentStep === 'payment'
-                  ? 'text-black font-semibold'
-                  : 'bg-black/40 text-gray-300 hover:text-white'
-              }`}
-              style={currentStep === 'payment' ? { backgroundColor: '#AAC81E' } : {}}
-            >
-              <CreditCard className="w-6 h-6 md:w-5 md:h-5" />
-              {!isMobile && <span>Payment</span>}
-            </button>
+            {tabOrder.map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setCurrentStep(tab.key)}
+                className={`flex items-center justify-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg transition-colors ${
+                  currentStep === tab.key
+                    ? 'text-black font-semibold'
+                    : 'bg-black/40 text-gray-300 hover:text-white'
+                }`}
+                style={currentStep === tab.key ? { backgroundColor: '#AAC81E' } : {}}
+              >
+                <tab.icon className="w-6 h-6 md:w-5 md:h-5" />
+                {!isMobile && <span>{tab.label}</span>}
+              </button>
+            ))}
           </div>
 
-          {/* Form Section */}
+          {/* Tab Content Section */}
           <div className="bg-[#000] backdrop-blur-sm rounded-2xl p-4 sm:p-8 md:p-12 shadow-[0_19px_38px_#AAC81E,0_15px_12px_#AAC81E] w-full max-w-4xl mx-auto overflow-x-auto">
-            {currentStep !== 'confirmation' && (
+            {currentStep === 'problem-statements' && (
+              <div className="mb-4">
+                <h2 className="text-3xl font-bold text-white mb-4 text-center">Innothon 2025 — Problem Statements</h2>
+                <div className="space-y-8 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                  {Array.from(new Set(problemStatements.map(ps => ps.track))).map(track => (
+                    <div key={track} className="bg-white/5 rounded-xl p-6 border border-[#AAC81E]/30 shadow">
+                      <h3 className="text-2xl font-semibold text-[#AAC81E] mb-4">{track} Track</h3>
+                      <div className="grid md:grid-cols-2 gap-6">
+                        {problemStatements.filter(ps => ps.track === track).map((ps, idx) => (
+                          <Card
+                            key={ps.title + idx}
+                            className="bg-black border-[#AAC81E]/20 text-white transition-all duration-200 hover:border-[#AAC81E] hover:shadow-[0_0_0_3px_#AAC81E55] focus-within:border-[#AAC81E] focus-within:shadow-[0_0_0_3px_#AAC81E55] flex flex-col relative group"
+                            tabIndex={0}
+                          >
+                            <div className="absolute left-0 top-0 m-4">
+                              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-lg bg-[#AAC81E] text-black shadow-md border-2 border-[#AAC81E] group-hover-scale-110 group-focus-scale-110 transition-transform">{idx + 1}</span>
+                            </div>
+                            <CardHeader className="pl-16">
+                              <CardTitle>{ps.title}</CardTitle>
+                              <CardDescription className="text-gray-300 text-sm mb-1">Domain: <span className="font-medium text-white">{ps.domain}</span></CardDescription>
+                            </CardHeader>
+                            <CardContent className="pl-16">
+                              <div className="text-gray-400 mb-2"><span className="font-semibold text-white">Abstract:</span> {ps.abstract}</div>
+                              <div className="text-gray-400 mb-2"><span className="font-semibold text-white">Expected Output:</span> {ps.expectedOutput}</div>
+                              <div className="text-gray-400 mb-2"><span className="font-semibold text-white">Tech Stack:</span> {ps.techStack}</div>
+                              <div className="text-gray-400"><span className="font-semibold text-white">Bonus Points:</span> {ps.bonusPoints}</div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {currentStep !== 'problem-statements' && currentStep !== 'confirmation' && (
               <form className="space-y-8">
                 {currentStep === 'team-details' ? (
                   <>
@@ -504,16 +559,63 @@ const InnothonRegistration = () => {
                         <label className="block text-white font-medium mb-1">
                           Preferred Problem Statement <span style={{ color: '#AAC81E' }}>*</span>
                         </label>
-                        <select
-                          value={formData.problemStatement}
-                          onChange={(e) => handleInputChange('problemStatement', '', e.target.value)}
-                          className="w-full px-3 py-2 bg-white/10 border border-[#AAC81E]/30 rounded-lg text-white focus:outline-none focus:border-[#AAC81E] focus:ring-1 focus:ring-[#AAC81E]"
-                        >
-                          <option value="">Select a problem statement</option>
-                          {problemStatements.map((statement) => (
-                            <option key={statement} value={statement}>{statement}</option>
-                          ))}
-                        </select>
+                        <div className="relative" ref={problemDropdownRef}>
+                          <button
+                            type="button"
+                            ref={problemDropdownButtonRef}
+                            className={`w-full px-3 py-2 bg-white/10 border border-[#AAC81E]/30 rounded-lg text-white text-left flex justify-between items-center focus:outline-none focus:border-[#AAC81E] focus:ring-1 focus:ring-[#AAC81E] transition-colors ${showProblemDropdown ? 'ring-2 ring-[#AAC81E]' : ''}`}
+                            onClick={openDropdown}
+                          >
+                            {formData.problemStatement
+                                ? problemStatements.find((ps) => ps.title === formData.problemStatement)?.title
+                                : otherSelected
+                                  ? 'Other (please specify)'
+                                  : 'Select a problem statement'}
+
+                            <svg className={`w-5 h-5 ml-2 transition-transform ${showProblemDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                          </button>
+                          {showProblemDropdown && dropdownPosition && ReactDOM.createPortal(
+                            <div
+                              className="z-[9999] bg-black border border-[#AAC81E]/40 rounded-lg shadow-2xl max-h-60 overflow-y-auto custom-scrollbar animate-fadeInDown"
+                              style={{
+                                position: 'absolute',
+                                top: dropdownPosition.top,
+                                left: dropdownPosition.left,
+                                width: dropdownPosition.width,
+                                minWidth: 240,
+                                boxShadow: '0 8px 32px 0 #AAC81E55, 0 1.5px 6px 0 #0008',
+                              }}
+                            >
+                              {problemStatements.map((statement) => (
+                                <div
+                                  key={statement.title}
+                                  className={`px-4 py-3 cursor-pointer hover:bg-[#AAC81E] hover:text-black transition-colors ${formData.problemStatement === statement.title ? 'bg-[#AAC81E] text-black font-semibold' : 'text-white'}`}
+                                  onClick={() => handleProblemStatementSelect(statement.title)}
+                                >
+                                  {statement.title}
+                                </div>
+                              ))}
+                              <div className="px-4 py-3 cursor-pointer hover:bg-[#AAC81E] hover:text-black transition-colors text-white border-t border-[#AAC81E]/20" onClick={() => handleProblemStatementSelect('Other (please specify)')}>
+                                Other (please specify)
+                              </div>
+                            </div>,
+                            document.body
+                          )}
+                        </div>
+                        {/* Show custom textarea only if 'Other' is selected */}
+                        {otherSelected && (
+                          <div className="mt-3">
+                            <textarea
+                              value={formData.customProblemStatement}
+                              onChange={e => handleInputChange('customProblemStatement', '', e.target.value)}
+                              placeholder="Please specify your problem statement (max 500 characters)"
+                              className="w-full px-3 py-2 bg-white/10 border border-[#AAC81E]/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#AAC81E] focus:ring-1 focus:ring-[#AAC81E] mt-1 resize-none"
+                              maxLength={500}
+                              rows={6}
+                            />
+                            <div className="text-xs text-gray-400 mt-1">Max 500 characters</div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </>
@@ -1479,6 +1581,33 @@ const InnothonRegistration = () => {
 
         .animate-pulse {
           animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #AAC81E;
+          border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .group:focus-within .group-focus-scale-110, .group:hover .group-hover-scale-110 { transform: scale(1.1); }
+        @keyframes fadeInDown {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeInDown { animation: fadeInDown 0.2s ease; }
+        /* Add dark theme for select dropdowns */
+        select {
+          background-color: #18181b !important;
+          color: #fff !important;
+          border: 1px solid #AAC81E !important;
+        }
+        select:focus {
+          outline: none !important;
+          border-color: #AAC81E !important;
+          box-shadow: 0 0 0 2px #AAC81E55;
         }
       `}</style>
     </div>
