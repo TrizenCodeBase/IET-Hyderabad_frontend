@@ -300,7 +300,7 @@ const InnothonRegistration = () => {
       });
 
       // Make real API call to backend
-      const response = await fetch('http://localhost:5001/api/innothon/register', {
+      const response = await fetch('https://iet-hyderabad-backend.llp.trizenventures.com/api/innothon/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
